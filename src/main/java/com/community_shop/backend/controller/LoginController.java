@@ -1,6 +1,6 @@
 package com.community_shop.backend.controller;
 
-import com.community_shop.backend.entity.LoginRequest;
+import com.community_shop.backend.entity.DTO.request.LoginRequest;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.LocalToken;
 import com.community_shop.backend.service.LoginService;

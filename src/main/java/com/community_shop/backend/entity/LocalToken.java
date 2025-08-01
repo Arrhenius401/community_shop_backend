@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import lombok.Data;
+
+@Data
 public class LocalToken {
     private User user;
     private String subject;

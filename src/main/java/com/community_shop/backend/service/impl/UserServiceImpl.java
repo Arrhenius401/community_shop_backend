@@ -1,4 +1,4 @@
-package com.community_shop.backend.service;
+package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.mapper.UserMapper;
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserServiceImpl {
     //标准状态
     public static final String USER_STATUS_NORMAL = "NORMAL";
     public static final String USER_STATUS_BANNED = "BANNED";

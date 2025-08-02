@@ -1,4 +1,4 @@
-package com.community_shop.backend.entity;
+package com.community_shop.backend.entity.DTO.request;
 
 public class LoginRequest {
     private String email;

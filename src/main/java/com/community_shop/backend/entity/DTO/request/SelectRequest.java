@@ -1,4 +1,4 @@
-package com.community_shop.backend.entity;
+package com.community_shop.backend.entity.DTO.request;
 
 public class SelectRequest {
     private String subject;

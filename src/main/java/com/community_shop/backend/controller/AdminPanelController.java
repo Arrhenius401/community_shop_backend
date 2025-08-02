@@ -2,8 +2,8 @@ package com.community_shop.backend.controller;
 
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.service.PostService;
-import com.community_shop.backend.service.UserService;
+import com.community_shop.backend.service.impl.PostServiceImpl;
+import com.community_shop.backend.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,10 +15,10 @@ import java.util.List;
 public class AdminPanelController {
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     //adminPanel界面获取所有帖子
     @RequestMapping("/api/post/all")
@@ -34,7 +34,7 @@ public class AdminPanelController {
     //adminPanel界面获取所有用户
     @RequestMapping("/api/user/all")
     public List<User> getAllUser(){
-        List<User> users = userService.getAllUser();
+        List<User> users = userServiceImpl.getAllUser();
 
         //生成日志
         System.out.println("传输User数量: " + users.size());
@@ -48,7 +48,7 @@ public class AdminPanelController {
         //输出日志
         System.out.println("收到关于更新用户状态请求");
 
-        boolean isValid = userService.updateUserStatus(user.getUserID(), user.getStatus());
+        boolean isValid = userServiceImpl.updateUserStatus(user.getUserID(), user.getStatus());
 
         //输出日志
         System.out.println("更新用户状态请求结果: " + isValid);

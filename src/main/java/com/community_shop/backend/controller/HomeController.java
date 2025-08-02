@@ -1,7 +1,7 @@
 package com.community_shop.backend.controller;
 
 import com.community_shop.backend.entity.Post;
-import com.community_shop.backend.service.PostService;
+import com.community_shop.backend.service.impl.PostServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +12,7 @@ import java.util.List;
 public class HomeController {
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService;
 
     //home界面获取帖子
     @RequestMapping("/api/post/home")

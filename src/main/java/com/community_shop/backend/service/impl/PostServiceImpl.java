@@ -1,4 +1,4 @@
-package com.community_shop.backend.service;
+package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.mapper.PostMapper;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class PostService {
+public class PostServiceImpl {
     public static final int HOME_POST_LIMIT = 50;
     public static final int POST_DEFAULT_OFFSET = 0;
 

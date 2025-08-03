@@ -3,14 +3,17 @@ package com.community_shop.backend.service.impl;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.mapper.PostMapper;
 import com.community_shop.backend.mapper.UserMapper;
+import com.community_shop.backend.service.base.PostService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
-public class PostServiceImpl {
+public class PostServiceImpl implements PostService {
     public static final int HOME_POST_LIMIT = 50;
     public static final int POST_DEFAULT_OFFSET = 0;
 
@@ -68,9 +71,9 @@ public class PostServiceImpl {
         return true;
     }
 
-    //风险方法
     //获得所有帖子
-    public List<Post> getAllPost(){
+    @Override
+    public List<Post> getAllPosts(){
         //生成日志
         System.out.println("正在获取所有帖子");
         List<Post> posts = null;
@@ -83,6 +86,30 @@ public class PostServiceImpl {
         }
 
         return posts;
+    }
+
+    // 获取帖子详情
+    @Override
+    public Post getPostById(Long id){
+        return postMapper.getPostByID(id);
+    }
+
+    // 添加帖子
+    @Override
+    public int addPost(Post post){
+        return postMapper.addPost(post);
+    }
+
+    // 更新帖子信息
+    @Override
+    public int updatePost(Post post){
+        return postMapper.updatePost(post);
+    }
+
+    // 删除帖子
+    @Override
+    public int deletePost(Long id){
+        return postMapper.deletePost(id);
     }
 
     //通过userID获得用户发布的所有帖子

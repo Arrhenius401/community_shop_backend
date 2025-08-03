@@ -1,4 +1,4 @@
-package com.community_shop.backend.component;
+package com.community_shop.backend.component.utils;
 
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;

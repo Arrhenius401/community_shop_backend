@@ -1,6 +1,6 @@
 package com.community_shop.backend.service;
 
-import com.community_shop.backend.component.JwtTokenUtil;
+import com.community_shop.backend.component.utils.JwtTokenUtil;
 import com.community_shop.backend.entity.LocalToken;
 import com.community_shop.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;

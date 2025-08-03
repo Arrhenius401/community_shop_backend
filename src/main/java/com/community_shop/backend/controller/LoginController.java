@@ -42,7 +42,7 @@ public class LoginController {
 
     @RequestMapping({"/api/login/phoneNumber"})
     public LocalToken loginByPhoneNumber(@RequestBody LoginRequest request){
-        Long phoneNumber = request.getPhoneNumber();
+        String phoneNumber = request.getPhoneNumber();
         String password = request.getPassword();
 
         System.out.println("收到登录请求: " + "phoneNumber = " + phoneNumber + "; password = " + password); // 添加日志

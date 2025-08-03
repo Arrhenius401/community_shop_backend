@@ -3,7 +3,7 @@ package com.community_shop.backend.service;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.LocalToken;
 import com.community_shop.backend.mapper.UserMapper;
-import com.community_shop.backend.component.JwtTokenUtil;
+import com.community_shop.backend.component.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class LoginService {
 
     //数据库测试方法
     public List<User> getUser(){
-        return userMapper.getAllUser();
+        return userMapper.getAllUsers();
     }
 
     //使用邮箱地址登录
@@ -54,7 +54,7 @@ public class LoginService {
     }
 
     //使用电话号码登录
-    public LocalToken loginByPhoneNumber(Long phoneNumber, String password){
+    public LocalToken loginByPhoneNumber(String phoneNumber, String password){
         LocalToken response = new LocalToken();
         String token = "";
         String status = "";
@@ -83,7 +83,7 @@ public class LoginService {
     }
 
     //使用电话号码得到User
-    public User getUserByPhone(Long phoneNumber){
+    public User getUserByPhone(String phoneNumber){
         Long dbID = userMapper.getIDByPhoneNumber(phoneNumber);
         if(dbID == null){
             return null;

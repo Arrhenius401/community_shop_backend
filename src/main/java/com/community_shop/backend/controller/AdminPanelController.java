@@ -23,7 +23,7 @@ public class AdminPanelController {
     //adminPanel界面获取所有帖子
     @RequestMapping("/api/post/all")
     public List<Post> getAllPost(){
-        List<Post> posts = postService.getAllPost();
+        List<Post> posts = postService.getAllPosts();
 
         //生成日志
         System.out.println("传输Post数量: " + posts.size());

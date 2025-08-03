@@ -21,7 +21,7 @@ public class RegisterController {
         //获取前端表格参数
         String username = user.getUsername();
         String email = user.getEmail();
-        Long phoneNumber = user.getPhoneNumber();
+        String phoneNumber = user.getPhoneNumber();
         String password = user.getPassword();
 
         //获取当前时间的标准字符表达式

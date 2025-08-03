@@ -17,7 +17,7 @@ public class RegisterService {
         this.userMapper = userMapper;
     }
 
-    public String insertDefaultUser(String username, String email, Long phoneNumber, String password, String initDate){
+    public String insertDefaultUser(String username, String email, String phoneNumber, String password, String initDate){
         String status = "";
         String role = "ROLE_USER";
         String userStatus = "NORMAL";
@@ -45,7 +45,7 @@ public class RegisterService {
     }
 
     //检验电话号码唯一性
-    public boolean isPhoneNumberUnique(Long phoneNumber){
+    public boolean isPhoneNumberUnique(String phoneNumber){
         //调用mapper
         Long db_id = userMapper.getIDByPhoneNumber(phoneNumber);
         if(db_id==null){

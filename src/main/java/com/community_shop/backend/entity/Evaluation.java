@@ -1,7 +1,10 @@
 package com.community_shop.backend.entity;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 public class Evaluation {
     private Long evalId; // 评价ID
     private Long orderId; // 关联订单ID

@@ -14,7 +14,7 @@ public class Post {
     int commentCount;
     LocalDateTime createTime;
     String status;
-    Boolean ishot;
+    Boolean isHot;
     String username;
 
 }

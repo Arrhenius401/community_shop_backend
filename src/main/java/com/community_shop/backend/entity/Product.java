@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Product {
-    private Long productId; // 商品ID
+    private Long productID; // 商品ID
     private String title; // 标题
     private String category; // 类别（如“二手手机”）
     private Double price; // 价格

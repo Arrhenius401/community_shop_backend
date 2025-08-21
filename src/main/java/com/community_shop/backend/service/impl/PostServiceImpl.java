@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService {
             return false;
         }
 
-        Post post = postMapper.getPostByID(postID);
+        Post post = postMapper.selectById(postID);
 
         if(post == null || !ALLOWED_STATUS.contains(status)){
             return false;
@@ -91,7 +91,7 @@ public class PostServiceImpl implements PostService {
     // 获取帖子详情
     @Override
     public Post getPostById(Long id){
-        return postMapper.getPostByID(id);
+        return postMapper.selectById(id);
     }
 
     // 添加帖子

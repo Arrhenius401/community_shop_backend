@@ -7,6 +7,9 @@ import java.util.List;
 
 @Mapper
 public interface EvaluationMapper {
+
+    // 基础CRUD
+
     /**
      * 提交评价（交易完成后）
      * @param evaluation 评价实体
@@ -25,12 +28,23 @@ public interface EvaluationMapper {
     Evaluation selectById(Long evalId);
 
     /**
+     * 查询评价详情
+     * @param evalId 评价ID
+     * @return 删除结果影响行数
+     */
+    @Delete("DELETE FROM evaluation WHERE eval_id = #{evalId}")
+    int deleteById(Long evalId);
+
+
+    // 关联查询
+
+    /**
      * 查询订单对应的评价（判断是否已评价）
-     * @param orderId 订单ID
+     * @param evalId 订单ID
      * @return 评价实体
      */
-    @Select("SELECT * FROM evaluation WHERE order_id = #{orderId}")
-    Evaluation selectByOrderId(Long orderId);
+    @Select("SELECT * FROM evaluation WHERE eval_id = #{evalId}")
+    Evaluation selectByOrderId(Long evalId);
 
     /**
      * 查询卖家收到的评价（卖家信用展示）

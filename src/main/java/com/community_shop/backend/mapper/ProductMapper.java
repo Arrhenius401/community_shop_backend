@@ -37,6 +37,14 @@ public interface ProductMapper {
             "WHERE product_id = #{productID}")
     int updateById(Product product);
 
+    /**
+     * 删除商品信息
+     * @param productId 商品ID
+     * @return 删除结果影响行数
+     */
+    @Delete("DELETE FROM product WHERE product_id = #{productId}")
+    int deleteById(Long productId);
+
     // 搜索与筛选功能
 
     /**

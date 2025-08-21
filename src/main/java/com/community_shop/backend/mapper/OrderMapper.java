@@ -8,6 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface OrderMapper {
+
+    // 基础CRUD
+
     /**
      * 创建订单（下单功能）
      * @param order 订单实体
@@ -26,6 +29,17 @@ public interface OrderMapper {
     Order selectById(Long orderId);
 
     /**
+     * 删除订单详情（订单页）
+     * @param orderId 订单ID
+     * @return 删除结果影响行数
+     */
+    @Delete("DELETE FROM order WHERE order_id = #{orderId}")
+    int deleteById(Long orderId);
+
+
+    // 状态更新
+
+    /**
      * 更新订单状态
      * @param orderId 订单ID
      * @param status 订单状态
@@ -42,6 +56,9 @@ public interface OrderMapper {
      */
     @Update("UPDATE order SET pay_time = #{payTime} WHERE order_id = #{orderId}")
     int updatePayTime(@Param("orderId") Long orderId, @Param("payTime") LocalDateTime payTime);
+
+
+    // 条件查询
 
     /**
      * 查询买家的订单（按状态筛选）

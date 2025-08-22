@@ -2,7 +2,7 @@ package com.community_shop.backend.entity.enums.statusEnum;
 
 
 public enum PostStatusEnum {
-
+    // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
     DRAFT("DRAFT", "草稿"),
     PENDING_REVIEW("PENDING_REVIEW", "待审核"), // 新用户发帖需审核时的状态
     PASSED("PASSED", "审核通过"),

@@ -1,7 +1,7 @@
 package com.community_shop.backend.entity.enums.statusEnum;
 
 public enum OrderStatusEnum {
-
+    // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
     PENDING_PAYMENT("PENDING_PAYMENT", "待支付"), // 下单后未支付
     PAID("PAID", "已支付"), // 用户完成支付
     PENDING_SHIPMENT("PENDING_SHIPMENT", "待发货"), // 支付后等待卖家发货

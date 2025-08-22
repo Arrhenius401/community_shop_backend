@@ -1,7 +1,7 @@
 package com.community_shop.backend.entity.enums.statusEnum;
 
 public enum ProductStatusEnum {
-
+    // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
     PENDING_REVIEW("PENDING_REVIEW", "待审核"), // 新发布商品（尤其新用户发布），需管理员预审（参考帖子预审逻辑）
     ON_SALE("ON_SALE", "在售"), // 审核通过，库存＞0，可被搜索/购买
     SOLD_OUT("SOLD_OUT", "已售罄"), // 库存=0，不可购买，仅保留展示（用户可查看历史商品）

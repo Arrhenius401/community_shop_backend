@@ -12,7 +12,6 @@ public class User{
     private String username;
     private String email;
     private String phoneNumber;
-    private LocalDateTime initDate;
     private String profilePicture;
     private String role;
     private String status;
@@ -20,4 +19,6 @@ public class User{
     private int creditScore;
     private int followerCount;
     private int postCount;
+    private LocalDateTime initDate;
+    private LocalDateTime activityDate;
 }

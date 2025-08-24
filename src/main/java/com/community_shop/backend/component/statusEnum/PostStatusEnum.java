@@ -1,4 +1,4 @@
-package com.community_shop.backend.entity.enums.statusEnum;
+package com.community_shop.backend.component.statusEnum;
 
 
 public enum PostStatusEnum {

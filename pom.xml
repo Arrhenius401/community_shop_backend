@@ -54,6 +54,13 @@
             <version>3.0.4</version>
         </dependency>
 
+        <!--  MyBatis-Plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3.1</version> <!-- 使用最新稳定版 -->
+        </dependency>
+
         <!-- MySQL Driver -->
         <dependency>
             <groupId>com.mysql</groupId>

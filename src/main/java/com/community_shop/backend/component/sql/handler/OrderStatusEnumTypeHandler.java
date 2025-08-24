@@ -1,6 +1,6 @@
-package com.community_shop.backend.entity.enums.handle;
+package com.community_shop.backend.component.sql.handler;
 
-import com.community_shop.backend.entity.enums.statusEnum.OrderStatusEnum;
+import com.community_shop.backend.component.statusEnum.OrderStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

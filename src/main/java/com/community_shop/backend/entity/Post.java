@@ -1,20 +1,19 @@
 package com.community_shop.backend.entity;
 
+import com.community_shop.backend.component.statusEnum.PostStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 public class Post {
-    Long postID;
-    Long userID;
-    String title;
-    String content;
-    int likeCount;
-    int commentCount;
-    LocalDateTime createTime;
-    String status;
-    Boolean isHot;
-    String username;
-
+    private Long postID;
+    private Long userID;
+    private int likeCount;
+    private int commentCount;
+    private String title;
+    private String content;
+    private LocalDateTime createTime;
+    private Boolean isHot;
+    private PostStatusEnum status;
 }

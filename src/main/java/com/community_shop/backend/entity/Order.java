@@ -1,5 +1,6 @@
 package com.community_shop.backend.entity;
 
+import com.community_shop.backend.component.statusEnum.OrderStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,8 +12,7 @@ public class Order {
     private Long buyerID; // 买家ID
     private Long sellerID; // 卖家ID
     private Double amount; // 交易金额
-    private String status; // 状态（枚举值）
     private LocalDateTime createTime; // 下单时间
     private LocalDateTime payTime; // 支付时间
-
+    private OrderStatusEnum status; // 订单状态
 }

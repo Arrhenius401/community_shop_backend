@@ -1,5 +1,6 @@
 package com.community_shop.backend.entity;
 
+import com.community_shop.backend.component.statusEnum.EvaluationStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,4 +13,5 @@ public class Evaluation {
     private String content; // 评价内容
     private Integer score; // 评分（1-5星）
     private LocalDateTime createTime; // 评价时间
+    private EvaluationStatusEnum status;    // 评价状态
 }

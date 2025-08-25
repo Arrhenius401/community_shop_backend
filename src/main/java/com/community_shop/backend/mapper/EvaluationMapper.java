@@ -35,7 +35,6 @@ public interface EvaluationMapper {
     @Delete("DELETE FROM evaluation WHERE eval_id = #{evalId}")
     int deleteById(Long evalId);
 
-
     // 关联查询
 
     /**

@@ -43,6 +43,14 @@ public interface PostMapper {
             "WHERE post_id = #{postID}")
     int updateById(Post post);
 
+    /**
+     * 删除帖子
+     *
+     * @param postId 帖子ID
+     * @return 删除结果影响行数
+     */
+    @Delete("DELETE FROM post WHERE post_id = #{id}")
+    int deleteById(Long postId);
 
     // 列表查询（多维度排序）
 
@@ -173,6 +181,7 @@ public interface PostMapper {
     @Select("SELECT * FROM post WHERE is_hot = 1 ORDER BY like_count DESC, comment_count DESC LIMIT #{limit}")
     List<Post> selectHotPosts(@Param("limit") int limit);
 
+    // 互动数据更新
     /**
      * 更新点赞数
      *
@@ -193,6 +202,7 @@ public interface PostMapper {
     @Update("UPDATE post SET comment_count = #{count} WHERE post_id = #{postId}")
     int updateCommentCount(@Param("postId") Long postId, @Param("count") int count);
 
+    // 管理功能
     /**
      * 设置帖子为精华/置顶
      *

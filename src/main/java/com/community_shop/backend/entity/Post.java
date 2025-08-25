@@ -15,5 +15,7 @@ public class Post {
     private String content;
     private LocalDateTime createTime;
     private Boolean isHot;
+    private Boolean isEssence;
+    private Boolean isTop;
     private PostStatusEnum status;
 }

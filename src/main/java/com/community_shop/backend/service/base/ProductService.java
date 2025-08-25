@@ -19,4 +19,6 @@ public interface ProductService {
 
     // 删除商品
     int deleteProduct(int id);
+
+
 }

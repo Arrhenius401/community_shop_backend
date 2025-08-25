@@ -1,6 +1,6 @@
 package com.community_shop.backend.controller;
 
-import com.community_shop.backend.DTO.request.LoginRequest;
+import com.community_shop.backend.DTO.request.LoginParam;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.LocalToken;
 import com.community_shop.backend.service.LoginService;
@@ -29,7 +29,7 @@ public class LoginController {
     }
 
     @RequestMapping({"/api/login/email"})
-    public LocalToken loginByEmail(@RequestBody LoginRequest request){
+    public LocalToken loginByEmail(@RequestBody LoginParam request){
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -41,7 +41,7 @@ public class LoginController {
     }
 
     @RequestMapping({"/api/login/phoneNumber"})
-    public LocalToken loginByPhoneNumber(@RequestBody LoginRequest request){
+    public LocalToken loginByPhoneNumber(@RequestBody LoginParam request){
         String phoneNumber = request.getPhoneNumber();
         String password = request.getPassword();
 

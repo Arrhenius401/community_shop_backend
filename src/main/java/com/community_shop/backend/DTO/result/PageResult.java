@@ -20,4 +20,17 @@ public class PageResult<T> {
     private Integer pageNum;
     // 每页条数
     private Integer pageSize;
+
+    // @Data 不会提供构造函数
+    // 添加无参构造函数
+    public PageResult() {}
+
+    // 添加全参构造函数
+    public PageResult(Long total, Integer totalPages, List<T> list, Integer pageNum, Integer pageSize) {
+        this.total = total;
+        this.totalPages = totalPages;
+        this.list = list;
+        this.pageNum = pageNum;
+        this.pageSize = pageSize;
+    }
 }

@@ -32,6 +32,6 @@ public enum OrderStatusEnum {
                 return status;
             }
         }
-        throw new IllegalArgumentException("无效的用户状态code：" + code);
+        throw new IllegalArgumentException("无效的订单状态code：" + code);
     }
 }

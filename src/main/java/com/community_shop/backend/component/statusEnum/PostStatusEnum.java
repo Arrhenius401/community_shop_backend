@@ -35,6 +35,6 @@ public enum PostStatusEnum {
                 return status;
             }
         }
-        throw new IllegalArgumentException("无效的用户状态code：" + code);
+        throw new IllegalArgumentException("无效的帖子状态code：" + code);
     }
 }

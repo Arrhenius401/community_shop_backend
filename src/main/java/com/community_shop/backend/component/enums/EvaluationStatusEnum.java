@@ -1,4 +1,4 @@
-package com.community_shop.backend.component.statusEnum;
+package com.community_shop.backend.component.enums;
 
 public enum EvaluationStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）

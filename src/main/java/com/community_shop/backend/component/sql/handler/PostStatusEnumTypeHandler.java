@@ -1,6 +1,6 @@
 package com.community_shop.backend.component.sql.handler;
 
-import com.community_shop.backend.component.statusEnum.PostStatusEnum;
+import com.community_shop.backend.component.enums.PostStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

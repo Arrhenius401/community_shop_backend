@@ -1,4 +1,4 @@
-package com.community_shop.backend.DTO.request;
+package com.community_shop.backend.DTO.param;
 
 /**
  * 分页查询通用参数，适配《文档》中所有分页查询方法（如帖子列表、商品搜索）

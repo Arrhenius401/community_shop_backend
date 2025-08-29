@@ -1,4 +1,4 @@
-package com.community_shop.backend.DTO.request;
+package com.community_shop.backend.DTO.param;
 
 public class SelectRequest {
     private String subject;

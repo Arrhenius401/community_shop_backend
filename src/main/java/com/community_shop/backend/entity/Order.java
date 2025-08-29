@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.component.statusEnum.OrderStatusEnum;
+import com.community_shop.backend.component.enums.OrderStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;

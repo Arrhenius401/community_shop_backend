@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.component.statusEnum.ProductStatusEnum;
+import com.community_shop.backend.component.enums.ProductStatusEnum;
 import lombok.Data;
 
 @Data

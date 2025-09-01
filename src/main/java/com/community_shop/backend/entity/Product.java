@@ -15,6 +15,7 @@ public class Product {
     private Integer viewCount; // 浏览量
     private ProductStatusEnum status;   // 商品状态
 
+    public Product(){}
 
     public Product(Long productID, Long sellerId, String title, String category, String condition, Double price, Integer stock, Integer viewCount, ProductStatusEnum status) {
         this.productID = productID;

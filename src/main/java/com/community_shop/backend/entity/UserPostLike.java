@@ -18,6 +18,7 @@ public class UserPostLike {
     // 点赞时间（记录用户点赞的时间）
     private LocalDateTime likeTime;
 
+    public UserPostLike(){}
 
     public UserPostLike(Long id, Long userId, Long postId, LocalDateTime likeTime) {
         this.id = id;

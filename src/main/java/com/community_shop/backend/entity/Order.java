@@ -16,6 +16,8 @@ public class Order {
     private LocalDateTime payTime; // 支付时间
     private OrderStatusEnum status; // 订单状态
 
+    public Order(){}
+
     public Order(Long orderID, Long productID, Long buyerID, Long sellerID, Double amount, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
         this.orderID = orderID;
         this.productID = productID;

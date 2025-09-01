@@ -27,6 +27,7 @@ public class User{
     private UserRoleEnum role;
     private List<String> interestTags;
 
+    public User(){}
 
     public User(Long userID, String password, String username, String email, String phoneNumber, String profilePicture, String bio, String gender, int creditScore, int followerCount, int postCount, LocalDateTime initDate, LocalDateTime activityDate, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
         this.userID = userID;

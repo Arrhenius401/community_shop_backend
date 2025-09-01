@@ -15,6 +15,8 @@ public class Evaluation {
     private LocalDateTime createTime; // 评价时间
     private EvaluationStatusEnum status;    // 评价状态
 
+    public Evaluation(){}
+
     public Evaluation(Long evalID, Long orderID, Long userID, String content, Integer score, LocalDateTime createTime, EvaluationStatusEnum status) {
         this.evalID = evalID;
         this.orderID = orderID;

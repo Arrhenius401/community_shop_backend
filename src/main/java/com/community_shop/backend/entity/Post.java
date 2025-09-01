@@ -19,6 +19,8 @@ public class Post {
     private Boolean isTop;
     private PostStatusEnum status;
 
+    public Post(){}
+
     public Post(Long postID, Long userID, int likeCount, int commentCount, String title, String content, LocalDateTime createTime, Boolean isHot, Boolean isEssence, Boolean isTop, PostStatusEnum status) {
         this.postID = postID;
         this.userID = userID;

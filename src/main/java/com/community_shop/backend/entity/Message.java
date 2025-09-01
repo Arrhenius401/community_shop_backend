@@ -41,6 +41,8 @@ public class Message {
     // 消息状态
     private MessageStatusEnum status;
 
+    public Message(){}
+
     public Message(Long msgId, Long senderId, Long receiverId, String content, Long orderId, Integer isRead, LocalDateTime createTime, Integer isDeleted, MessageTypeEnum type, MessageStatusEnum status) {
         this.msgId = msgId;
         this.senderId = senderId;

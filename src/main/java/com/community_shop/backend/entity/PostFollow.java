@@ -17,6 +17,7 @@ public class PostFollow {
     private boolean isDeleted;
     private PostFollowStatusEnum status;
 
+    public PostFollow(){}
 
     public PostFollow(Long postFollowID, Long postID, Long userID, String content, int likeCount, LocalDateTime createTime, LocalDateTime updateTime, boolean isDeleted, PostFollowStatusEnum status) {
         this.postFollowID = postFollowID;

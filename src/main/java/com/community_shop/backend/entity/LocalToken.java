@@ -9,6 +9,8 @@ public class LocalToken {
     private String status;
     private String token;
 
+    public LocalToken(){}
+
     public LocalToken(User user, String subject, String status, String token) {
         this.user = user;
         this.subject = subject;

@@ -15,4 +15,15 @@ public class Order {
     private LocalDateTime createTime; // 下单时间
     private LocalDateTime payTime; // 支付时间
     private OrderStatusEnum status; // 订单状态
+
+    public Order(Long orderID, Long productID, Long buyerID, Long sellerID, Double amount, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
+        this.orderID = orderID;
+        this.productID = productID;
+        this.buyerID = buyerID;
+        this.sellerID = sellerID;
+        this.amount = amount;
+        this.createTime = createTime;
+        this.payTime = payTime;
+        this.status = status;
+    }
 }

@@ -40,4 +40,17 @@ public class Message {
 
     // 消息状态
     private MessageStatusEnum status;
+
+    public Message(Long msgId, Long senderId, Long receiverId, String content, Long orderId, Integer isRead, LocalDateTime createTime, Integer isDeleted, MessageTypeEnum type, MessageStatusEnum status) {
+        this.msgId = msgId;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.content = content;
+        this.orderId = orderId;
+        this.isRead = isRead;
+        this.createTime = createTime;
+        this.isDeleted = isDeleted;
+        this.type = type;
+        this.status = status;
+    }
 }

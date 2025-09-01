@@ -18,4 +18,18 @@ public class Post {
     private Boolean isEssence;
     private Boolean isTop;
     private PostStatusEnum status;
+
+    public Post(Long postID, Long userID, int likeCount, int commentCount, String title, String content, LocalDateTime createTime, Boolean isHot, Boolean isEssence, Boolean isTop, PostStatusEnum status) {
+        this.postID = postID;
+        this.userID = userID;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
+        this.title = title;
+        this.content = content;
+        this.createTime = createTime;
+        this.isHot = isHot;
+        this.isEssence = isEssence;
+        this.isTop = isTop;
+        this.status = status;
+    }
 }

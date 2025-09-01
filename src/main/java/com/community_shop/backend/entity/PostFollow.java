@@ -16,4 +16,17 @@ public class PostFollow {
     private LocalDateTime updateTime;
     private boolean isDeleted;
     private PostFollowStatusEnum status;
+
+
+    public PostFollow(Long postFollowID, Long postID, Long userID, String content, int likeCount, LocalDateTime createTime, LocalDateTime updateTime, boolean isDeleted, PostFollowStatusEnum status) {
+        this.postFollowID = postFollowID;
+        this.postID = postID;
+        this.userID = userID;
+        this.content = content;
+        this.likeCount = likeCount;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+        this.isDeleted = isDeleted;
+        this.status = status;
+    }
 }

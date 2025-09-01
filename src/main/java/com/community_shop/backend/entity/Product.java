@@ -14,4 +14,17 @@ public class Product {
     private Integer stock; // 库存
     private Integer viewCount; // 浏览量
     private ProductStatusEnum status;   // 商品状态
+
+
+    public Product(Long productID, Long sellerId, String title, String category, String condition, Double price, Integer stock, Integer viewCount, ProductStatusEnum status) {
+        this.productID = productID;
+        this.sellerId = sellerId;
+        this.title = title;
+        this.category = category;
+        this.condition = condition;
+        this.price = price;
+        this.stock = stock;
+        this.viewCount = viewCount;
+        this.status = status;
+    }
 }

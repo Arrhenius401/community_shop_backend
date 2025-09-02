@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
     //搜索相关
     //默认的偏移量和数量限制
     private static final int DEFAULT_OFFSET = 0;
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
 
     //更新帖子状态
-    @Override
+
     public boolean updateUserStatus(Long userID, String status){
         if(userID == null){
             return false;
@@ -86,19 +86,15 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
-
-    @Override
     public List<User> getAllUsers() {
         return userMapper.getAllUsers();
     }
 
-    @Override
     public User getUserById(Long id) {
         return userMapper.getUserByID(id);
     }
 
     //根据状态获取用户
-    @Override
     public List<User> getUsersByStatus(String status, boolean isDESC, String order, Integer limit, Integer offset){
         //是否采用默认的数量限制
         if(limit == null){
@@ -123,7 +119,6 @@ public class UserServiceImpl implements UserService {
     }
 
     //根据用户名获取用户
-    @Override
     public List<User> getUsersByUsername(String username, boolean isDESC, String order, Integer limit, Integer offset){
         //是否采用默认的数量限制
         if(limit == null){
@@ -147,7 +142,6 @@ public class UserServiceImpl implements UserService {
     }
 
     //根据用户角色获取用户
-    @Override
     public List<User> getUsersByRole(String role, boolean isDESC, String order, Integer limit, Integer offset){
         //是否采用默认的数量限制
         if(limit == null){
@@ -171,7 +165,6 @@ public class UserServiceImpl implements UserService {
     }
 
     //添加用户
-    @Override
     public int addUser(User user) throws UserException {
         try {
             checkFactor(user);
@@ -186,7 +179,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //修改用户
-    @Override
+
     public int updateUser(User user) throws UserException {
         try{
             checkUserExists(user.getUserID());
@@ -202,7 +195,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //删除用户
-    @Override
+
     public int deleteUser(Long id) {
         int result = userMapper.deleteUser(id);
         if(result == 0){
@@ -212,7 +205,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //更新用户角色
-    @Override
+
     public boolean updateUserRole(Long userId, String role) throws UserException{
         checkUserExists(userId);
         if(!ALLOWED_USER_ROLE.contains(role)){
@@ -223,7 +216,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //更新用户密码
-    @Override
+
     public boolean updateUserPassword(Long userId, String password) throws UserException{
         checkUserExists(userId);
         if(password == null){
@@ -234,7 +227,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //更新用户名称
-    @Override
+
     public boolean updateUsername(Long userId, String username) throws UserException{
         checkUserExists(userId);
         if(username == null){
@@ -248,10 +241,10 @@ public class UserServiceImpl implements UserService {
     //检验关键数据是否非法
     //若姓名、邮箱和电话非法，则抛出对应异常
     //针对add，update
-    @Override
+
     public void checkFactor(User user) throws UserException{
 
-        String role = user.getRole();
+        String role = user.getRole().toString();
         String name = user.getUsername();
         String phoneNumber = user.getPhoneNumber();
         String email = user.getEmail();
@@ -291,7 +284,7 @@ public class UserServiceImpl implements UserService {
 
     //根据userId检查用户是否存在
     //针对update
-    @Override
+
     public void checkUserExists(Long userId) throws UserException{
         if(userId == 0){
             throw new UserException(ErrorCode.USER_ID_NULL);

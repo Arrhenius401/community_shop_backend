@@ -91,16 +91,16 @@ public interface EvaluationService {
      */
     ResultDTO<String> submitEvaluation(EvaluationVO evaluationVO, Long buyerId);
 
-//    /**
-//     * 计算卖家评分（业务方法）
-//     * 核心逻辑：调用EvaluationMapper统计平均评分、好评/中评/差评数，计算好评率
-//     * @param sellerId 卖家ID
-//     * @return ResultDTO<SellerScoreDTO> 成功返回评分详情（平均评分、好评率、各星级数量），失败返回错误信息
-//     * @see com.community_shop.backend.mapper.EvaluationMapper#selectAverageScore(Long)
-//     * @see com.community_shop.backend.mapper.EvaluationMapper#countScoreLevel(Long, Integer, Integer)
-//     */
-//    ResultDTO<SellerScoreDTO> calculateSellerScore(Long sellerId);
-//
+    /**
+     * 计算卖家评分（业务方法）
+     * 核心逻辑：调用EvaluationMapper统计平均评分、好评/中评/差评数，计算好评率
+     * @param sellerId 卖家ID
+     * @return ResultDTO<SellerScoreDTO> 成功返回评分详情（平均评分、好评率、各星级数量），失败返回错误信息
+     * @see com.community_shop.backend.mapper.EvaluationMapper#selectAverageScore(Long)
+     * @see com.community_shop.backend.mapper.EvaluationMapper#countScoreLevel(Long, Integer, Integer)
+     */
+    ResultDTO<SellerScoreDTO> calculateSellerScore(Long sellerId);
+
 //    /**
 //     * 举报评价（业务方法）
 //     * 核心逻辑：校验评价存在性，记录举报信息，24小时内管理员审核，通过则删除评价

@@ -48,6 +48,13 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- 可选：Spring Boot Validation  Starter（自动配置校验器,提供@NotNull、@Length等注解） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <!-- 若使用Spring Boot，无需指定版本，会自动匹配Spring Boot版本 -->
+        </dependency>
+
         <!--    json依赖    -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

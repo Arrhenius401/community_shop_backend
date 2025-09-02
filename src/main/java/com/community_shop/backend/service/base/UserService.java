@@ -5,7 +5,6 @@ import com.community_shop.backend.VO.RegisterVO;
 import com.community_shop.backend.VO.UserProfileVO;
 import com.community_shop.backend.component.exception.UserException;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.component.exception.BaseException;
 
 import java.util.List;
 

@@ -36,6 +36,11 @@ public class ResultDTO<T> implements Serializable {
     }
 
     // 失败响应静态方法（带错误信息）
+    public static <T> ResultDTO<T> fail(String message) {
+        return new ResultDTO<>(500, message, null);
+    }
+
+    // 失败响应静态方法（带自定义错误码和错误信息）
     public static <T> ResultDTO<T> fail(Integer code, String message) {
         return new ResultDTO<>(code, message, null);
     }

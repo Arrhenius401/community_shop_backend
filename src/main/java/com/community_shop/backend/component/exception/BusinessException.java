@@ -2,12 +2,16 @@ package com.community_shop.backend.component.exception;
 
 import com.community_shop.backend.component.exception.errorcode.ErrorCode;
 
-public class BusinessException extends BaseException {
-    public BusinessException(int code, String message) {
-        super(code, message);
+public class BusinessException extends RuntimeException {
+    private final String code;
+
+    public BusinessException(String code, String message) {
+        super(message);
+        this.code = code;
     }
 
     public BusinessException(ErrorCode errorCode) {
-        super(errorCode);
+        super(errorCode.getMessage());
+        this.code = errorCode.getCode();
     }
 }

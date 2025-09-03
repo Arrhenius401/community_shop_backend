@@ -25,6 +25,7 @@ public class ResultDTO<T> implements Serializable {
         this.data = data;
     }
 
+    // 判断是否成功只要判断code是否是200
     // 成功响应静态方法（无数据）
     public static <T> ResultDTO<T> success() {
         return new ResultDTO<>(200, "success", null);

@@ -8,6 +8,13 @@ import com.community_shop.backend.entity.Post;
 
 import java.util.List;
 
+/**
+ * 商品管理Service接口，实现《文档》中商品发布、搜索、库存管理等核心功能
+ * 依据：
+ * 1. 《文档1_需求分析.docx》：商品发布（多图/视频）、搜索筛选、库存管理
+ * 2. 《文档4_数据库工作（新）.docx》：product表结构（product_id、price、stock、seller_id等）
+ * 3. 《代码文档1 Mapper层设计.docx》：ProductMapper的CRUD及库存更新方法
+ */
 public interface PostService {
     // 获取所有帖子
     List<Post> getAllPosts();

@@ -2,7 +2,6 @@ package com.community_shop.backend.component.enums;
 
 public enum UserStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
-    ADMIN("ADMIN", "管理员"),  //管理员，有操作台
     NORMAL("NORMAL", "正常状态"), // 信用分≥80分，无违规，权限完整（可发帖/发布商品/交易）
     LIMITED_TRADE("LIMITED_TRADE", "交易限制"), // 信用分60-79分，仅可浏览/购买商品，不可发布商品
     BANNED_TEMP("BANNED_TEMP", "临时封禁"), // 违规后被管理员临时封禁（按时长，如7天/30天），不可发帖/交易

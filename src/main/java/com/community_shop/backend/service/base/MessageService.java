@@ -18,9 +18,9 @@ public interface MessageService {
      * @param sellerId 接收通知的卖家ID
      * @param content 通知内容（如"您有新订单待处理，订单号：123456"）
      * @param orderId 关联的订单ID（用于点击通知跳转订单详情）
-     * @return ResultDTO<Boolean> 成功返回true，失败返回错误信息
+     * @return 成功返回true，失败抛出异常或返回false
      */
-    ResultDTO<Boolean> sendSellerNotice(Long sellerId, String content, Long orderId);
+    Boolean sendSellerNotice(Long sellerId, String content, Long orderId);
 
     /**
      * 发送买家通知（物流/售后相关）
@@ -28,18 +28,18 @@ public interface MessageService {
      * @param buyerId 接收通知的买家ID
      * @param content 通知内容（如"您的订单已发货，快递单号：SF123456789"）
      * @param orderId 关联的订单ID
-     * @return ResultDTO<Boolean> 成功返回true，失败返回错误信息
+     * @return 成功返回true，失败抛出异常或返回false
      */
-    ResultDTO<Boolean> sendBuyerNotice(Long buyerId, String content, Long orderId);
+    Boolean sendBuyerNotice(Long buyerId, String content, Long orderId);
 
     /**
      * 发送系统公告（管理员向所有用户）
      * 核心逻辑：创建系统公告消息，所有用户可见，标记为"系统消息"类型
      * @param content 公告内容（如"平台将于2023年10月1日进行系统维护"）
      * @param operatorId 操作管理员ID（需校验管理员权限）
-     * @return ResultDTO<Boolean> 成功返回true，失败返回错误信息（如"无管理员权限"）
+     * @return 成功返回true，失败抛出异常或返回false
      */
-    ResultDTO<Boolean> sendSystemAnnouncement(String content, Long operatorId);
+    Boolean sendSystemAnnouncement(String content, Long operatorId);
 
     /**
      * 查询用户的消息列表（分页）
@@ -47,34 +47,33 @@ public interface MessageService {
      * @param userId 接收消息的用户ID
      * @param msgType 消息类型（"SYSTEM"=系统消息，"ORDER"=订单消息，null=全部）
      * @param pageParam 分页参数（页码、每页条数）
-     * @return ResultDTO<PageResult<Message>> 成功返回分页消息列表，失败返回错误信息
+     * @return 分页消息列表
      */
-    ResultDTO<PageResult<Message>> selectUserMessages(Long userId, String msgType, PageParam pageParam);
+    PageResult<Message> selectUserMessages(Long userId, String msgType, PageParam pageParam);
 
     /**
      * 标记消息为已读
      * 核心逻辑：校验消息接收者为当前用户，更新消息状态为"已读"
      * @param msgId 消息ID
      * @param userId 操作用户ID（需与消息receiver_id一致）
-     * @return ResultDTO<Boolean> 成功返回true，失败返回错误信息（如"无权限操作"）
+     * @return 成功返回true，失败抛出异常或返回false
      */
-    ResultDTO<Boolean> markAsRead(Long msgId, Long userId);
+    Boolean markAsRead(Long msgId, Long userId);
 
     /**
      * 统计用户未读消息数量
      * 核心逻辑：按接收者ID和状态为"未读"查询计数
      * @param userId 用户ID
-     * @return ResultDTO<Integer> 成功返回未读消息数，失败返回错误信息
+     * @return 未读消息数
      */
-    ResultDTO<Integer> countUnreadMessages(Long userId);
+    Integer countUnreadMessages(Long userId);
 
     /**
      * 删除消息（逻辑删除）
      * 核心逻辑：校验消息接收者为当前用户，标记消息为"已删除"
      * @param msgId 消息ID
      * @param userId 操作用户ID（需与消息receiver_id一致）
-     * @return ResultDTO<Boolean> 成功返回true，失败返回错误信息
+     * @return 成功返回true，失败抛出异常或返回false
      */
-    ResultDTO<Boolean> deleteMessage(Long msgId, Long userId);
-
+    Boolean deleteMessage(Long msgId, Long userId);
 }

@@ -30,11 +30,11 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultDTO<Boolean> sendSellerNotice(Long sellerId, String content, Long orderId) {
+    public Boolean sendSellerNotice(Long sellerId, String content, Long orderId) {
         // 校验卖家是否存在
-        ResultDTO<User> userResult = userService.selectUserById(sellerId);
-        if (userResult.getCode() != 200 || userResult.getData() == null) {
-            return ResultDTO.fail(404, "卖家不存在");
+        User user = userService.selectUserById(sellerId);
+        if (user == null) {
+            throw new RuntimeException("卖家不存在");
         }
 
         // 创建消息实体
@@ -50,16 +50,19 @@ public class MessageServiceImpl implements MessageService {
 
         // 插入消息
         int rows = messageMapper.insert(message);
-        return rows > 0 ? ResultDTO.success(true) : ResultDTO.fail(500, "通知发送失败");
+        if (rows <= 0) {
+            throw new RuntimeException("通知发送失败");
+        }
+        return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultDTO<Boolean> sendBuyerNotice(Long buyerId, String content, Long orderId) {
+    public Boolean sendBuyerNotice(Long buyerId, String content, Long orderId) {
         // 校验买家是否存在
-        ResultDTO<User> userResult = userService.selectUserById(buyerId);
-        if (userResult.getCode() != 200 || userResult.getData() == null) {
-            return ResultDTO.fail(404, "买家不存在");
+        User user = userService.selectUserById(buyerId);
+        if (user == null) {
+            throw new RuntimeException("买家不存在");
         }
 
         // 创建消息实体
@@ -75,19 +78,22 @@ public class MessageServiceImpl implements MessageService {
 
         // 插入消息
         int rows = messageMapper.insert(message);
-        return rows > 0 ? ResultDTO.success(true) : ResultDTO.fail(500, "通知发送失败");
+        if (rows <= 0) {
+            throw new RuntimeException("通知发送失败");
+        }
+        return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultDTO<Boolean> sendSystemAnnouncement(String content, Long operatorId) {
+    public Boolean sendSystemAnnouncement(String content, Long operatorId) {
         // 校验操作员是否为管理员
-        ResultDTO<User> userResult = userService.selectUserById(operatorId);
-        if (userResult.getCode() != 200 || userResult.getData() == null) {
-            return ResultDTO.fail(404, "操作员不存在");
+        User user = userService.selectUserById(operatorId);
+        if (user == null) {
+            throw new RuntimeException("操作员不存在");
         }
-        if (!UserRoleEnum.ADMIN.equals(userResult.getData().getRole())) {
-            return ResultDTO.fail(403, "无管理员权限，无法发送系统公告");
+        if (!UserRoleEnum.ADMIN.equals(user.getRole())) {
+            throw new RuntimeException("无管理员权限，无法发送系统公告");
         }
 
         // 创建系统公告（实际业务中可能需要向所有用户推送，这里简化为单条公告，用户查询时可见）
@@ -101,11 +107,14 @@ public class MessageServiceImpl implements MessageService {
         message.setIsDeleted(0);
 
         int rows = messageMapper.insert(message);
-        return rows > 0 ? ResultDTO.success(true) : ResultDTO.fail(500, "公告发送失败");
+        if (rows <= 0) {
+            throw new RuntimeException("公告发送失败");
+        }
+        return true;
     }
 
     @Override
-    public ResultDTO<PageResult<Message>> selectUserMessages(Long userId, String msgType, PageParam pageParam) {
+    public PageResult<Message> selectUserMessages(Long userId, String msgType, PageParam pageParam) {
         // 计算分页参数
         int offset = (pageParam.getPageNum() - 1) * pageParam.getPageSize();
         int limit = pageParam.getPageSize();
@@ -120,53 +129,57 @@ public class MessageServiceImpl implements MessageService {
 
         // 封装分页结果
         // Math.ceil() 是为了处理整除不尽的情况,结果向上取整（如 137 条不能被 10 整除，需要多一页显示剩余 7 条）
-        PageResult<Message> pageResult = new PageResult<>(
+        return new PageResult<>(
                 total,
                 (int) Math.ceil((double) total / limit),
                 messages,
                 pageParam.getPageNum(),
                 limit
         );
-        return ResultDTO.success(pageResult);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultDTO<Boolean> markAsRead(Long msgId, Long userId) {
+    public Boolean markAsRead(Long msgId, Long userId) {
         // 校验消息是否存在且属于当前用户
         Message message = messageMapper.selectById(msgId);
         if (message == null || message.getIsDeleted() == 1) {
-            return ResultDTO.fail(404, "消息不存在或已删除");
+            throw new RuntimeException("消息不存在或已删除");
         }
         if (!message.getReceiverId().equals(userId) && message.getReceiverId() != -1) {
-            return ResultDTO.fail(403, "无权限操作此消息");
+            throw new RuntimeException("无权限操作此消息");
         }
 
         // 标记为已读
         int rows = messageMapper.updateReadStatus(msgId, 1); // 1=已读
-        return rows > 0 ? ResultDTO.success(true) : ResultDTO.fail(500, "更新失败");
+        if (rows <= 0) {
+            throw new RuntimeException("更新失败");
+        }
+        return true;
     }
 
     @Override
-    public ResultDTO<Integer> countUnreadMessages(Long userId) {
-        int count = messageMapper.countUnread(userId);
-        return ResultDTO.success(count);
+    public Integer countUnreadMessages(Long userId) {
+        return messageMapper.countUnread(userId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultDTO<Boolean> deleteMessage(Long msgId, Long userId) {
+    public Boolean deleteMessage(Long msgId, Long userId) {
         // 校验消息权限
         Message message = messageMapper.selectById(msgId);
         if (message == null || message.getIsDeleted() == 1) {
-            return ResultDTO.fail(404, "消息不存在或已删除");
+            throw new RuntimeException("消息不存在或已删除");
         }
         if (!message.getReceiverId().equals(userId) && message.getReceiverId() != -1) {
-            return ResultDTO.fail(403, "无权限删除此消息");
+            throw new RuntimeException("无权限删除此消息");
         }
 
         // 逻辑删除（标记为已删除）
         int rows = messageMapper.updateDeleteStatus(msgId, 1); // 1=已删除
-        return rows > 0 ? ResultDTO.success(true) : ResultDTO.fail(500, "删除失败");
+        if (rows <= 0) {
+            throw new RuntimeException("删除失败");
+        }
+        return true;
     }
 }

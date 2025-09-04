@@ -20,7 +20,7 @@ public interface UserThirdPartyService {
      * @param accessToken 第三方登录临时凭证
      * @return 登录结果（含用户信息）
      */
-    ResultDTO<User> login(ThirdPartyTypeEnum thirdType, String openid, String accessToken);
+    User login(ThirdPartyTypeEnum thirdType, String openid, String accessToken);
 
     /**
      * 业务方法：已注册用户绑定第三方账号
@@ -31,7 +31,7 @@ public interface UserThirdPartyService {
      * @param accessToken 第三方登录临时凭证
      * @return 绑定结果
      */
-    ResultDTO<Boolean> bind(Long userId, ThirdPartyTypeEnum thirdType, String openid, String accessToken);
+    Boolean bind(Long userId, ThirdPartyTypeEnum thirdType, String openid, String accessToken);
 
     /**
      * 基础方法：解绑第三方账号
@@ -40,7 +40,7 @@ public interface UserThirdPartyService {
      * @param bindingId 第三方绑定记录ID
      * @return 解绑结果
      */
-    ResultDTO<Boolean> unbind(Long userId, Long bindingId);
+    Boolean unbind(Long userId, Long bindingId);
 
     /**
      * 基础方法：查询用户已绑定的第三方账号列表
@@ -48,7 +48,7 @@ public interface UserThirdPartyService {
      * @param userId 平台用户ID
      * @return 绑定列表结果
      */
-    ResultDTO<List<UserThirdParty>> listBindings(Long userId);
+    List<UserThirdParty> listBindings(Long userId);
 
     /**
      * 基础方法：更新第三方账号access_token
@@ -58,5 +58,5 @@ public interface UserThirdPartyService {
      * @param newToken 新的access_token
      * @return 更新结果
      */
-    ResultDTO<Boolean> updateAccessToken(ThirdPartyTypeEnum thirdType, String openid, String newToken);
+    Boolean updateAccessToken(ThirdPartyTypeEnum thirdType, String openid, String newToken);
 }

@@ -1,6 +1,7 @@
 package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.DTO.result.ResultDTO;
+import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
 
@@ -19,7 +20,7 @@ public interface UserThirdPartyService {
      * @param accessToken 第三方登录临时凭证
      * @return 登录结果（含用户信息）
      */
-    ResultDTO<User> login(String thirdType, String openid, String accessToken);
+    ResultDTO<User> login(ThirdPartyTypeEnum thirdType, String openid, String accessToken);
 
     /**
      * 业务方法：已注册用户绑定第三方账号
@@ -30,7 +31,7 @@ public interface UserThirdPartyService {
      * @param accessToken 第三方登录临时凭证
      * @return 绑定结果
      */
-    ResultDTO<Boolean> bind(Long userId, String thirdType, String openid, String accessToken);
+    ResultDTO<Boolean> bind(Long userId, ThirdPartyTypeEnum thirdType, String openid, String accessToken);
 
     /**
      * 基础方法：解绑第三方账号
@@ -57,5 +58,5 @@ public interface UserThirdPartyService {
      * @param newToken 新的access_token
      * @return 更新结果
      */
-    ResultDTO<Boolean> updateAccessToken(String thirdType, String openid, String newToken);
+    ResultDTO<Boolean> updateAccessToken(ThirdPartyTypeEnum thirdType, String openid, String newToken);
 }

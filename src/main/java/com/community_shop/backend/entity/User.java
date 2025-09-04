@@ -133,31 +133,20 @@ public class User{
      */
     public User(){}
 
-    /**
-     * 手机号注册专用构造（最常用场景）
-     * 自动初始化时间与默认状态，减少Service层重复代码
-     */
-    public User(String password, String username, String phoneNumber) {
-        this.password = password; // 密码加密在Service层处理（文档3要求BCrypt）
-        this.username = username;
-        this.phoneNumber = phoneNumber;
-        this.initDate = LocalDateTime.now();
-        this.activityDate = LocalDateTime.now();
-        this.creditScore = 100;
-        this.status = UserStatusEnum.NORMAL;
-        this.role = UserRoleEnum.USER;
-    }
 
     /**
-     * 第三方登录自动注册构造
+     * 基本注册专用构造（最常用场景）
+     * 自动初始化时间与默认状态，减少Service层重复代码
      */
-    public User(String username, String openId) {
+    public User(String password, String username) {
+        this.password = password;
         this.username = username;
         this.initDate = LocalDateTime.now();
         this.activityDate = LocalDateTime.now();
         this.creditScore = 100;
         this.status = UserStatusEnum.NORMAL;
         this.role = UserRoleEnum.USER;
+        this.gender = GenderEnum.UNKNOWN;
     }
 
     /**
@@ -180,6 +169,26 @@ public class User{
         this.status = status;
         this.role = role;
         this.interestTags = interestTags;
+    }
+
+    /**
+     * 手机号注册专用构造（最常用场景）
+     * 自动初始化时间与默认状态，减少Service层重复代码
+     */
+    public User registerByPhone(String password, String username, String phoneNumber) {
+        User user = new User(password, username);
+        user.phoneNumber = phoneNumber;
+        return user;
+    }
+
+    /**
+     * 邮箱号注册专用构造（最常用场景）
+     * 自动初始化时间与默认状态，减少Service层重复代码
+     */
+    public User registerByEmail(String password, String username, String email) {
+        User user = new User(password, username);
+        user.email = email;
+        return user;
     }
 
     // ===================== 6. 业务辅助方法（简化Service层逻辑） =====================

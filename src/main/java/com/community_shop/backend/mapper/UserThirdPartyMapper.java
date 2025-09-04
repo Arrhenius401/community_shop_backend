@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.UserThirdParty;
 import org.apache.ibatis.annotations.*;
 
@@ -28,7 +29,7 @@ public interface UserThirdPartyMapper {
     @Select("SELECT id, user_id, third_type, openid, access_token, bind_time, is_valid " +
             "FROM user_third_party " +
             "WHERE third_type = #{thirdType} AND openid = #{openid} AND isValid = 1")
-    UserThirdParty selectByThirdTypeAndOpenid(@Param("thirdType") String thirdType, @Param("openid") String openid);
+    UserThirdParty selectByThirdTypeAndOpenid(@Param("thirdType") ThirdPartyTypeEnum thirdType, @Param("openid") String openid);
 
     /**
      * 按用户ID查询有效绑定列表（用于个人中心展示）
@@ -52,5 +53,5 @@ public interface UserThirdPartyMapper {
      */
     @Update("UPDATE user_third_party SET access_token = #{newToken} " +
             "WHERE third_type = #{thirdType} AND openid = #{openid} AND isValid = 1")
-    int updateAccessToken(@Param("thirdType") String thirdType, @Param("openid") String openid, @Param("newToken") String newToken);
+    int updateAccessToken(@Param("thirdType") ThirdPartyTypeEnum thirdType, @Param("openid") String openid, @Param("newToken") String newToken);
 }

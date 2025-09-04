@@ -17,7 +17,7 @@ public class RedisConfig {
      * @return
      */
     @Bean
-    public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory){
+    public RedisTemplate myRedisTemplate(RedisConnectionFactory redisConnectionFactory){
         log.info("开始创建Redis模版对象...");
         RedisTemplate redisTemplate = new RedisTemplate();
         //设置redis的连接工厂对象

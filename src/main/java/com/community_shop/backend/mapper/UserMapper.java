@@ -1,5 +1,7 @@
 package com.community_shop.backend.mapper;
 
+import com.community_shop.backend.component.enums.UserRoleEnum;
+import com.community_shop.backend.component.enums.UserStatusEnum;
 import com.community_shop.backend.entity.User;
 import org.apache.ibatis.annotations.*;
 
@@ -71,17 +73,9 @@ public interface UserMapper {
 
 
     // UPDATE语句
-    // 更新用户信息
-    @Update("UPDATE user SET username = #{username}, email = #{email}, phone_number = #{phoneNumber}, password = #{password}, role = #{role}, status = #{status} WHERE user_id = #{userID}")
-    int updateUser(User user);
-
     // 更新用户名
     @Update("UPDATE user SET username = #{username} WHERE user_id = #{id}")
     int updateUsername(String username, Long id);
-
-    // 更新角色
-    @Update("UPDATE user SET role = #{role} WHERE user_id = #{id}")
-    int updateUserRole(String role, Long id);
 
     // 更新密码
     @Update("UPDATE user SET password = #{password} WHERE user_id = #{id}")
@@ -89,7 +83,11 @@ public interface UserMapper {
 
     // 更新用户状态
     @Update("UPDATE homework_web.user SET status = #{status} where user_id = #{userID}")
-    int updateUserStatus(Long userID, String status);
+    int updateUserStatus(Long userID, UserStatusEnum status);
+
+    // 更新角色
+    @Update("UPDATE user SET role = #{role} WHERE user_id = #{id}")
+    int updateUserRole(UserRoleEnum role, Long id);
 
 
     // DELETE语句

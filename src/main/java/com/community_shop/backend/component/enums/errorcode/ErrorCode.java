@@ -1,4 +1,4 @@
-package com.community_shop.backend.component.exception.errorcode;
+package com.community_shop.backend.component.enums.errorcode;
 
 public enum ErrorCode {
     // SUCCESS、PARAM_ERROR等是ErrorCode枚举类的实例，其类型即为ErrorCode本身

@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Component
-public class JwtTokenUtil {
+public class TokenUtil {
     private static long EXPIRATION = 1000*60*60*24;  //过期时间
     private static String KEY = "z4Z6e7J9H0k3N5q8T1w4Z7C9v2B5y8D1f4G7j1K4m6P9s3U6x0A8t5F2w7R0"; //签名
 
@@ -24,6 +24,28 @@ public class JwtTokenUtil {
                 .claim("username", username)
                 .claim("role", role)            //自定义参数2
                 .claim("status", status)
+                .setSubject(subject)    //主题
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .setId(UUID.randomUUID().toString())
+                //signature
+                .signWith(SignatureAlgorithm.HS256, KEY)  //加密算法及其密钥
+                .compact();     //将三部分拼装
+
+        //生成日志
+        System.out.println("生成令牌: " + token);
+
+        return token;
+    }
+
+    //生成令牌
+    public String generateToken(String subject, String userID){
+        JwtBuilder jwtBuilder = Jwts.builder();
+        String token = jwtBuilder
+                //header
+                .setHeaderParam("typ", "JWT")   //类型
+                .setHeaderParam("alg", "HS256") //算法
+                //payload
+                .claim("userID", userID)    //自定义参数1
                 .setSubject(subject)    //主题
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .setId(UUID.randomUUID().toString())

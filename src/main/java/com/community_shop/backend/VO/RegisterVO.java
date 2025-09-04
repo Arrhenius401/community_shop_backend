@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class RegisterVO {
+    // 用户名
+    private String username;
     // 手机号（与邮箱二选一）
     private String phoneNumber;
     // 邮箱（与手机号二选一）

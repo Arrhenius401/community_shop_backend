@@ -1,5 +1,6 @@
 package com.community_shop.backend.DTO.result;
 
+import com.community_shop.backend.component.enums.errorcode.ErrorCode;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -47,6 +48,11 @@ public class ResultDTO<T> implements Serializable {
     // 失败响应静态方法（带自定义错误码和错误信息）
     public static <T> ResultDTO<T> fail(String code, String message) {
         return new ResultDTO<>(code, message, null);
+    }
+
+    // 失败响应静态方法（使用ErrorCode枚举类）
+    public static <T> ResultDTO<T> fail(ErrorCode errorCode) {
+        return new ResultDTO<>(errorCode.getCode(), errorCode.getMessage(), null);
     }
 
 }

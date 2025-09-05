@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     // 缓存相关常量
     private static final String CACHE_KEY_USER = "user:info:"; // 用户信息缓存Key前缀
-    private static final Duration CACHE_USER_TTL = Duration.ofHours(1); // 用户信息缓存1小时
+    private static final Duration CACHE_TTL_USER = Duration.ofHours(1); // 用户信息缓存1小时
 
     @Autowired
     private UserMapper userMapper;
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
         // 3. 脱敏并缓存
         user.setPassword(null);
-        redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_USER_TTL);
+        redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_TTL_USER);
         return user;
     }
 
@@ -335,7 +335,7 @@ public class UserServiceImpl implements UserService {
             // userThirdPartyMapper.insert(newUser.getUserId(), platform, openId);
 
             // 缓存用户并生成Token
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + newUser.getUserId(), newUser, CACHE_USER_TTL);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + newUser.getUserId(), newUser, CACHE_TTL_USER);
             log.info("第三方登录自动注册成功，用户ID：{}，平台：{}", newUser.getUserId(), platform);
             return tokenUtil.generateToken("USER",  newUser.getUserId().toString());
         } catch (BusinessException e) {
@@ -373,7 +373,7 @@ public class UserServiceImpl implements UserService {
 
         // 更新缓存
         user.setCreditScore(newCreditScore);
-        redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_USER_TTL);
+        redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_TTL_USER);
         log.info("更新信用分成功，用户ID：{}，原分数：{}，变更值：{}，新分数：{}，原因：{}",
                 userId, currentScore, scoreChange, newCreditScore, reason);
         return newCreditScore;

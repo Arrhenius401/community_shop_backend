@@ -2,8 +2,8 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
-import com.community_shop.backend.DTO.result.ResultDTO;
-import com.community_shop.backend.VO.PostVO;
+import com.community_shop.backend.VO.PostDetailVO;
+import com.community_shop.backend.VO.PostUpdateVO;
 import com.community_shop.backend.entity.Post;
 
 import java.util.List;
@@ -16,20 +16,7 @@ import java.util.List;
  * 3. 《代码文档1 Mapper层设计.docx》：ProductMapper的CRUD及库存更新方法
  */
 public interface PostService {
-    // 获取所有帖子
-    List<Post> getAllPosts();
 
-    // 获取帖子详情
-    Post getPostById(Long id);
-
-    // 添加帖子
-    int addPost(Post post);
-
-    // 更新帖子信息
-    int updatePost(Post post);
-
-    // 删除帖子
-    int deletePost(Long id);
 
     /**
      * 新增帖子（基础CRUD）
@@ -51,26 +38,14 @@ public interface PostService {
     Post selectPostById(Long postId);
 
     /**
-     * 按主题吧查询帖子列表（基础CRUD，分页）
-     * 核心逻辑：调用PostMapper.selectByBarName查询，按orderType排序（time=时间倒序，hot=热度倒序）
-     * @param barName 主题吧名称（如"数码交流"）
-     * @param orderType 排序类型（"time"=最新，"hot"=热门）
-     * @param pageParam 分页参数（页码、每页条数）
-     * @return 分页帖子列表
-     * @see com.community_shop.backend.mapper.PostMapper#selectByBarName(String, String, int, int)
-     */
-    PageResult<Post> selectPostListByBar(String barName, String orderType, PageParam pageParam);
-
-    /**
      * 更新帖子内容（基础CRUD）
      * 核心逻辑：校验仅帖子作者可操作，调用PostMapper.updateById更新内容
-     * @param postId 帖子ID
-     * @param newContent 新帖子内容
+     * @param postVO 帖子更新参数（标题、内容、图片列表）
      * @param userId 操作用户ID（需与帖子作者ID一致）
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.PostMapper#updateById(Post)
      */
-    Boolean updatePostContent(Long postId, String newContent, Long userId);
+    Boolean updatePostContent(PostUpdateVO postVO, Long userId);
 
     /**
      * 按帖子ID删除（基础CRUD，逻辑删除）
@@ -93,7 +68,7 @@ public interface PostService {
      * @see UserService#selectUserById(Long)
      * @see com.community_shop.backend.utils.OssUtil （阿里云OSS上传工具）
      */
-    String publishPost(PostVO postVO, Long userId);
+    String publishPost(PostDetailVO postVO, Long userId);
 
     /**
      * 更新帖子点赞数（业务方法）
@@ -119,4 +94,34 @@ public interface PostService {
      * @see UserService#selectUserById(Long)
      */
     Boolean setPostEssenceOrTop(Long postId, Boolean isEssence, Boolean isTop, Long adminId);
+
+    /**
+     * 获取帖子列表（业务方法）
+     * 核心逻辑：调用PostMapper.selectHotPosts获取最热帖子列表
+     * @param limit 获取数量
+     * @return 最热帖子列表
+     * @see com.community_shop.backend.mapper.PostMapper#selectHotPosts(int)
+     */
+    List<PostDetailVO> selectHotPosts(Integer limit);
+
+    /**
+     * 获取帖子列表（业务方法）
+     * 核心逻辑：调用PostMapper.selectTopPosts获取置顶帖子列表
+     * @return 置顶帖子列表
+     * @see com.community_shop.backend.mapper.PostMapper#selectEssencePosts(int, int)
+     */
+    PageResult<PostDetailVO> selectEssencePosts(PageParam pageParam);
+
+    /**
+     * 获取帖子列表（业务方法）
+     * 核心逻辑：调用PostMapper.selectTopPosts获取置顶帖子列表
+     * @return 置顶帖子列表
+     * @see com.community_shop.backend.mapper.PostMapper#selectTopPosts(int)
+     */
+    List<PostDetailVO> selectTopPosts();
+
+    /**
+     * 辅助方法：将Post实体+关联User信息转换为PostDetailVO
+     */
+    PostDetailVO convertToDetailVO(Post post);
 }

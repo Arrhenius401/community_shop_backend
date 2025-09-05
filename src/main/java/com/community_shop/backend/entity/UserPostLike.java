@@ -20,6 +20,12 @@ public class UserPostLike {
 
     public UserPostLike(){}
 
+    public UserPostLike(Long userId, Long postId, LocalDateTime likeTime) {
+        this.userId = userId;
+        this.postId = postId;
+        this.likeTime = likeTime;
+    }
+
     public UserPostLike(Long id, Long userId, Long postId, LocalDateTime likeTime) {
         this.id = id;
         this.userId = userId;

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class Product {
-    private Long productID; // 商品ID
+    private Long productId; // 商品ID
     private Long sellerId; // 卖家ID
     private String title; // 标题
     private String category; // 类别（如“二手手机”）
@@ -18,8 +18,8 @@ public class Product {
 
     public Product(){}
 
-    public Product(Long productID, Long sellerId, String title, String category, Double price, Integer stock, Integer viewCount, ProductStatusEnum status, ProductConditionEnum condition) {
-        this.productID = productID;
+    public Product(Long productId, Long sellerId, String title, String category, Double price, Integer stock, Integer viewCount, ProductStatusEnum status, ProductConditionEnum condition) {
+        this.productId = productId;
         this.sellerId = sellerId;
         this.title = title;
         this.category = category;

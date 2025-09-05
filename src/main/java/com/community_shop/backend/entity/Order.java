@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class Order {
-    private Long orderID; // 订单ID
-    private Long productID; // 商品ID
-    private Long buyerID; // 买家ID
-    private Long sellerID; // 卖家ID
+    private Long orderId; // 订单ID
+    private Long productId; // 商品ID
+    private Long buyerId; // 买家ID
+    private Long sellerId; // 卖家ID
     private Double amount; // 交易金额
     private LocalDateTime createTime; // 下单时间
     private LocalDateTime payTime; // 支付时间
@@ -18,11 +18,11 @@ public class Order {
 
     public Order(){}
 
-    public Order(Long orderID, Long productID, Long buyerID, Long sellerID, Double amount, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
-        this.orderID = orderID;
-        this.productID = productID;
-        this.buyerID = buyerID;
-        this.sellerID = sellerID;
+    public Order(Long orderId, Long productId, Long buyerId, Long sellerId, Double amount, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
+        this.orderId = orderId;
+        this.productId = productId;
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
         this.amount = amount;
         this.createTime = createTime;
         this.payTime = payTime;

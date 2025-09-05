@@ -3,6 +3,7 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.VO.RegisterVO;
 import com.community_shop.backend.VO.UserProfileVO;
+import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
 import com.community_shop.backend.component.enums.UserRoleEnum;
 import com.community_shop.backend.component.enums.UserStatusEnum;
 import com.community_shop.backend.component.exception.UserException;
@@ -94,12 +95,12 @@ public interface UserService {
     Boolean updateUserPassword(Long userId, String password);
 
     /**
-     * 更新用户名（业务方法）
-     * @param userId
-     * @param username
-     * @return 成功返回true，失败抛出异常或返回false
+     * 验证密码（业务方法）
+     * @param rawPassword 明文密码
+     * @param encodedPassword 密文密码
+     * @return 验证结果（true/false）
      */
-    Boolean updateUsername(Long userId, String username);
+    Boolean verifyPassword(String rawPassword, String encodedPassword);
 
     /**
      * 用户注册（业务方法）
@@ -119,7 +120,7 @@ public interface UserService {
      * @return 登录Token
      * @see com.community_shop.backend.config.OAuth2Config （适配《文档2》OAuth2.0集成）
      */
-    String loginByThirdParty(String platform, String code);
+    String loginByThirdParty(ThirdPartyTypeEnum platform, String code);
 
     /**
      * 更新用户信用分（业务方法）
@@ -133,12 +134,12 @@ public interface UserService {
      */
     Integer updateCreditScore(Long userId, Integer scoreChange, String reason);
 
-    //根据状态获取用户
-    List<User> getUsersByStatus(String status, boolean isDESC, String order, Integer limit, Integer offset);
-
-    //根据用户名获取用户
-    List<User> getUsersByUsername(String username, boolean isDESC, String order, Integer limit, Integer offset);
-
-    //根据用户角色获取用户
-    List<User> getUsersByRole(String role, boolean isDESC, String order, Integer limit, Integer offset);
+//    //根据状态获取用户
+//    List<User> getUsersByStatus(String status, boolean isDESC, String order, Integer limit, Integer offset);
+//
+//    //根据用户名获取用户
+//    List<User> getUsersByUsername(String username, boolean isDESC, String order, Integer limit, Integer offset);
+//
+//    //根据用户角色获取用户
+//    List<User> getUsersByRole(String role, boolean isDESC, String order, Integer limit, Integer offset);
 }

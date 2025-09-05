@@ -1,335 +1,391 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.component.exception.UserException;
+import com.community_shop.backend.VO.RegisterVO;
+import com.community_shop.backend.VO.UserProfileVO;
+import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
+import com.community_shop.backend.component.enums.UserRoleEnum;
+import com.community_shop.backend.component.enums.UserStatusEnum;
+import com.community_shop.backend.component.exception.BusinessException;
 import com.community_shop.backend.entity.User;
+import com.community_shop.backend.entity.UserThirdParty;
 import com.community_shop.backend.mapper.UserMapper;
-import com.community_shop.backend.component.exception.errorcode.ErrorCode;
+import com.community_shop.backend.component.enums.errorcode.ErrorCode;
+import com.community_shop.backend.mapper.UserThirdPartyMapper;
 import com.community_shop.backend.service.base.UserService;
+import com.community_shop.backend.service.base.UserThirdPartyService;
+import com.community_shop.backend.utils.ThirdPartyAuthUtil;
+import com.community_shop.backend.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.Duration;
+import java.util.Objects;
 
+// "object == null" 与 “Objects.isNull(object)” 等价
 @Slf4j
 @Service
-public class UserServiceImpl {
-    //搜索相关
-    //默认的偏移量和数量限制
-    private static final int DEFAULT_OFFSET = 0;
-    private static final int DEFAULT_LIMIT = 0;
+public class UserServiceImpl implements UserService {
 
-    //User类的role属性常量
-    private static final String USER_ROLE_ADMIN = "ROLE_ADMIN";
-    private static final String USER_ROLE_TEACHER = "ROLE_TEACHER";
-    private static final String USER_ROLE_STUDENT = "ROLE_STUDENT";
-    public static final List<String> ALLOWED_USER_ROLE = Arrays.asList(USER_ROLE_ADMIN, USER_ROLE_TEACHER, USER_ROLE_STUDENT);
+    // 信用分常量
+    private static final Integer INIT_CREDIT_SCORE = 100;
+    private static final Integer MIN_CREDIT_SCORE = 0;
 
-    //User类的status属性常量
-    private static final String USER_STATUS_NORMAL = "NORMAL";
-    private static final String USER_STATUS_BANNED = "BANNED";
-    public static final List<String> ALLOWED_USER_STATUS = Arrays.asList(USER_STATUS_NORMAL, USER_STATUS_BANNED);
-
-    //SQL片段（如列名、表名、排序方向等）
-    //排序方式
-    private static final String SQL_DESCENDING = "DESC";
-    private static final String SQL_ASCENDING = "ASC";
-
-    //列名
-    private static final String SQL_USER_USERNAME = "username";
-    private static final String SQL_USER_ROLE = "role";
-    private static final String SQL_USER_CREATED_AT = "created_at";
-    private static final String SQL_USER_LAST_ACTIVITY_AT = "last_activity_at";
-    private static final String SQL_USER_EMAIL = "email";
-    private static final String SQL_USER_PHONE_NUMBER = "phone_number";
-    private static final String SQL_USER_STATUS = "status";
-    public static final List<String> ALLOWED_USER_COLUMN_NAME = Arrays.asList(SQL_USER_USERNAME, SQL_USER_ROLE, SQL_USER_CREATED_AT,
-            SQL_USER_LAST_ACTIVITY_AT, SQL_USER_EMAIL, SQL_USER_PHONE_NUMBER, SQL_USER_STATUS);
-
+    // 缓存相关常量
+    private static final String CACHE_KEY_USER = "user:info:"; // 用户信息缓存Key前缀
+    private static final Duration CACHE_USER_TTL = Duration.ofHours(1); // 用户信息缓存1小时
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
+    @Autowired
+    private UserThirdPartyService userThirdPartyService;
 
-    //更新帖子状态
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
-    public boolean updateUserStatus(Long userID, String status){
-        if(userID == null){
-            return false;
+    @Autowired
+    private TokenUtil tokenUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ThirdPartyAuthUtil thirdPartyAuthUtil;
+    @Autowired
+    private UserThirdPartyMapper userThirdPartyMapper;
+
+    /**
+     * 新增用户（内部调用，注册流程前置）
+     * 密码加密存储，初始化信用分100
+     */
+    @Override
+    public Integer insertUser(User user) {
+        try {
+            // 1. 密码BCrypt加密
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPassword);
+
+            // 2. 初始化用户基础数据
+            user.setCreditScore(INIT_CREDIT_SCORE); // 基础信用分100
+            user.setPostCount(0);
+            user.setFollowerCount(0);
+
+            // 3. 插入数据库
+            Integer insertRows = userMapper.insert(user);
+            if (insertRows <= 0) {
+                log.error("插入用户失败，用户信息：{}", user);
+                throw new BusinessException(ErrorCode.FAILURE);
+            }
+            return insertRows;
+        } catch (BusinessException e) {
+            throw e; // 抛出业务异常，由全局处理器处理
+        } catch (Exception e) {
+            log.error("插入用户异常", e);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
 
-        User user = userMapper.getUserByID(userID);
-
-        if(user == null || !ALLOWED_USER_STATUS.contains(status)){
-            return false;
-        }
-
-        userMapper.updateUserStatus(userID, status);
-        return true;
     }
 
-    //风险方法
-    //获得所有用户
-    public List<User> getAllUser(){
-        //生成日志
-        System.out.println("正在获取所有用户");
-        List<User> users = null;
+    /**
+     * 根据用户ID查询详情（密码脱敏）
+     */
+    @Override
+    public User selectUserById(Long userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        // 1. 先查缓存
+        User user = (User) redisTemplate.opsForValue().get(CACHE_KEY_USER + userId);
+        if (Objects.nonNull(user)) {
+            // 脱敏处理（隐藏密码）
+            user.setPassword(null);
+            return user;
+        }
+
+        // 2. 缓存未命中，查数据库
+        user = userMapper.selectById(userId);
+        if (user == null) {
+            return user;
+        }
+
+        // 3. 脱敏并缓存
+        user.setPassword(null);
+        redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_USER_TTL);
+        return user;
+    }
+
+    /**
+     * 根据手机号查询用户（用于登录校验）
+     */
+    @Override
+    public User selectUserByPhone(String phoneNumber) {
+        if (!StringUtils.hasText(phoneNumber)) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        User user = userMapper.selectByPhone(phoneNumber);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+        }
+
+        user.setPassword(null); // 脱敏处理
+        return user;
+    }
+
+    /**
+     * 更新用户资料（仅允许修改非敏感字段）
+     */
+    @Override
+    public Boolean updateUserProfile(Long userId, UserProfileVO profileVO) {
+        if (userId == null || profileVO == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        // 校验用户存在
+        selectUserById(userId); // 直接调用查询方法，不存在会自动抛异常
+
+        // 构建更新实体
+        User updateUser = new User();
+        updateUser.setUserID(userId);
+        updateUser.setUsername(profileVO.getUsername());
+        updateUser.setProfilePicture(profileVO.getAvatarUrl());
+        updateUser.setInterestTags(profileVO.getInterestTags());
+
+        int rows = userMapper.updateById(updateUser);
+        if (rows <= 0) {
+            log.error("更新用户资料失败，用户ID：{}，资料：{}", userId, profileVO);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+
+        // 更新缓存
+        redisTemplate.delete(CACHE_KEY_USER + userId);
+        log.info("更新用户资料成功，用户ID：{}", userId);
+        return rows > 0;
+    }
+
+    /**
+     * 注销账号（逻辑删除）
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteUserById(Long userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        // 校验用户存在
+        selectUserById(userId);
+
+        int rows = userMapper.deleteById(userId);
+        if (rows <= 0) {
+            log.error("删除用户失败，用户ID：{}", userId);
+            throw new BusinessException(ErrorCode.DATA_DELETE_FAILED);
+        }
+
+        // 清除缓存
+        redisTemplate.delete(CACHE_KEY_USER + userId);
+        log.info("删除用户成功，用户ID：{}", userId);
+        return rows > 0;
+    }
+
+    /**
+     * 更新用户状态
+     */
+    @Override
+    public Boolean updateUserStatus(Long userId, UserStatusEnum status) {
+        if (userId == null || status == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+        selectUserById(userId);
+        int rows = userMapper.updateUserStatus(userId, status);
+
+        if (rows <= 0) {
+            log.error("更新用户状态失败，用户ID：{}，状态：{}", userId, status);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+        log.info("更新用户状态成功，用户ID：{}，状态：{}", userId, status);
+
+        return rows > 0;
+    }
+
+    /**
+     * 更新用户密码
+     */
+    @Override
+    public Boolean updateUserPassword(Long userId, String newPassword) {
+        if (userId == null || !StringUtils.hasText(newPassword)) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+        selectUserById(userId);
+        int rows = userMapper.updateUserPassword(passwordEncoder.encode(newPassword), userId);
+
+        if (rows <= 0) {
+            log.error("更新用户密码失败，用户ID：{}，新密码：{}", userId, newPassword);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+
+        log.info("更新用户密码成功，用户ID：{}，新密码：{}", userId, newPassword);
+
+        return rows > 0;
+    }
+
+    @Override
+    public Boolean updateUserRole(Long userId, UserRoleEnum role) {
+        if (userId == null || role == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+        selectUserById(userId);
+        int rows = userMapper.updateUserRole(role, userId);
+
+        if (rows <= 0) {
+            log.error("更新用户角色失败，用户ID：{}，角色：{}", userId, role);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+
+        log.info("更新用户角色成功，用户ID：{}，角色：{}", userId, role);
+        return rows > 0;
+    }
+
+    /**
+     * 用户注册（手机号+验证码模式）
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String register(RegisterVO registerVO) {
+        // 1. 参数校验（保持不变）
+        if (registerVO == null || !StringUtils.hasText(registerVO.getPassword())) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        // 2. 校验手机号/邮箱是否已注册（保持不变）
+        if (StringUtils.hasText(registerVO.getPhoneNumber())) {
+            User phoneUser = userMapper.selectByPhone(registerVO.getPhoneNumber());
+            if (phoneUser != null) {
+                throw new BusinessException(ErrorCode.PHONE_EXISTS);
+            }
+        } else if (StringUtils.hasText(registerVO.getEmail())) {
+            User emailUser = userMapper.selectByEmail(registerVO.getEmail());
+            if (emailUser != null) {
+                throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+            }
+        } else {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+//        // 3. 验证码校验（此处简化，实际需对接短信服务）
+//        if (!"123456".equals(registerVO.getVerifyCode())) { // 示例验证码，实际需动态生成
+//            throw new BusinessException(ErrorCodeEnum.VERIFY_CODE_ERROR);
+//        }
+
+        // 3. 插入用户数据
+        User user = new User();
+        user.setPhoneNumber(registerVO.getPhoneNumber());
+        user.setPassword(registerVO.getPassword());
+        user.setUsername(registerVO.getUsername()); // 生成默认用户名
+        insertUser(user);
+
+        // 4. 生成登录Token
+        return tokenUtil.generateToken( "USER", user.getUserID().toString());
+    }
+
+    /**
+     * 第三方登录（微信/QQ等）
+     */
+    // 指定事务的隔离级别为 READ_COMMITTED（读已提交）
+    // 指定哪些异常发生时，事务需要「回滚」（即撤销方法中已执行的数据库操作）
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public String loginByThirdParty(ThirdPartyTypeEnum platform, String code) {
+        if (platform == null || !StringUtils.hasText(code)) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
 
         try {
-            users = userMapper.getAllUsers();
-        }catch (Exception e){
-            System.out.println("获取用户失败: " + e.getMessage());
-        }
+            // 获取第三方OpenID
+            String openId = thirdPartyAuthUtil.getOpenId(platform, code);
+            if (!StringUtils.hasText(openId)) {
+                throw new BusinessException(ErrorCode.THIRD_AUTH_FAILED);
+            }
 
-        return users;
-    }
+            // 查询OpenID是否已绑定
+            UserThirdParty bindingRecord = userThirdPartyMapper.selectByThirdTypeAndOpenid(platform, openId);
+            if (bindingRecord != null || bindingRecord.getIsValid() == 0) {
+                return tokenUtil.generateToken("USER", bindingRecord.getUserId().toString());
+            }
 
-    public List<User> getAllUsers() {
-        return userMapper.getAllUsers();
-    }
+            // 未绑定，自动注册用户
+            User newUser = new User();
+            newUser.setUsername(platform + "_" + openId.substring(0, 8));
+            newUser.setPassword(passwordEncoder.encode(openId));
+            newUser.setCreditScore(INIT_CREDIT_SCORE);
 
-    public User getUserById(Long id) {
-        return userMapper.getUserByID(id);
-    }
+            int insertRows = userMapper.insert(newUser);
+            if (insertRows <= 0) {
+                throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
+            }
 
-    //根据状态获取用户
-    public List<User> getUsersByStatus(String status, boolean isDESC, String order, Integer limit, Integer offset){
-        //是否采用默认的数量限制
-        if(limit == null){
-            limit = DEFAULT_LIMIT;
-        }
-        //是否采用默认的偏移量
-        if(offset == null){
-            offset = DEFAULT_OFFSET;
-        }
+            // 绑定第三方账号（假设实现）
+            // userThirdPartyMapper.insert(newUser.getUserId(), platform, openId);
 
-        //检测比较参数和排序参数是否合法
-        if(!ALLOWED_USER_STATUS.contains(status) || !ALLOWED_USER_COLUMN_NAME.contains(order)){
-            return null;
-        }
-
-        if(isDESC){
-            return userMapper.getUsersByAllParam(SQL_USER_STATUS, status, order, SQL_DESCENDING, limit, offset);
-        }else {
-            return userMapper.getUsersByAllParam(SQL_USER_STATUS, status, order, SQL_ASCENDING, limit, offset);
-        }
-
-    }
-
-    //根据用户名获取用户
-    public List<User> getUsersByUsername(String username, boolean isDESC, String order, Integer limit, Integer offset){
-        //是否采用默认的数量限制
-        if(limit == null){
-            limit = DEFAULT_LIMIT;
-        }
-        //是否采用默认的偏移量
-        if(offset == null){
-            offset = DEFAULT_OFFSET;
-        }
-
-        //检测比较参数和排序参数是否合法
-        if(!ALLOWED_USER_COLUMN_NAME.contains(order)){
-            return null;
-        }
-
-        if(isDESC){
-            return userMapper.getUsersByAllParam(SQL_USER_USERNAME, username, order, SQL_DESCENDING, limit, offset);
-        }else {
-            return userMapper.getUsersByAllParam(SQL_USER_USERNAME, username, order, SQL_ASCENDING, limit, offset);
+            // 缓存用户并生成Token
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + newUser.getUserID(), newUser, CACHE_USER_TTL);
+            log.info("第三方登录自动注册成功，用户ID：{}，平台：{}", newUser.getUserID(), platform);
+            return tokenUtil.generateToken("USER",  newUser.getUserID().toString());
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("第三方登录系统异常", e);
+            throw new BusinessException(ErrorCode.THIRD_SYSTEM_ERROR);
         }
     }
 
-    //根据用户角色获取用户
-    public List<User> getUsersByRole(String role, boolean isDESC, String order, Integer limit, Integer offset){
-        //是否采用默认的数量限制
-        if(limit == null){
-            limit = DEFAULT_LIMIT;
-        }
-        //是否采用默认的偏移量
-        if(offset == null){
-            offset = DEFAULT_OFFSET;
-        }
-
-        //检测比较参数和排序参数是否合法
-        if(!ALLOWED_USER_ROLE.contains(role) || !ALLOWED_USER_COLUMN_NAME.contains(order)){
-            return null;
+    /**
+     * 更新用户信用分（支持增减，最低为0）
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public Integer updateCreditScore(Long userId, Integer scoreChange, String reason) {
+        if (userId == null || scoreChange == null || !StringUtils.hasText(reason)) {
+            throw new BusinessException(ErrorCode.PARAM_NULL);
         }
 
-        if(isDESC){
-            return userMapper.getUsersByAllParam(SQL_USER_ROLE, role, order, SQL_DESCENDING, limit, offset);
-        }else {
-            return userMapper.getUsersByAllParam(SQL_USER_ROLE, role, order, SQL_ASCENDING, limit, offset);
+        // 获取当前用户
+        User user = selectUserById(userId);
+        int currentScore = user.getCreditScore();
+
+        // 计算新信用分
+        int newCreditScore = currentScore + scoreChange;
+        newCreditScore = Math.max(newCreditScore, MIN_CREDIT_SCORE);
+
+        // 更新信用分
+        int rows = userMapper.updateCreditScore(userId, newCreditScore);
+        if (rows <= 0) {
+            log.error("更新信用分失败，用户ID：{}，变更值：{}，原因：{}", userId, scoreChange, reason);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
         }
+
+        // 更新缓存
+        user.setCreditScore(newCreditScore);
+        redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_USER_TTL);
+        log.info("更新信用分成功，用户ID：{}，原分数：{}，变更值：{}，新分数：{}，原因：{}",
+                userId, currentScore, scoreChange, newCreditScore, reason);
+        return newCreditScore;
     }
 
-    //添加用户
-    public int addUser(User user) throws UserException {
-        try {
-            checkFactor(user);
-            return userMapper.addUser(user);
-        } catch (UserException be){
-            log.error("can't add in \"users\" table: " + be.getMessage());
-            throw be;
-        } catch (Exception e){
-            log.error("can't add in \"users\" table: " + e.getMessage());
-            throw new UserException(ErrorCode.FAILURE);
-        }
-    }
-
-    //修改用户
-
-    public int updateUser(User user) throws UserException {
-        try{
-            checkUserExists(user.getUserID());
-            checkFactor(user);
-            return userMapper.updateUser(user);
-        } catch (UserException be){
-            log.error("can't update in \"users\" table.BE code = " + be.getCode());
-            throw be;
-        } catch (Exception e){
-            log.error("can't update in \"users\" table because of unknown error." + e.getMessage());
-            throw new UserException(ErrorCode.FAILURE);
-        }
-    }
-
-    //删除用户
-
-    public int deleteUser(Long id) {
-        int result = userMapper.deleteUser(id);
-        if(result == 0){
-            log.warn("can't delete in \"users\" table");
-        }
-        return result;
-    }
-
-    //更新用户角色
-
-    public boolean updateUserRole(Long userId, String role) throws UserException{
-        checkUserExists(userId);
-        if(!ALLOWED_USER_ROLE.contains(role)){
-            throw new UserException(ErrorCode.ROLE_ERROR);
-        }
-        userMapper.updateUserRole(role, userId);
-        return true;
-    }
-
-    //更新用户密码
-
-    public boolean updateUserPassword(Long userId, String password) throws UserException{
-        checkUserExists(userId);
-        if(password == null){
-            throw new UserException(ErrorCode.PASSWORD_NULL);
-        }
-        userMapper.updateUserPassword(password, userId);
-        return true;
-    }
-
-    //更新用户名称
-
-    public boolean updateUsername(Long userId, String username) throws UserException{
-        checkUserExists(userId);
-        if(username == null){
-            throw new UserException(ErrorCode.USERNAME_NULL);
-        }
-        userMapper.updateUsername(username, userId);
-        return true;
-    }
-
-
-    //检验关键数据是否非法
-    //若姓名、邮箱和电话非法，则抛出对应异常
-    //针对add，update
-
-    public void checkFactor(User user) throws UserException{
-
-        String role = user.getRole().toString();
-        String name = user.getUsername();
-        String phoneNumber = user.getPhoneNumber();
-        String email = user.getEmail();
-
-        //检查用户角色
-        if(role == null){
-            throw new UserException(ErrorCode.ROLE_NULL);
-        }
-        if(ALLOWED_USER_ROLE.contains(role)){
-            throw new UserException(ErrorCode.ROLE_ERROR);
-        }
-
-        //检查用户名
-        if(name == null){
-            throw new UserException(ErrorCode.USERNAME_NULL);
-        }
-        if(!isNameUnique(name)){
-            throw new UserException(ErrorCode.USERNAME_EXISTS);
-        }
-
-        //检查电话号码
-        if(phoneNumber == null){
-            throw new UserException(ErrorCode.PHONE_NULL);
-        }
-        if(!isPhoneNumberUnique(phoneNumber)){
-            throw new UserException(ErrorCode.PHONE_EXISTS);
-        }
-
-        //检查邮箱号码
-        if(email == null){
-            throw new UserException(ErrorCode.EMAIL_NULL);
-        }
-        if(!isEmailUnique(email)){
-            throw new UserException(ErrorCode.EMAIL_EXISTS);
-        }
-    }
-
-    //根据userId检查用户是否存在
-    //针对update
-
-    public void checkUserExists(Long userId) throws UserException{
-        if(userId == 0){
-            throw new UserException(ErrorCode.USER_ID_NULL);
-        }
-        if(userMapper.getUserByID(userId) == null){
-            throw new UserException(ErrorCode.USER_NOT_EXISTS);
-        }
-    }
-
-    //检验用户名称唯一性
-    public boolean isNameUnique(String name){
-        //调用mapper
-        Long db_id = userMapper.getIDByUsername(name);
-        if(db_id==null){
-            //用户不存在，凭证唯一
-            return true;
-        }else {
-            //用户存在，凭证不唯一
-            return false;
-        }
-    }
-
-    //检验电话号码唯一性
-    public boolean isPhoneNumberUnique(String phoneNumber){
-        //调用mapper
-        Long db_id = userMapper.getIDByPhoneNumber(phoneNumber);
-        if(db_id==null){
-            //用户不存在，凭证唯一
-            return true;
-        }else {
-            //用户存在，凭证不唯一
-            return false;
-        }
-    }
-
-    //检验邮箱号码唯一性
-    public boolean isEmailUnique(String email){
-        //调用mapper
-        Long db_id = userMapper.getIDByEmail(email);
-        if(db_id==null){
-            //用户不存在，凭证唯一
-            return true;
-        }else {
-            //用户存在，凭证不唯一
-            return false;
-        }
+    /**
+     * 新增：密码校验方法（使用Spring Security的匹配器）
+     * 用于登录时验证密码正确性
+     */
+    @Override
+    public Boolean verifyPassword(String rawPassword, String encodedPassword) {
+        // 使用加密器的matches方法验证原始密码与加密密码是否匹配
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }

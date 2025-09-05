@@ -3,7 +3,7 @@ package com.community_shop.backend.service;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.LocalToken;
 import com.community_shop.backend.mapper.UserMapper;
-import com.community_shop.backend.utils.JwtTokenUtil;
+import com.community_shop.backend.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class LoginService {
 
     //JWT令牌相关
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private TokenUtil tokenUtil;
 
     //数据库测试方法
     public List<User> getUser(){
@@ -104,7 +104,7 @@ public class LoginService {
 
     //创建token
     public String generateToken(User user){
-        String token = jwtTokenUtil.generateToken("LOGIN", user.getUserID().toString(), user.getUsername(), user.getRole().toString(), user.getStatus().toString());
+        String token = tokenUtil.generateToken("LOGIN", user.getUserID().toString(), user.getUsername(), user.getRole().toString(), user.getStatus().toString());
         return token;
     }
 }

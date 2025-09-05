@@ -125,7 +125,7 @@ public class MessageServiceImpl implements MessageService {
         );
 
         // 查询总条数
-        Long total = messageMapper.countByReceiver(userId, msgType);
+        Integer total = messageMapper.countByReceiver(userId, msgType);
 
         // 封装分页结果
         // Math.ceil() 是为了处理整除不尽的情况,结果向上取整（如 137 条不能被 10 整除，需要多一页显示剩余 7 条）

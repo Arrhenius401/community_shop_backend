@@ -46,7 +46,7 @@ public interface MessageMapper {
      * @param msgType 消息类型（可为null）
      * @return 总条数
      */
-    Long countByReceiver(
+    Integer countByReceiver(
             @Param("receiverId") Long receiverId,
             @Param("msgType") String msgType
     );

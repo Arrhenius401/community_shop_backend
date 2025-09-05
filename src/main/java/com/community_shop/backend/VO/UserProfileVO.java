@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class UserProfileVO {
     // 昵称（显示名称，可修改）
-    private String nickname;
+    private String username;
 
     // 头像URL（阿里云OSS存储路径）
     private String avatarUrl;

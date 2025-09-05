@@ -12,6 +12,10 @@ public enum ErrorCode {
     FORBIDDEN("SYSTEM_005", "无权限"),
     NOT_FOUND("SYSTEM_006", "资源不存在"),
 
+    DATA_UPDATE_FAILED("SYSTEM_011", "数据更新失败"),
+    DATA_DELETE_FAILED("SYSTEM_012", "数据删除失败"),
+    DATA_INSERT_FAILED("SYSTEM_013", "数据插入失败"),
+
     // 业务错误
     // 用户模块
     USER_EXISTS("USER_001", "用户已存在"),
@@ -31,6 +35,9 @@ public enum ErrorCode {
 
     USER_NOT_EXISTS("USER_031", "用户不存在"),
     PASSWORD_WRONG("USER_032", "密码错误"),
+
+    THIRD_AUTH_FAILED("USER_041", "第三方授权失败"),
+    THIRD_SYSTEM_ERROR("USER_042", "第三方系统错误"),
 
     // 用户第三方绑定相关
     USER_THIRD_PARTY_NOT_BOUND("USER_041", "第三方账号未绑定"),

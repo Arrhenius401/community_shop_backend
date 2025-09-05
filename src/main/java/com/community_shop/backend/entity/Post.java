@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class Post {
-    private Long postID;
-    private Long userID;
+    private Long postId;
+    private Long userId;
     private int likeCount;
     private int commentCount;
     private String title;
@@ -21,9 +21,9 @@ public class Post {
 
     public Post(){}
 
-    public Post(Long postID, Long userID, int likeCount, int commentCount, String title, String content, LocalDateTime createTime, Boolean isHot, Boolean isEssence, Boolean isTop, PostStatusEnum status) {
-        this.postID = postID;
-        this.userID = userID;
+    public Post(Long postId, Long userId, int likeCount, int commentCount, String title, String content, LocalDateTime createTime, Boolean isHot, Boolean isEssence, Boolean isTop, PostStatusEnum status) {
+        this.postId = postId;
+        this.userId = userId;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.title = title;

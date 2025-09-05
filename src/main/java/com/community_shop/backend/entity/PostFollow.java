@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Data
 public class PostFollow {
     private Long postFollowId;
-    private Long postID;
-    private Long userID;
+    private Long postId;
+    private Long userId;
     private String content;
     private int likeCount;
     private LocalDateTime createTime;
@@ -19,10 +19,10 @@ public class PostFollow {
 
     public PostFollow(){}
 
-    public PostFollow(Long postFollowId, Long postID, Long userID, String content, int likeCount, LocalDateTime createTime, LocalDateTime updateTime, boolean isDeleted, PostFollowStatusEnum status) {
+    public PostFollow(Long postFollowId, Long postId, Long userId, String content, int likeCount, LocalDateTime createTime, LocalDateTime updateTime, boolean isDeleted, PostFollowStatusEnum status) {
         this.postFollowId = postFollowId;
-        this.postID = postID;
-        this.userID = userID;
+        this.postId = postId;
+        this.userId = userId;
         this.content = content;
         this.likeCount = likeCount;
         this.createTime = createTime;

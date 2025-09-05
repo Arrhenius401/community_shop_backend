@@ -22,7 +22,7 @@ public class CheckService {
         boolean isValid = false;
 
         try {
-            isValid = tokenUtil.validateToken(token, tokenUser.getUserID());
+            isValid = tokenUtil.validateToken(token, tokenUser.getUserId());
             //输出日志
             tokenUtil.printToken(token);
         }catch (Exception e){

@@ -104,7 +104,7 @@ public class LoginService {
 
     //创建token
     public String generateToken(User user){
-        String token = tokenUtil.generateToken("LOGIN", user.getUserID().toString(), user.getUsername(), user.getRole().toString(), user.getStatus().toString());
+        String token = tokenUtil.generateToken("LOGIN", user.getUserId().toString(), user.getUsername(), user.getRole().toString(), user.getStatus().toString());
         return token;
     }
 }

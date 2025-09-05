@@ -23,7 +23,7 @@ public class User{
      * 用户唯一标识（数据库主键，自动递增）
      * 对应文档4 user表：user_id（bigint AI PK）
      */
-    private Long userID;
+    private Long userId;
 
     /**
      * 登录密码（BCrypt加密存储）
@@ -152,8 +152,8 @@ public class User{
     /**
      * 完整构造（用于数据库查询）
      */
-    public User(Long userID, String password, String username, String email, String phoneNumber, String profilePicture, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initDate, LocalDateTime activityDate, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
-        this.userID = userID;
+    public User(Long userId, String password, String username, String email, String phoneNumber, String profilePicture, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initDate, LocalDateTime activityDate, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
+        this.userId = userId;
         this.password = password;
         this.username = username;
         this.email = email;

@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
 
         // 构建更新实体
         User updateUser = new User();
-        updateUser.setUserID(userId);
+        updateUser.setUserId(userId);
         updateUser.setUsername(profileVO.getUsername());
         updateUser.setProfilePicture(profileVO.getAvatarUrl());
         updateUser.setInterestTags(profileVO.getInterestTags());
@@ -292,7 +292,7 @@ public class UserServiceImpl implements UserService {
         insertUser(user);
 
         // 4. 生成登录Token
-        return tokenUtil.generateToken( "USER", user.getUserID().toString());
+        return tokenUtil.generateToken( "USER", user.getUserId().toString());
     }
 
     /**
@@ -335,9 +335,9 @@ public class UserServiceImpl implements UserService {
             // userThirdPartyMapper.insert(newUser.getUserId(), platform, openId);
 
             // 缓存用户并生成Token
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + newUser.getUserID(), newUser, CACHE_USER_TTL);
-            log.info("第三方登录自动注册成功，用户ID：{}，平台：{}", newUser.getUserID(), platform);
-            return tokenUtil.generateToken("USER",  newUser.getUserID().toString());
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + newUser.getUserId(), newUser, CACHE_USER_TTL);
+            log.info("第三方登录自动注册成功，用户ID：{}，平台：{}", newUser.getUserId(), platform);
+            return tokenUtil.generateToken("USER",  newUser.getUserId().toString());
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {

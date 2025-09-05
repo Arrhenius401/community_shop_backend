@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class Evaluation {
     private Long evalId; // 评价ID
     private Long orderId; // 关联订单ID
-    private Long userID; // 评价者ID
+    private Long userId; // 评价者ID
     private String content; // 评价内容
     private Integer score; // 评分（1-5星）
     private LocalDateTime createTime; // 评价时间
@@ -17,10 +17,10 @@ public class Evaluation {
 
     public Evaluation(){}
 
-    public Evaluation(Long evalId, Long orderId, Long userID, String content, Integer score, LocalDateTime createTime, EvaluationStatusEnum status) {
+    public Evaluation(Long evalId, Long orderId, Long userId, String content, Integer score, LocalDateTime createTime, EvaluationStatusEnum status) {
         this.evalId = evalId;
         this.orderId = orderId;
-        this.userID = userID;
+        this.userId = userId;
         this.content = content;
         this.score = score;
         this.createTime = createTime;

@@ -1,6 +1,5 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
@@ -56,7 +55,7 @@ public class UserThirdPartyServiceImpl implements UserThirdPartyService {
 
             // 绑定第三方账号（参考《代码文档1》UserThirdPartyMapper.insert逻辑）
             // 返回自增的userId（MyBatis-Plus会自动回填自增ID）
-            UserThirdParty newBinding = new UserThirdParty(newUser.getUserID(), thirdType, openid, accessToken);
+            UserThirdParty newBinding = new UserThirdParty(newUser.getUserId(), thirdType, openid, accessToken);
             userThirdPartyMapper.insert(newBinding);
 
             return newUser;

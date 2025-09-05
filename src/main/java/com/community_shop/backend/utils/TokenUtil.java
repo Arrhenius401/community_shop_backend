@@ -20,7 +20,7 @@ public class TokenUtil {
                 .setHeaderParam("typ", "JWT")   //类型
                 .setHeaderParam("alg", "HS256") //算法
                 //payload
-                .claim("userID", userID)    //自定义参数1
+                .claim("userId", userID)    //自定义参数1
                 .claim("username", username)
                 .claim("role", role)            //自定义参数2
                 .claim("status", status)
@@ -45,7 +45,7 @@ public class TokenUtil {
                 .setHeaderParam("typ", "JWT")   //类型
                 .setHeaderParam("alg", "HS256") //算法
                 //payload
-                .claim("userID", userID)    //自定义参数1
+                .claim("userId", userID)    //自定义参数1
                 .setSubject(subject)    //主题
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .setId(UUID.randomUUID().toString())
@@ -63,7 +63,7 @@ public class TokenUtil {
     public Long getUserIDFromToken(String token){
         Long userID = null;
         Claims claims = getAllClaimsFromToken(token);
-        String userIDString = claims.get("userID").toString();
+        String userIDString = claims.get("userId").toString();
         try{
             userID = Long.valueOf(userIDString);
         }catch (Exception e){
@@ -130,7 +130,7 @@ public class TokenUtil {
         Claims claims = getAllClaimsFromToken(token);
         System.out.println();
         System.out.println("解析token: " + "ID = " + claims.getId() + "; subject: " + claims.getSubject() + "; expiration = " + claims.getExpiration()
-                + "; userID = "+ claims.get("userID") + "; username = " + claims.get("username") + "; role = " + claims.get("role")
+                + "; userId = "+ claims.get("userId") + "; username = " + claims.get("username") + "; role = " + claims.get("role")
                 + "; status = " + claims.get("status"));
 
     }

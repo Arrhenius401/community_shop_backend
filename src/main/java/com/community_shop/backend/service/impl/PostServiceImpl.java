@@ -3,7 +3,6 @@ package com.community_shop.backend.service.impl;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.mapper.PostMapper;
 import com.community_shop.backend.mapper.UserMapper;
-import com.community_shop.backend.service.base.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class PostServiceImpl {
     //对数据库原生Post进行填充
     public List<Post> fillDbPost(List<Post> posts){
         for(Post post : posts){
-            String username = userMapper.getUsernameByID(post.getUserID());
+            String username = userMapper.getUsernameByID(post.getUserId());
 //            post.setUsername(username);
         }
         return posts;
@@ -56,7 +55,7 @@ public class PostServiceImpl {
     //更新帖子状态
     public Boolean updatePostStatus(Long postID, String status){
         //测试
-        System.out.println("postID: " + postID + "; status: " + status);
+        System.out.println("postId: " + postID + "; status: " + status);
         if(postID == null){
             return false;
         }

@@ -21,7 +21,7 @@ public class ProfileController {
         //生成日志
         System.out.println("收到传输指定用户创建帖子的请求");
 
-        Long userID = user.getUserID();
+        Long userID = user.getUserId();
 
         if(userID == null){
             System.out.println("传输指定用户创建帖子的请求: 失败");

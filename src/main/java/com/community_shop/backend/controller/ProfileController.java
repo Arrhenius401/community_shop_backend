@@ -2,7 +2,7 @@ package com.community_shop.backend.controller;
 
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.service.impl.PostServiceImpl;
+import com.community_shop.backend.service.impl.PostServiceImplOld;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class ProfileController {
     @Autowired
-    PostServiceImpl postService;
+    PostServiceImplOld postService;
 
     //获得指定用户所发布的帖子
     @RequestMapping("/api/post/byUserID")

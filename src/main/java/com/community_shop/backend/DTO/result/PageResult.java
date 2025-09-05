@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class PageResult<T> {
     // 总记录数
-    private Long total;
+    private Integer total;
     // 总页数
     private Integer totalPages;
     // 当前页数据列表
@@ -26,7 +26,7 @@ public class PageResult<T> {
     public PageResult() {}
 
     // 添加全参构造函数
-    public PageResult(Long total, Integer totalPages, List<T> list, Integer pageNum, Integer pageSize) {
+    public PageResult(Integer total, Integer totalPages, List<T> list, Integer pageNum, Integer pageSize) {
         this.total = total;
         this.totalPages = totalPages;
         this.list = list;

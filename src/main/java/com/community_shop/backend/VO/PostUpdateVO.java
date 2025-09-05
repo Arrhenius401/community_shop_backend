@@ -1,24 +1,27 @@
 package com.community_shop.backend.VO;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * 帖子更新VO：封装用户更新帖子时可修改的字段
+ * 仅包含用户有权限修改的内容，不包含状态、点赞数等系统维护字段
+ */
 @Data
 public class PostUpdateVO {
-    // 商品标题（可选，若不为空则长度1-100）
-    private String title;
 
-    // 商品价格（可选，若不为空则≥0.01）
-    private Double price;
+    @NotNull(message = "帖子ID不能为空")
+    private Long postId; // 必须携带，用于定位要更新的帖子
 
-    // 商品库存（可选，若不为空则≥0）
-    private Integer stock;
+    @NotBlank(message = "帖子标题不能为空")
+    @Size(max = 100, message = "标题长度不能超过100个字符")
+    private String title; // 允许修改标题
 
-    // 商品描述（可选，若不为空则长度1-5000）
-    private String description;
-//
-//    // 图片列表（可选，若不为空则至少1张，最多5张）
-//    private List<String> imageUrls;
-//
-//    // 商品标签（可选，若不为空则最多5个）
-//    private List<String> tags;
+    @NotBlank(message = "帖子内容不能为空")
+    @Size(max = 5000, message = "内容长度不能超过5000个字符")
+    private String content; // 允许修改内容
+
+
 }

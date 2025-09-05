@@ -8,13 +8,16 @@ public enum ErrorCode {
     FAILURE("SYSTEM_001", "操作失败"),
     PARAM_ERROR("SYSTEM_002", "参数错误"),
     PARAM_NULL("SYSTEM_003", "参数为空"),
-    UNAUTHORIZED("SYSTEM_004", "未认证"),
-    FORBIDDEN("SYSTEM_005", "无权限"),
-    NOT_FOUND("SYSTEM_006", "资源不存在"),
+    NOT_FOUND("SYSTEM_004", "资源不存在"),
 
     DATA_UPDATE_FAILED("SYSTEM_011", "数据更新失败"),
     DATA_DELETE_FAILED("SYSTEM_012", "数据删除失败"),
     DATA_INSERT_FAILED("SYSTEM_013", "数据插入失败"),
+
+    PERMISSION_UNAUTHORIZED("SYSTEM_021", "未认证"),
+    PERMISSION_DENIED("SYSTEM_022", "无权限"),
+
+    SYSTEM_ERROR("SYSTEM_100", "系统错误"),
 
     // 业务错误
     // 用户模块
@@ -36,14 +39,15 @@ public enum ErrorCode {
     USER_NOT_EXISTS("USER_031", "用户不存在"),
     PASSWORD_WRONG("USER_032", "密码错误"),
 
-    THIRD_AUTH_FAILED("USER_041", "第三方授权失败"),
-    THIRD_SYSTEM_ERROR("USER_042", "第三方系统错误"),
+    CREDIT_TOO_LOW("USER_051", "用户积分不足"),
 
     // 用户第三方绑定相关
-    USER_THIRD_PARTY_NOT_BOUND("USER_041", "第三方账号未绑定"),
-    USER_THIRD_PARTY_BIND_FAILED("USER_042", "第三方账号绑定失败"),
-    USER_THIRD_PARTY_UNBIND_FAILED("USER_043", "第三方账号解绑失败"),
-    USER_THIRD_PARTY_NOT_EXISTS("USER_044", "第三方账号绑定记录不存在"),
+    THIRD_AUTH_FAILED("USER_071", "第三方授权失败"),
+    THIRD_SYSTEM_ERROR("USER_072", "第三方系统错误"),
+    USER_THIRD_PARTY_UNBIND_FAILED("USER_073", "第三方账号解绑失败"),
+    USER_THIRD_PARTY_NOT_EXISTS("USER_074", "第三方账号绑定记录不存在"),
+    USER_THIRD_PARTY_NOT_BOUND("USER_075", "第三方账号未绑定"),
+    USER_THIRD_PARTY_BIND_FAILED("USER_076", "第三方账号绑定失败"),
 
     // 帖子模块
     POST_NOT_EXISTS("POST_001", "帖子不存在"),

@@ -4,7 +4,9 @@ import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
 import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.VO.OrderCreateVO;
+import com.community_shop.backend.component.enums.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,26 +18,13 @@ import java.util.List;
  * 2. 《文档4_数据库工作（新）.docx》：order表结构（order_id、buyer_id、seller_id、status等）
  * 3. 《代码文档1 Mapper层设计.docx》：OrderMapper的CRUD及状态更新方法
  */
+@Service
 public interface OrderService {
-    // 获取所有订单
-    List<Order> getAllOrders();
-
-    // 获取订单详情
-    Order getOrderById(int id);
-
-    // 添加订单
-    int addOrder(Order order);
-
-    // 更新订单信息
-    int updateOrder(Order order);
-
-    // 删除订单
-    int deleteOrder(int id);
 
     /**
      * 新增订单（基础CRUD）
      * 核心逻辑：初始化订单状态为"待支付"，记录创建时间，调用OrderMapper.insert插入
-     * @param order 订单实体（含productId、buyerId、sellerId、amount，不含order_id）
+     * @param order 订单实体（含productId、buyerId、sellerId、totalAmount，不含order_id）
      * @return 新增订单ID
      * @see com.community_shop.backend.mapper.OrderMapper#insert(Order)
      */
@@ -59,10 +48,10 @@ public interface OrderService {
      * @param status 订单状态（枚举值："PENDING_PAY"/"PAID"/"SHIPPED"/"COMPLETED"/"CANCELLED"）
      * @param pageParam 分页参数（页码、每页条数）
      * @return 分页订单列表
-     * @see com.community_shop.backend.mapper.OrderMapper#selectByBuyerId(Long, String, int, int)
+     * @see com.community_shop.backend.mapper.OrderMapper#selectByBuyerId(Long, OrderStatusEnum, int, int)
      * @see com.community_shop.backend.component.enums.OrderStatusEnum （订单状态枚举）
      */
-    PageResult<Order> selectOrderByBuyer(Long buyerId, String status, PageParam pageParam);
+    PageResult<Order> selectOrderByBuyer(Long buyerId, OrderStatusEnum status, PageParam pageParam);
 
     /**
      * 更新订单状态（基础CRUD）
@@ -71,10 +60,10 @@ public interface OrderService {
      * @param status 目标状态（需符合状态流转规则）
      * @param operatorId 操作用户ID（买家/卖家/管理员）
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.OrderMapper#updateStatus(Long, String)
+     * @see com.community_shop.backend.mapper.OrderMapper#updateStatus(Long, OrderStatusEnum)
      * @see 《文档2_系统设计.docx》订单状态流转规则
      */
-    Boolean updateOrderStatus(Long orderId, String status, Long operatorId);
+    Boolean updateOrderStatus(Long orderId, OrderStatusEnum status, Long operatorId);
 
     /**
      * 按订单ID删除（基础CRUD，逻辑删除）

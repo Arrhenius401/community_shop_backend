@@ -2,7 +2,7 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.VO.RegisterVO;
 import com.community_shop.backend.VO.UserProfileVO;
-import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
+import com.community_shop.backend.component.enums.simple.ThirdPartyTypeEnum;
 import com.community_shop.backend.component.enums.UserRoleEnum;
 import com.community_shop.backend.component.enums.UserStatusEnum;
 import com.community_shop.backend.component.exception.BusinessException;

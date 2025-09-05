@@ -1,16 +1,12 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.VO.RegisterVO;
 import com.community_shop.backend.VO.UserProfileVO;
-import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
+import com.community_shop.backend.component.enums.simple.ThirdPartyTypeEnum;
 import com.community_shop.backend.component.enums.UserRoleEnum;
 import com.community_shop.backend.component.enums.UserStatusEnum;
-import com.community_shop.backend.component.exception.UserException;
 import com.community_shop.backend.entity.User;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 用户管理Service接口，实现《文档》中用户注册、登录、信用管理等核心功能

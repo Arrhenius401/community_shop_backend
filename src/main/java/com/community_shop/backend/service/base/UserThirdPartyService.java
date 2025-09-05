@@ -1,7 +1,6 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.DTO.result.ResultDTO;
-import com.community_shop.backend.component.enums.ThirdPartyTypeEnum;
+import com.community_shop.backend.component.enums.simple.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
 

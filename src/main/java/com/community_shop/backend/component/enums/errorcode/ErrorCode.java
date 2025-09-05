@@ -78,6 +78,8 @@ public enum ErrorCode {
     ORDER_BUYER_NULL("ORDER_005", "订单买家为空"),
     ORDER_SELLER_NULL("ORDER_006", "订单卖家为空"),
 
+    STOCK_INSUFFICIENT("ORDER_021", "商品库存不足"),
+
     // 评价模块
     EVALUATION_NOT_EXISTS("EVAL_001", "评价不存在"),
     EVALUATION_ID_NULL("EVAL_002", "评价ID为空"),

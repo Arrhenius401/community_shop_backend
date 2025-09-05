@@ -11,6 +11,7 @@ public enum OrderStatusEnum {
     CANCELLED("CANCELLED", "已取消"), // 未支付时取消或协商取消
     REFUNDING("REFUNDING", "退款中"), // 售后阶段的退款流程
     REFUNDED("REFUNDED", "已退款"), // 退款完成
+    RETURNED("RETURNED", "已退货"),
     ARBITRATION("ARBITRATION", "平台仲裁中"); // 卖家超时未响应售后时的状态
 
     private final String code;

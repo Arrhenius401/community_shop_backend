@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.community_shop.backend.component.enums.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import org.apache.ibatis.annotations.*;
 
@@ -46,7 +47,7 @@ public interface OrderMapper {
      * @return 更新结果影响行数
      */
     @Update("UPDATE order SET status = #{status} WHERE order_id = #{orderId}")
-    int updateStatus(@Param("orderId") Long orderId, @Param("status") String status);
+    int updateStatus(@Param("orderId") Long orderId, @Param("status") OrderStatusEnum status);
 
     /**
      * 更新支付时间（支付成功后）
@@ -74,7 +75,7 @@ public interface OrderMapper {
             "LIMIT #{offset}, #{limit}" +
             "</script>")
     List<Order> selectByBuyerId(@Param("buyerId") Long buyerId,
-                                @Param("status") String status,
+                                @Param("status") OrderStatusEnum status,
                                 @Param("offset") int offset,
                                 @Param("limit") int limit);
 
@@ -93,7 +94,16 @@ public interface OrderMapper {
             "LIMIT #{offset}, #{limit}" +
             "</script>")
     List<Order> selectBySellerId(@Param("sellerId") Long sellerId,
-                                 @Param("status") String status,
+                                 @Param("status") OrderStatusEnum status,
                                  @Param("offset") int offset,
                                  @Param("limit") int limit);
+
+    /**
+     * 统计买家的订单数量（按状态筛选）
+     * @param buyerId 买家ID
+     * @param status 订单状态
+     * @return 订单数量
+     */
+    @Select("SELECT COUNT(*) FROM order WHERE buyer_id = #{buyerId} AND status = #{status}")
+    int countByBuyerId(@Param("buyerId") Long buyerId, @Param("status") OrderStatusEnum status);
 }

@@ -6,6 +6,7 @@ import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.VO.ProductUpdateVO;
 import com.community_shop.backend.VO.ProductVO;
 import com.community_shop.backend.entity.Product;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * 2. 《文档4_数据库工作（新）.docx》：product表结构（product_id、price、stock、seller_id等）
  * 3. 《代码文档1 Mapper层设计.docx》：ProductMapper的CRUD及库存更新方法
  */
+@Service
 public interface ProductService {
     // 获取所有商品
     List<Product> getAllProducts();

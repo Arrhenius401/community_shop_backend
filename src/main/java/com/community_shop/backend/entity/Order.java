@@ -11,19 +11,22 @@ public class Order {
     private Long productId; // 商品ID
     private Long buyerId; // 买家ID
     private Long sellerId; // 卖家ID
-    private Double amount; // 交易金额
+    private Integer quantity;   // 商品数量
+    private Double totalAmount; // 交易金额
     private LocalDateTime createTime; // 下单时间
     private LocalDateTime payTime; // 支付时间
     private OrderStatusEnum status; // 订单状态
 
     public Order(){}
 
-    public Order(Long orderId, Long productId, Long buyerId, Long sellerId, Double amount, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
+    public Order(Long orderId, Long productId, Long buyerId, Long sellerId, Integer quantity,
+                 Double totalAmount, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
         this.orderId = orderId;
         this.productId = productId;
         this.buyerId = buyerId;
         this.sellerId = sellerId;
-        this.amount = amount;
+        this.quantity = quantity;
+        this.totalAmount = totalAmount;
         this.createTime = createTime;
         this.payTime = payTime;
         this.status = status;

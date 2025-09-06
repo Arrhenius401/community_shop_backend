@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * 帖子服务实现类
+ */
 @Slf4j
 @Service
 public class PostServiceImpl implements PostService {

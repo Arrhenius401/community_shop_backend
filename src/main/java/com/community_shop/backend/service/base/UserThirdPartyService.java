@@ -3,6 +3,7 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.component.enums.simpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * 第三方账号Service接口
  * 匹配《代码文档2 Service层设计.docx》的接口定义规范
  */
+@Service
 public interface UserThirdPartyService {
     /**
      * 业务方法：第三方登录（含自动注册）

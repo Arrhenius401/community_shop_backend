@@ -4,6 +4,7 @@ import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
 import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.entity.Message;
+import org.springframework.stereotype.Service;
 
 /**
  * 站内消息服务接口，负责系统通知、用户私信等消息的发送与管理
@@ -11,6 +12,7 @@ import com.community_shop.backend.entity.Message;
  * 1. 《文档1_需求分析.docx》：订单通知、售后通知、系统公告
  * 2. 《文档4_数据库工作（新）.docx》：message表结构（msg_id、sender_id、receiver_id等）
  */
+@Service
 public interface MessageService {
     /**
      * 发送卖家通知（订单相关）

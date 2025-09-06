@@ -1,9 +1,11 @@
 package com.community_shop.backend.service.base;
 
+import com.community_shop.backend.DTO.other.ProductScoreDTO;
 import com.community_shop.backend.DTO.other.SellerScoreDTO;
 import com.community_shop.backend.VO.EvaluationCreateVO;
 import com.community_shop.backend.VO.EvaluationUpdateVO;
 import com.community_shop.backend.entity.Evaluation;
+import org.springframework.stereotype.Service;
 
 /**
  * 信用与评价Service接口，实现《文档》中评价提交、好评率统计、评价举报等核心功能
@@ -12,6 +14,7 @@ import com.community_shop.backend.entity.Evaluation;
  * 2. 《文档4_数据库工作（新）.docx》：user_evaluation表结构（eval_id、order_id、score等）
  * 3. 《代码文档1 Mapper层设计.docx》：EvaluationMapper的CRUD及评分统计方法
  */
+@Service
 public interface EvaluationService {
 
 
@@ -80,10 +83,19 @@ public interface EvaluationService {
      * 核心逻辑：调用EvaluationMapper统计平均评分、好评/中评/差评数，计算好评率
      * @param sellerId 卖家ID
      * @return 评分详情（平均评分、好评率、各星级数量）
-     * @see com.community_shop.backend.mapper.EvaluationMapper#selectAverageScore(Long)
-     * @see com.community_shop.backend.mapper.EvaluationMapper#countScoreLevel(Long, Integer, Integer)
+     * @see com.community_shop.backend.mapper.EvaluationMapper#selectSellerAverageScore(Long)
+     * @see com.community_shop.backend.mapper.EvaluationMapper#countSellerScoreLevel(Long, Integer, Integer) 
      */
     SellerScoreDTO calculateSellerScore(Long sellerId);
+
+    /**
+     * 统计商品评分（业务方法）
+     * 核心逻辑：调用EvaluationMapper统计商品评分
+     * @param productId 商品ID
+     * @see com.community_shop.backend.mapper.EvaluationMapper#selectSellerAverageScore(Long)
+     * @see com.community_shop.backend.mapper.EvaluationMapper#countProductScoreLevel(Long, Integer, Integer)
+     */
+    ProductScoreDTO calculateProductScore(Long productId);
 
 //    /**
 //     * 举报评价（业务方法）

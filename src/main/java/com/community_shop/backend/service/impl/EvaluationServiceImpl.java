@@ -1,5 +1,6 @@
 package com.community_shop.backend.service.impl;
 
+import com.community_shop.backend.DTO.other.ProductScoreDTO;
 import com.community_shop.backend.DTO.other.SellerScoreDTO;
 import com.community_shop.backend.VO.EvaluationCreateVO;
 import com.community_shop.backend.VO.EvaluationUpdateVO;
@@ -285,15 +286,15 @@ public class EvaluationServiceImpl implements EvaluationService {
         scoreDTO.setSellerId(sellerId);
 
         // 3. 查询平均评分
-        Double avgScore = evaluationMapper.selectAverageScore(sellerId);
+        Double avgScore = evaluationMapper.selectSellerAverageScore(sellerId);
         scoreDTO.setAverageScore(avgScore != null ? avgScore : 0.0);
 
         // 4. 统计各星级数量
-        int fiveStar = evaluationMapper.countScoreLevel(sellerId, 5, 5);
-        int fourStar = evaluationMapper.countScoreLevel(sellerId, 4, 4);
-        int threeStar = evaluationMapper.countScoreLevel(sellerId, 3, 3);
-        int twoStar = evaluationMapper.countScoreLevel(sellerId, 2, 2);
-        int oneStar = evaluationMapper.countScoreLevel(sellerId, 1, 1);
+        int fiveStar = evaluationMapper.countProductScoreLevel(sellerId, 5, 5);
+        int fourStar = evaluationMapper.countProductScoreLevel(sellerId, 4, 4);
+        int threeStar = evaluationMapper.countProductScoreLevel(sellerId, 3, 3);
+        int twoStar = evaluationMapper.countProductScoreLevel(sellerId, 2, 2);
+        int oneStar = evaluationMapper.countProductScoreLevel(sellerId, 1, 1);
 
         // 5. 设置星级统计数据
         scoreDTO.setFiveStarCount(fiveStar);
@@ -311,6 +312,47 @@ public class EvaluationServiceImpl implements EvaluationService {
 
         log.info("计算卖家评分完成，卖家ID：{}，总评价数：{}，平均评分：{}",
                 sellerId, total, scoreDTO.getAverageScore());
+        return scoreDTO;
+    }
+
+    @Override
+    public ProductScoreDTO calculateProductScore(Long productId) {
+        // 1. 参数校验
+        if (productId == null || productId <= 0) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "商品ID无效");
+        }
+
+        // 2. 初始化结果对象
+        ProductScoreDTO scoreDTO = new ProductScoreDTO();
+        scoreDTO.setProductId(productId);
+
+        // 3. 查询平均评分
+        Double avgScore = evaluationMapper.selectSellerAverageScore(productId);
+        scoreDTO.setAverageScore(avgScore != null ? avgScore : 0.0);
+
+        // 4. 统计各星级数量
+        int fiveStar = evaluationMapper.countProductScoreLevel(productId, 5, 5);
+        int fourStar = evaluationMapper.countProductScoreLevel(productId, 4, 4);
+        int threeStar = evaluationMapper.countProductScoreLevel(productId, 3, 3);
+        int twoStar = evaluationMapper.countProductScoreLevel(productId, 2, 2);
+        int oneStar = evaluationMapper.countProductScoreLevel(productId, 1, 1);
+
+        // 5. 设置星级统计数据
+        scoreDTO.setFiveStarCount(fiveStar);
+        scoreDTO.setFourStarCount(fourStar);
+        scoreDTO.setThreeStarCount(threeStar);
+        scoreDTO.setTwoStarCount(twoStar);
+        scoreDTO.setOneStarCount(oneStar);
+
+        // 6. 计算好评率（4-5星视为好评）
+        int total = fiveStar + fourStar + threeStar + twoStar + oneStar;
+        int positiveCount = fiveStar + fourStar;
+        int negativeCount = twoStar + oneStar;
+        scoreDTO.setPositiveRate(total > 0 ? (double) positiveCount / total * 100 : 0.0);
+        scoreDTO.setNegativeRate(total > 0 ? (double) negativeCount / total * 100 : 0.0);
+
+        log.info("计算商品评分完成，商品ID：{}，总评价数：{}，平均评分：{}",
+                productId, total, scoreDTO.getAverageScore());
         return scoreDTO;
     }
 

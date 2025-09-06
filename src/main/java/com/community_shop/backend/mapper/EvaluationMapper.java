@@ -72,7 +72,7 @@ public interface EvaluationMapper {
      * @return 平均评分
      */
     @Select("SELECT AVG(score) FROM evaluation WHERE seller_id = #{sellerId}")
-    double selectAverageScore(Long sellerId);
+    Double selectSellerAverageScore(Long sellerId);
 
     /**
      * 统计指定卖家在指定评分范围内的评价数量（好评/中评/差评数）
@@ -93,7 +93,38 @@ public interface EvaluationMapper {
             "<if test='maxScore != null'>AND score &lt;= #{maxScore}</if>",
             "</script>"
     })
-    int countScoreLevel(@Param("sellerId") Long sellerId,
+    int countSellerScoreLevel(@Param("sellerId") Long sellerId,
                         @Param("minScore") Integer minScore,
                         @Param("maxScore") Integer maxScore);
+
+
+    /**
+     * 统计指定产品的平均评分（好评率计算）
+     * @param productId 产品ID
+     * @return 平均评分
+     */
+    @Select({"SELECT AVG(e.score) FROM evaluation e JOIN `order` o ON e.order_id = o.order_id WHERE o.product_id = #{productId}"})
+    Double selectProductAverageScore(Long productId);
+
+    /**
+     * 统计指定产品的评分数量（好评/中评/差评数）
+     * @param productId 产品ID
+     * @param minScore 最低评分（含）
+     * @param maxScore 最高评分（含）
+     * @return 评分范围内的评价数量
+     */
+    // order 是 SQL 关键字（用于排序的 ORDER BY），作为表名时必须用反引号 ` 包裹，否则数据库会将其解析为关键字而非表名，导致逻辑错误。
+    // 在 MyBatis 的 @Select 注解中，>=、<= 等比较符号可以直接书写，无需转义为 &gt;=、&lt;=（转义通常用于 XML 配置文件，注解中冗余且降低可读性）。
+    @Select({
+            "<script>",
+            "SELECT COUNT(*)",
+            "FROM evaluation e",
+            "JOIN `order` o USING (order_id)",  // 修复：USING添加括号，order表名加反引号
+            "WHERE o.product_id = #{productId}",
+            "<if test='minScore != null'>AND e.score >= #{minScore}</if>",  // 优化：符号去转义
+            "<if test='maxScore != null'>AND e.score <= #{maxScore}</if>",  // 优化：符号去转义
+            "</script>"})
+    int countProductScoreLevel(@Param("productId") Long productId,
+                                @Param("minScore") Integer minScore,
+                                @Param("maxScore") Integer maxScore);
 }

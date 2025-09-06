@@ -3,7 +3,7 @@ package com.community_shop.backend.service.impl;
 import com.community_shop.backend.DTO.other.SellerScoreDTO;
 import com.community_shop.backend.VO.EvaluationCreateVO;
 import com.community_shop.backend.VO.EvaluationUpdateVO;
-import com.community_shop.backend.component.enums.UserRoleEnum;
+import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.component.enums.errorcode.ErrorCode;
 import com.community_shop.backend.component.exception.BusinessException;
 import com.community_shop.backend.entity.Evaluation;

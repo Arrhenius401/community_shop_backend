@@ -1,6 +1,6 @@
 package com.community_shop.backend.mapper;
 
-import com.community_shop.backend.component.enums.OrderStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import org.apache.ibatis.annotations.*;
 

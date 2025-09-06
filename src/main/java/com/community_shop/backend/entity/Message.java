@@ -1,7 +1,7 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.component.enums.MessageStatusEnum;
-import com.community_shop.backend.component.enums.MessageTypeEnum;
+import com.community_shop.backend.component.enums.codeEnum.MessageStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.MessageTypeEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;

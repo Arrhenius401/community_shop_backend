@@ -1,6 +1,6 @@
 package com.community_shop.backend.mapper;
 
-import com.community_shop.backend.component.enums.simple.ThirdPartyTypeEnum;
+import com.community_shop.backend.component.enums.simpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.UserThirdParty;
 import org.apache.ibatis.annotations.*;
 

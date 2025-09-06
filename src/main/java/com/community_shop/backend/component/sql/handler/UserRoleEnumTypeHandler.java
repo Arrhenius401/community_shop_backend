@@ -1,7 +1,6 @@
 package com.community_shop.backend.component.sql.handler;
 
-import com.community_shop.backend.component.enums.UserRoleEnum;
-import com.community_shop.backend.component.enums.UserStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

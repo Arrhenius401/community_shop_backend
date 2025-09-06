@@ -2,14 +2,12 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
-import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.VO.OrderCreateVO;
-import com.community_shop.backend.component.enums.OrderStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 交易流程Service接口，实现《文档》中订单创建、支付、售后等核心功能
@@ -49,7 +47,7 @@ public interface OrderService {
      * @param pageParam 分页参数（页码、每页条数）
      * @return 分页订单列表
      * @see com.community_shop.backend.mapper.OrderMapper#selectByBuyerId(Long, OrderStatusEnum, int, int)
-     * @see com.community_shop.backend.component.enums.OrderStatusEnum （订单状态枚举）
+     * @see OrderStatusEnum （订单状态枚举）
      */
     PageResult<Order> selectOrderByBuyer(Long buyerId, OrderStatusEnum status, PageParam pageParam);
 

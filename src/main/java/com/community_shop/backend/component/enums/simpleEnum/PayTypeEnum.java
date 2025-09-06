@@ -1,4 +1,4 @@
-package com.community_shop.backend.component.enums.simple;
+package com.community_shop.backend.component.enums.simpleEnum;
 
 public enum PayTypeEnum {
     WECHAT_PAY("微信支付"),

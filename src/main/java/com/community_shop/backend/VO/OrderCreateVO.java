@@ -1,6 +1,6 @@
 package com.community_shop.backend.VO;
 
-import com.community_shop.backend.component.enums.simple.PayTypeEnum;
+import com.community_shop.backend.component.enums.simpleEnum.PayTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

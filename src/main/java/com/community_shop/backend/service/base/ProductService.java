@@ -2,9 +2,9 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
-import com.community_shop.backend.DTO.result.ResultDTO;
 import com.community_shop.backend.VO.ProductUpdateVO;
 import com.community_shop.backend.VO.ProductVO;
+import com.community_shop.backend.component.enums.codeEnum.ProductConditionEnum;
 import com.community_shop.backend.entity.Product;
 import org.springframework.stereotype.Service;
 
@@ -92,7 +92,7 @@ public interface ProductService {
      * @return "发布成功" 或抛出异常
      * @see #insertProduct(Product)
      * @see UserService#selectUserById(Long)
-     * @see com.community_shop.backend.component.enums.ProductConditionEnum （商品成色枚举）
+     * @see ProductConditionEnum （商品成色枚举）
      */
     String publishProduct(ProductVO productVO, Long sellerId);
 

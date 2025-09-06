@@ -3,7 +3,7 @@ package com.community_shop.backend.service.impl;
 import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
 import com.community_shop.backend.VO.OrderCreateVO;
-import com.community_shop.backend.component.enums.OrderStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.OrderStatusEnum;
 import com.community_shop.backend.component.enums.errorcode.ErrorCode;
 import com.community_shop.backend.component.exception.BusinessException;
 import com.community_shop.backend.entity.Order;

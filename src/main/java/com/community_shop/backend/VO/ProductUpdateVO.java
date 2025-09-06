@@ -1,12 +1,10 @@
 package com.community_shop.backend.VO;
 
-import com.community_shop.backend.component.enums.ProductConditionEnum;
-import com.community_shop.backend.component.enums.ProductStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.ProductConditionEnum;
+import com.community_shop.backend.component.enums.codeEnum.ProductStatusEnum;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-
-import java.math.BigDecimal;
 
 
 /**

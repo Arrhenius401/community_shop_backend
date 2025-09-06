@@ -17,8 +17,8 @@ public interface OrderMapper {
      * @param order 订单实体
      * @return 插入结果影响行数
      */
-    @Insert("INSERT INTO order(product_id, buyer_id, seller_id, quantity, total_amount, address, buyer_remark, create_time, pay_time, status, pay_type) " +
-            "VALUES (#{productID}, #{buyerID}, #{sellerID}, #{quantity}, #{totalAmount}, #{address}, #{buyerRemark}, #{createTime}, #{payTime}, #{status}), #{payType}")
+    @Insert("INSERT INTO `order`(product_id, buyer_id, seller_id, quantity, total_amount, address, buyer_remark, create_time, pay_time, status, pay_type) " +
+            "VALUES (#{productID}, #{buyerID}, #{sellerID}, #{quantity}, #{totalAmount}, #{address}, #{buyerRemark}, #{createTime}, #{payTime}, #{status}, #{payType})")
     int insert(Order order);
 
     /**
@@ -26,7 +26,7 @@ public interface OrderMapper {
      * @param orderId 订单ID
      * @return 订单实体
      */
-    @Select("SELECT * FROM order WHERE order_id = #{orderId}")
+    @Select("SELECT * FROM `order` WHERE order_id = #{orderId}")
     Order selectById(Long orderId);
 
     /**
@@ -34,7 +34,7 @@ public interface OrderMapper {
      * @param orderId 订单ID
      * @return 删除结果影响行数
      */
-    @Delete("DELETE FROM order WHERE order_id = #{orderId}")
+    @Delete("DELETE FROM `order` WHERE order_id = #{orderId}")
     int deleteById(Long orderId);
 
 
@@ -46,7 +46,7 @@ public interface OrderMapper {
      * @param status 订单状态
      * @return 更新结果影响行数
      */
-    @Update("UPDATE order SET status = #{status} WHERE order_id = #{orderId}")
+    @Update("UPDATE `order` SET status = #{status} WHERE order_id = #{orderId}")
     int updateStatus(@Param("orderId") Long orderId, @Param("status") OrderStatusEnum status);
 
     /**
@@ -55,7 +55,7 @@ public interface OrderMapper {
      * @param payTime 支付时间
      * @return 更新结果影响行数
      */
-    @Update("UPDATE order SET pay_time = #{payTime} WHERE order_id = #{orderId}")
+    @Update("UPDATE `order` SET pay_time = #{payTime} WHERE order_id = #{orderId}")
     int updatePayTime(@Param("orderId") Long orderId, @Param("payTime") LocalDateTime payTime);
 
 
@@ -69,7 +69,7 @@ public interface OrderMapper {
      * @return 订单列表
      */
     @Select("<script>" +
-            "SELECT * FROM order WHERE buyer_id = #{buyerId} " +
+            "SELECT * FROM `order` WHERE buyer_id = #{buyerId} " +
             "<if test='status != null and status != \"\"'>AND status = #{status}</if> " +
             "ORDER BY create_time DESC " +
             "LIMIT #{offset}, #{limit}" +
@@ -88,7 +88,7 @@ public interface OrderMapper {
      * @return 订单列表
      */
     @Select("<script>" +
-            "SELECT * FROM order WHERE seller_id = #{sellerId} " +
+            "SELECT * FROM `order` WHERE seller_id = #{sellerId} " +
             "<if test='status != null and status != \"\"'>AND status = #{status}</if> " +
             "ORDER BY create_time DESC " +
             "LIMIT #{offset}, #{limit}" +
@@ -104,6 +104,6 @@ public interface OrderMapper {
      * @param status 订单状态
      * @return 订单数量
      */
-    @Select("SELECT COUNT(*) FROM order WHERE buyer_id = #{buyerId} AND status = #{status}")
+    @Select("SELECT COUNT(*) FROM `order` WHERE buyer_id = #{buyerId} AND status = #{status}")
     int countByBuyerId(@Param("buyerId") Long buyerId, @Param("status") OrderStatusEnum status);
 }

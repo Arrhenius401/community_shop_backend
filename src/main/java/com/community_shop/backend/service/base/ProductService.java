@@ -3,12 +3,10 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.DTO.param.PageParam;
 import com.community_shop.backend.DTO.result.PageResult;
 import com.community_shop.backend.VO.ProductUpdateVO;
-import com.community_shop.backend.VO.ProductVO;
+import com.community_shop.backend.VO.ProductCreateVO;
 import com.community_shop.backend.component.enums.codeEnum.ProductConditionEnum;
 import com.community_shop.backend.entity.Product;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 商品管理Service接口，实现《文档》中商品发布、搜索、库存管理等核心功能
@@ -19,20 +17,6 @@ import java.util.List;
  */
 @Service
 public interface ProductService {
-    // 获取所有商品
-    List<Product> getAllProducts();
-
-    // 获取商品详情
-    Product getProductById(int id);
-
-    // 添加商品
-    int addProduct(Product product);
-
-    // 更新商品信息
-    int updateProduct(Product product);
-
-    // 删除商品
-    int deleteProduct(int id);
 
     /**
      * 新增商品（基础CRUD）
@@ -87,14 +71,14 @@ public interface ProductService {
     /**
      * 发布商品（业务方法）
      * 核心逻辑：校验卖家信用分≥80分，校验成色合法性（仅"全新"/"9成新"等枚举），上传图片至OSS
-     * @param productVO 商品发布参数（类别、价格、成色、多图列表）
+     * @param productCreateVO 商品发布参数（类别、价格、成色、多图列表）
      * @param sellerId 卖家ID
-     * @return "发布成功" 或抛出异常
+     * @return 成功返回true，失败抛出异常或返回false
      * @see #insertProduct(Product)
      * @see UserService#selectUserById(Long)
      * @see ProductConditionEnum （商品成色枚举）
      */
-    String publishProduct(ProductVO productVO, Long sellerId);
+    Boolean publishProduct(ProductCreateVO productCreateVO, Long sellerId);
 
     /**
      * 更新商品库存（业务方法）

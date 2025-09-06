@@ -1,5 +1,6 @@
 package com.community_shop.backend.VO;
 
+import com.community_shop.backend.component.enums.simple.PayTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -12,6 +13,14 @@ import org.hibernate.validator.constraints.Length;
  */
 @Data
 public class OrderCreateVO {
+
+    /**
+     * 订单创建者ID
+     * 创建订单的用户ID，必传，用于定位下单用户
+     * 对应文档4中order表外键字段
+     */
+    @NotNull(message = "创建者ID不能为空")
+    private Long buyerId;
 
     /**
      * 商品ID
@@ -38,6 +47,13 @@ public class OrderCreateVO {
     private Integer quantity = 1;
 
     /**
+     * 订单总价
+     * 订单总价，默认为商品单价*购买数量
+     * 对应文档4中order表total_amount字段
+     */
+    private Double totalAmount;
+
+    /**
      * 买家留言
      * 买家对订单的特殊备注（如配送时间要求），非必传
      */
@@ -50,5 +66,5 @@ public class OrderCreateVO {
      * 对应文档2中支付流程的"支付平台"选择
      */
     @NotBlank(message = "支付方式不能为空")
-    private String payType;
+    private PayTypeEnum payType;
 }

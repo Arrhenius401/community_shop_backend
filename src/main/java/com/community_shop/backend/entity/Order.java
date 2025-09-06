@@ -1,6 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.community_shop.backend.VO.OrderCreateVO;
 import com.community_shop.backend.component.enums.OrderStatusEnum;
+import com.community_shop.backend.component.enums.simple.PayTypeEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ public class Order {
     private LocalDateTime createTime; // 下单时间
     private LocalDateTime payTime; // 支付时间
     private OrderStatusEnum status; // 订单状态
-    private String payType;     // 支付方式
+    private PayTypeEnum payType;     // 支付方式
 
     public Order(){}
 
@@ -34,5 +36,18 @@ public class Order {
         this.createTime = createTime;
         this.payTime = payTime;
         this.status = status;
+    }
+
+    public Order(OrderCreateVO orderCreateVO){
+        this.productId = orderCreateVO.getProductId();
+        this.buyerId = orderCreateVO.getBuyerId();
+        this.quantity = orderCreateVO.getQuantity();
+        this.totalAmount = orderCreateVO.getTotalAmount();
+        this.address = orderCreateVO.getAddress();
+        this.buyerRemark = orderCreateVO.getBuyerRemark();
+        this.payType = orderCreateVO.getPayType();
+
+        this.status = OrderStatusEnum.PENDING_PAYMENT;
+        this.createTime = LocalDateTime.now();
     }
 }

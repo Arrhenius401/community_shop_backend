@@ -17,8 +17,8 @@ public interface OrderMapper {
      * @param order 订单实体
      * @return 插入结果影响行数
      */
-    @Insert("INSERT INTO order(product_id, buyer_id, seller_id, quantity, total_amount, status, create_time, pay_time) " +
-            "VALUES (#{productID}, #{buyerID}, #{sellerID}, #{quantity}, #{totalAmount}, #{status}, #{createTime}, #{payTime})")
+    @Insert("INSERT INTO order(product_id, buyer_id, seller_id, quantity, total_amount, address, buyer_remark, create_time, pay_time, status, pay_type) " +
+            "VALUES (#{productID}, #{buyerID}, #{sellerID}, #{quantity}, #{totalAmount}, #{address}, #{buyerRemark}, #{createTime}, #{payTime}, #{status}), #{payType}")
     int insert(Order order);
 
     /**

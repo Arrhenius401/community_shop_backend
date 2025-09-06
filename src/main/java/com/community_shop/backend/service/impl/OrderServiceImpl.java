@@ -319,16 +319,12 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // 4. 构建订单实体
-            Order order = new Order();
-            order.setProductId(product.getProductId());
-            order.setBuyerId(buyerId);
+            Order order = new Order(orderCreateVO);
             order.setSellerId(product.getSellerId());
-            order.setTotalAmount(product.getPrice()); // 假设单价即总价（单商品下单）
-            order.setAddress(orderCreateVO.getAddress()); // 收货地址
 
             // 5. 调用基础方法插入订单
-            Long orderId = insertOrder(order);
-            order.setOrderId(orderId); // 回填订单ID
+            insertOrder(order);
+            Long orderId = order.getOrderId();
 
             // 6. 扣减商品库存（事务内操作，失败则回滚订单创建）
             productService.updateStock(product.getProductId(), -1, "下单扣减库存");

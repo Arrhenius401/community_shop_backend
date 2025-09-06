@@ -2,6 +2,8 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.VO.PostFollowCreateVO;
 import com.community_shop.backend.VO.PostFollowUpdateVO;
+import com.community_shop.backend.component.enums.codeEnum.PostFollowStatusEnum;
+import com.community_shop.backend.component.enums.codeEnum.PostStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import org.springframework.stereotype.Service;
 
@@ -67,13 +69,13 @@ public interface PostFollowService {
      */
     Long publishPostFollow(PostFollowCreateVO vo, Long userId);
 
-    /**
-     * 业务方法：更新跟帖点赞数
-     * @param postFollowId 跟帖唯一标识
-     * @param likeCount 最新点赞数（支持+1/-1调整）
-     * @return 影响行数（1=成功，0=未找到或已删除）
-     */
-    int updatePostFollowLikeCount(Long postFollowId, int likeCount);
+//    /**
+//     * 业务方法：更新跟帖点赞数
+//     * @param postFollowId 跟帖唯一标识
+//     * @param likeCount 最新点赞数（支持+1/-1调整）
+//     * @return 影响行数（1=成功，0=未找到或已删除）
+//     */
+//    int updatePostFollowLikeCount(Long postFollowId, int likeCount);
 
     /**
      * 业务方法：更新跟帖状态（管理员操作）
@@ -82,5 +84,5 @@ public interface PostFollowService {
      * @param adminId 管理员ID
      * @return 影响行数（1=成功，0=未找到或无权限）
      */
-    int updatePostFollowStatus(Long postFollowId, String status, Long adminId);
+    int updatePostFollowStatus(Long postFollowId, PostFollowStatusEnum status, Long adminId);
 }

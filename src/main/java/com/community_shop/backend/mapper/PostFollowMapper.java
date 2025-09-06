@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.community_shop.backend.component.enums.codeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import org.apache.ibatis.annotations.*;
 
@@ -86,5 +87,5 @@ public interface PostFollowMapper {
     @Update("UPDATE post_follow " +
             "SET status = #{status}, update_time = NOW() " +
             "WHERE post_follow_id = #{postFollowId} AND is_deleted = 0")
-    int updateStatus(@Param("postFollowId") Long postFollowId, @Param("status") String status);
+    int updateStatus(@Param("postFollowId") Long postFollowId, @Param("status") PostFollowStatusEnum status);
 }

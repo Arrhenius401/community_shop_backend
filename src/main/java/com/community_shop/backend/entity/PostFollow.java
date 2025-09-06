@@ -16,12 +16,12 @@ public class PostFollow {
     private int likeCount;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private boolean isDeleted;
     private PostFollowStatusEnum status;
+
 
     public PostFollow(){}
 
-    public PostFollow(Long postFollowId, Long postId, Long userId, String content, int likeCount, LocalDateTime createTime, LocalDateTime updateTime, boolean isDeleted, PostFollowStatusEnum status) {
+    public PostFollow(Long postFollowId, Long postId, Long userId, String content, int likeCount, LocalDateTime createTime, LocalDateTime updateTime, PostFollowStatusEnum status) {
         this.postFollowId = postFollowId;
         this.postId = postId;
         this.userId = userId;
@@ -29,7 +29,6 @@ public class PostFollow {
         this.likeCount = likeCount;
         this.createTime = createTime;
         this.updateTime = updateTime;
-        this.isDeleted = isDeleted;
         this.status = status;
     }
 
@@ -42,6 +41,5 @@ public class PostFollow {
         this.status = PostFollowStatusEnum.NORMAL;
         this.createTime = LocalDateTime.now();
         this.updateTime = LocalDateTime.now();
-        this.isDeleted = false;
     }
 }

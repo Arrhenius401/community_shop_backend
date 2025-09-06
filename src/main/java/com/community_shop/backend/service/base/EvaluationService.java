@@ -1,11 +1,9 @@
 package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.DTO.other.SellerScoreDTO;
-import com.community_shop.backend.DTO.result.ResultDTO;
-import com.community_shop.backend.VO.EvaluationVO;
+import com.community_shop.backend.VO.EvaluationCreateVO;
+import com.community_shop.backend.VO.EvaluationUpdateVO;
 import com.community_shop.backend.entity.Evaluation;
-
-import java.util.List;
 
 /**
  * 信用与评价Service接口，实现《文档》中评价提交、好评率统计、评价举报等核心功能
@@ -15,20 +13,7 @@ import java.util.List;
  * 3. 《代码文档1 Mapper层设计.docx》：EvaluationMapper的CRUD及评分统计方法
  */
 public interface EvaluationService {
-    // 获取所有评价
-    List<Evaluation> getAllEvaluations();
 
-    // 获取评价详情
-    Evaluation getEvaluationById(int id);
-
-    // 添加评价
-    int addEvaluation(Evaluation evaluation);
-
-    // 更新评价信息
-    int updateEvaluation(Evaluation evaluation);
-
-    // 删除评价
-    int deleteEvaluation(int id);
 
     /**
      * 新增评价（基础CRUD）
@@ -61,13 +46,12 @@ public interface EvaluationService {
     /**
      * 更新评价内容（基础CRUD）
      * 核心逻辑：校验仅评价者可操作，调用EvaluationMapper.updateById更新内容
-     * @param evalId 评价ID
-     * @param newContent 新评价内容
+     * @param evaluationUpdateVO 评价更新参数（评价ID、新内容）
      * @param userId 操作用户ID（需与评价userId一致）
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.EvaluationMapper#updateById(Evaluation)
      */
-    Boolean updateEvaluationContent(Long evalId, String newContent, Long userId);
+    Boolean updateEvaluationContent(EvaluationUpdateVO evaluationUpdateVO, Long userId);
 
     /**
      * 按评价ID删除（基础CRUD，逻辑删除）
@@ -82,14 +66,14 @@ public interface EvaluationService {
     /**
      * 提交评价（业务方法）
      * 核心逻辑：校验订单状态为"已完成"、未评价，提交评价后同步更新卖家信用分（好评+5/差评-10）
-     * @param evaluationVO 评价提交参数（订单ID、评分、内容）
+     * @param evaluationCreateVO 评价提交参数（订单ID、评分、内容）
      * @param buyerId 买家ID（评价者，需与订单buyer_id一致）
      * @return "评价提交成功" 或抛出异常
      * @see #insertEvaluation(Evaluation)
      * @see OrderService#selectOrderById(Long, Long)
      * @see UserService#updateCreditScore(Long, Integer, String)
      */
-    String submitEvaluation(EvaluationVO evaluationVO, Long buyerId);
+    String submitEvaluation(EvaluationCreateVO evaluationCreateVO, Long buyerId);
 
     /**
      * 计算卖家评分（业务方法）

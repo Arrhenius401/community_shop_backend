@@ -66,17 +66,6 @@ public interface UserMapper {
     void insertDefaultUser(String username, String email, String phoneNumber, String password,
                            String initDate, String role, String status);
 
-    // 添加用户
-    @Insert("INSERT user(username, email, phone_number, password, init_date, status) \n" +
-            "values(#{username}, #{email}, #{phoneNumber}, #{password},  #{initDate}, #{status});")
-    int addUser(User user);
-
-
-    // UPDATE语句
-    // 更新用户名
-    @Update("UPDATE user SET username = #{username} WHERE user_id = #{id}")
-    int updateUsername(String username, Long id);
-
     // 更新密码
     @Update("UPDATE user SET password = #{password} WHERE user_id = #{id}")
     int updateUserPassword(String password, Long id);
@@ -88,12 +77,6 @@ public interface UserMapper {
     // 更新角色
     @Update("UPDATE user SET role = #{role} WHERE user_id = #{id}")
     int updateUserRole(UserRoleEnum role, Long id);
-
-
-    // DELETE语句
-    // 删除用户
-    @Delete("DELETE FROM users WHERE user_id = #{id}")
-    int deleteUser(Long id);
 
 
     // 基础CRUD

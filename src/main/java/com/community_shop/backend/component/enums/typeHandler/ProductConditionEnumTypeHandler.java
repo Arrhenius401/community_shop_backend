@@ -1,4 +1,4 @@
-package com.community_shop.backend.component.sql.handler;
+package com.community_shop.backend.component.enums.typeHandler;
 
 import com.community_shop.backend.component.enums.codeEnum.ProductConditionEnum;
 import org.apache.ibatis.type.BaseTypeHandler;

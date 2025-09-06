@@ -13,6 +13,7 @@ public enum ErrorCode {
     DATA_UPDATE_FAILED("SYSTEM_011", "数据更新失败"),
     DATA_DELETE_FAILED("SYSTEM_012", "数据删除失败"),
     DATA_INSERT_FAILED("SYSTEM_013", "数据插入失败"),
+    DATA_QUERY_FAILED("SYSTEM_014", "数据查询失败"),
 
     PERMISSION_UNAUTHORIZED("SYSTEM_021", "未认证"),
     PERMISSION_DENIED("SYSTEM_022", "无权限"),

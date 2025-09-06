@@ -17,6 +17,8 @@ public enum ErrorCode {
     PERMISSION_UNAUTHORIZED("SYSTEM_021", "未认证"),
     PERMISSION_DENIED("SYSTEM_022", "无权限"),
 
+    OPERATION_REPEAT("SYSTEM_051", "操作重复"),
+
     SYSTEM_ERROR("SYSTEM_100", "系统错误"),
 
     // 业务错误

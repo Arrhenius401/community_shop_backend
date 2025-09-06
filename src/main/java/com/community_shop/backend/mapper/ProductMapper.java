@@ -110,4 +110,32 @@ public interface ProductMapper {
                                    @Param("offset") int offset,
                                    @Param("limit") int limit);
 
+    /**
+     * 根据关键词模糊查询商品数量
+     * @param keyword 关键词
+     * @return 商品数量
+     */
+    @Select("SELECT COUNT(*) FROM product WHERE title LIKE CONCAT('%', #{keyword}, '%')")
+    int countByKeyword(@Param("keyword") String keyword);
+
+    /**
+     * 根据类别、价格、成色等条件查询商品数量
+     * @param category 类别
+     * @param minPrice 最低价格
+     * @param maxPrice 最高价格
+     * @param condition 成色
+     * @return 商品数量
+     */
+    @Select("<script>" +
+            "SELECT * FROM product " +
+            "WHERE 1=1 " +
+            "<if test='category != null and category != \"\"'>AND category = #{category}</if> " +
+            "<if test='minPrice != null'>AND price >= #{minPrice}</if> " +
+            "<if test='maxPrice != null'>AND price <= #{maxPrice}</if> " +
+            "<if test='condition != null and condition != \"\"'>AND condition = #{condition}</if> " +
+            "</script>")
+    int countByCondition(@Param("category") String category,
+                        @Param("minPrice") Double minPrice,
+                        @Param("maxPrice") Double maxPrice,
+                        @Param("condition") String condition);
 }

@@ -3,7 +3,7 @@ package com.community_shop.backend.VO;
 import lombok.Data;
 
 @Data
-public class ProductVO {
+public class ProductCreateVO {
     // 商品标题（非空，长度1-100）
     private String title;
 

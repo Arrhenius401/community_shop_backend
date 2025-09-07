@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.VO.OrderCreateVO;
+import com.community_shop.backend.vo.order.OrderCreateVO;
 import com.community_shop.backend.component.enums.codeEnum.OrderStatusEnum;
 import com.community_shop.backend.component.enums.simpleEnum.PayTypeEnum;
 import lombok.Data;

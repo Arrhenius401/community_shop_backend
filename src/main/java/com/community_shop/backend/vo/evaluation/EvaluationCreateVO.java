@@ -1,4 +1,4 @@
-package com.community_shop.backend.VO;
+package com.community_shop.backend.vo.evaluation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

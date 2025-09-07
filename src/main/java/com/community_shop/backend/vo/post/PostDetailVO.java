@@ -1,4 +1,4 @@
-package com.community_shop.backend.VO;
+package com.community_shop.backend.vo.post;
 
 import com.community_shop.backend.entity.Post;
 import lombok.Data;

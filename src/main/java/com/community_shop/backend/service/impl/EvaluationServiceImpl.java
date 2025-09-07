@@ -1,9 +1,9 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.DTO.other.ProductScoreDTO;
-import com.community_shop.backend.DTO.other.SellerScoreDTO;
-import com.community_shop.backend.VO.EvaluationCreateVO;
-import com.community_shop.backend.VO.EvaluationUpdateVO;
+import com.community_shop.backend.dto.evaluation.ProductScoreDTO;
+import com.community_shop.backend.dto.evaluation.SellerScoreDTO;
+import com.community_shop.backend.vo.evaluation.EvaluationCreateVO;
+import com.community_shop.backend.vo.evaluation.EvaluationUpdateVO;
 import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.component.enums.errorcode.ErrorCode;
 import com.community_shop.backend.component.exception.BusinessException;

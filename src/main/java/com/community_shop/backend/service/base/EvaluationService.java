@@ -1,9 +1,9 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.DTO.other.ProductScoreDTO;
-import com.community_shop.backend.DTO.other.SellerScoreDTO;
-import com.community_shop.backend.VO.EvaluationCreateVO;
-import com.community_shop.backend.VO.EvaluationUpdateVO;
+import com.community_shop.backend.dto.evaluation.ProductScoreDTO;
+import com.community_shop.backend.dto.evaluation.SellerScoreDTO;
+import com.community_shop.backend.vo.evaluation.EvaluationCreateVO;
+import com.community_shop.backend.vo.evaluation.EvaluationUpdateVO;
 import com.community_shop.backend.entity.Evaluation;
 import org.springframework.stereotype.Service;
 
@@ -103,7 +103,7 @@ public interface EvaluationService {
 //     * @param evalId 被举报评价ID
 //     * @param reason 举报原因（如"虚假评价"/"辱骂内容"）
 //     * @param reporterId 举报者ID
-//     * @return ResultDTO<String> 成功返回"举报提交成功"，失败返回错误信息
+//     * @return ResultVO<String> 成功返回"举报提交成功"，失败返回错误信息
 //     * @see com.community_shop.backend.mapper.EvaluationReportMapper#insert(Long, String, Long)
 //     * @see #deleteEvaluationById(Long, Long)
 //     */

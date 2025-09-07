@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.VO.EvaluationCreateVO;
+import com.community_shop.backend.vo.evaluation.EvaluationCreateVO;
 import com.community_shop.backend.component.enums.codeEnum.EvaluationStatusEnum;
 import lombok.Data;
 

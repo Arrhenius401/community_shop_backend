@@ -1,9 +1,9 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.DTO.param.PageParam;
-import com.community_shop.backend.DTO.result.PageResult;
-import com.community_shop.backend.VO.ProductUpdateVO;
-import com.community_shop.backend.VO.ProductCreateVO;
+import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.dto.PageResult;
+import com.community_shop.backend.vo.product.ProductUpdateVO;
+import com.community_shop.backend.vo.product.ProductCreateVO;
 import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.component.enums.errorcode.ErrorCode;
 import com.community_shop.backend.component.exception.BusinessException;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;

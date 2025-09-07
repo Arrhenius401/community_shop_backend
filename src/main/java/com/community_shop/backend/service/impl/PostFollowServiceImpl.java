@@ -1,7 +1,7 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.VO.PostFollowCreateVO;
-import com.community_shop.backend.VO.PostFollowUpdateVO;
+import com.community_shop.backend.vo.post.PostFollowCreateVO;
+import com.community_shop.backend.vo.post.PostFollowUpdateVO;
 import com.community_shop.backend.component.enums.codeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.component.enums.codeEnum.PostStatusEnum;
 import com.community_shop.backend.component.enums.errorcode.ErrorCode;
@@ -23,9 +23,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 跟帖模块Service实现类

@@ -1,8 +1,7 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.DTO.param.PageParam;
-import com.community_shop.backend.DTO.result.PageResult;
-import com.community_shop.backend.DTO.result.ResultDTO;
+import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.entity.Message;
 import org.springframework.stereotype.Service;
 

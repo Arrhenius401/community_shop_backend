@@ -1,4 +1,4 @@
-package com.community_shop.backend.DTO.param;
+package com.community_shop.backend.dto.user;
 
 import lombok.Data;
 

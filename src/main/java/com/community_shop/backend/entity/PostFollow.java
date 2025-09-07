@@ -1,7 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.VO.PostFollowCreateVO;
-import com.community_shop.backend.VO.ProductCreateVO;
+import com.community_shop.backend.vo.post.PostFollowCreateVO;
 import com.community_shop.backend.component.enums.codeEnum.PostFollowStatusEnum;
 import lombok.Data;
 

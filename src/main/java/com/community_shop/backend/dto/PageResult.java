@@ -1,4 +1,4 @@
-package com.community_shop.backend.DTO.result;
+package com.community_shop.backend.dto;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.community_shop.backend.VO;
+package com.community_shop.backend.vo.product;
 
 import com.community_shop.backend.component.enums.codeEnum.ProductConditionEnum;
 import com.community_shop.backend.component.enums.codeEnum.ProductStatusEnum;

@@ -1,7 +1,7 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.VO.RegisterVO;
-import com.community_shop.backend.VO.UserProfileVO;
+import com.community_shop.backend.vo.user.RegisterVO;
+import com.community_shop.backend.vo.user.UserProfileVO;
 import com.community_shop.backend.component.enums.simpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.component.enums.codeEnum.UserStatusEnum;

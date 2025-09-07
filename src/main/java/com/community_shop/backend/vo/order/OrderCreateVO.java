@@ -1,4 +1,4 @@
-package com.community_shop.backend.VO;
+package com.community_shop.backend.vo.order;
 
 import com.community_shop.backend.component.enums.simpleEnum.PayTypeEnum;
 import jakarta.validation.constraints.NotBlank;

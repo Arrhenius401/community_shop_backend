@@ -1,9 +1,9 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.DTO.param.PageParam;
-import com.community_shop.backend.DTO.result.PageResult;
-import com.community_shop.backend.VO.PostDetailVO;
-import com.community_shop.backend.VO.PostUpdateVO;
+import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.dto.PageResult;
+import com.community_shop.backend.vo.post.PostDetailVO;
+import com.community_shop.backend.vo.post.PostUpdateVO;
 import com.community_shop.backend.component.enums.codeEnum.PostStatusEnum;
 import com.community_shop.backend.component.enums.errorcode.ErrorCode;
 import com.community_shop.backend.component.exception.BusinessException;

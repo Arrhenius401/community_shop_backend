@@ -1,6 +1,6 @@
-package com.community_shop.backend.component.exception;
+package com.community_shop.backend.exception;
 
-import com.community_shop.backend.component.enums.errorcode.ErrorCode;
+import com.community_shop.backend.enums.errorcode.ErrorCode;
 
 public class BusinessException extends RuntimeException {
     private final String code;

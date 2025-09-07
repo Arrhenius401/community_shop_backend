@@ -1,7 +1,7 @@
 package com.community_shop.backend.vo.product;
 
-import com.community_shop.backend.component.enums.codeEnum.ProductConditionEnum;
-import com.community_shop.backend.component.enums.codeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.codeEnum.ProductConditionEnum;
+import com.community_shop.backend.enums.codeEnum.ProductStatusEnum;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

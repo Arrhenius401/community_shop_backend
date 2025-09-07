@@ -2,10 +2,10 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.vo.post.PostFollowCreateVO;
 import com.community_shop.backend.vo.post.PostFollowUpdateVO;
-import com.community_shop.backend.component.enums.codeEnum.PostFollowStatusEnum;
-import com.community_shop.backend.component.enums.codeEnum.PostStatusEnum;
-import com.community_shop.backend.component.enums.errorcode.ErrorCode;
-import com.community_shop.backend.component.exception.BusinessException;
+import com.community_shop.backend.enums.codeEnum.PostFollowStatusEnum;
+import com.community_shop.backend.enums.codeEnum.PostStatusEnum;
+import com.community_shop.backend.enums.errorcode.ErrorCode;
+import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.PostFollow;
 import com.community_shop.backend.entity.User;

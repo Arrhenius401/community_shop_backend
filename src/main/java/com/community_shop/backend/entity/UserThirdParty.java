@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.component.enums.simpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;

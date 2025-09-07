@@ -1,9 +1,9 @@
 package com.community_shop.backend.entity;
 
 
-import com.community_shop.backend.component.enums.codeEnum.GenderEnum;
-import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
-import com.community_shop.backend.component.enums.codeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.codeEnum.GenderEnum;
+import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

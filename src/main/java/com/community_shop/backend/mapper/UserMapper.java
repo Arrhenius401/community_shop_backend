@@ -1,7 +1,7 @@
 package com.community_shop.backend.mapper;
 
-import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
-import com.community_shop.backend.component.enums.codeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
 import com.community_shop.backend.entity.User;
 import org.apache.ibatis.annotations.*;
 

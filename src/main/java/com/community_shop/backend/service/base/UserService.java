@@ -2,9 +2,9 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.vo.user.RegisterVO;
 import com.community_shop.backend.vo.user.UserProfileVO;
-import com.community_shop.backend.component.enums.simpleEnum.ThirdPartyTypeEnum;
-import com.community_shop.backend.component.enums.codeEnum.UserRoleEnum;
-import com.community_shop.backend.component.enums.codeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
 import com.community_shop.backend.entity.User;
 import org.springframework.stereotype.Service;
 

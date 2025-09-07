@@ -2,7 +2,7 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.vo.post.PostFollowCreateVO;
 import com.community_shop.backend.vo.post.PostFollowUpdateVO;
-import com.community_shop.backend.component.enums.codeEnum.PostFollowStatusEnum;
+import com.community_shop.backend.enums.codeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import org.springframework.stereotype.Service;
 

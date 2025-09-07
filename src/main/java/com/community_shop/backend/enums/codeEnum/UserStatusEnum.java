@@ -1,4 +1,4 @@
-package com.community_shop.backend.component.enums.codeEnum;
+package com.community_shop.backend.enums.codeEnum;
 
 public enum UserStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）

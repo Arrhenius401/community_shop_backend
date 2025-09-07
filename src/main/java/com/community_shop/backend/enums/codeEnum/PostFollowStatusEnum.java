@@ -1,4 +1,4 @@
-package com.community_shop.backend.component.enums.codeEnum;
+package com.community_shop.backend.enums.codeEnum;
 
 public enum PostFollowStatusEnum {
     // code：数据库存储标识（适配varchar类型）；desc：状态描述（用于前端展示/业务逻辑说明）

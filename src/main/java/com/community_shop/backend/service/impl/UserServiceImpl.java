@@ -388,4 +388,16 @@ public class UserServiceImpl implements UserService {
         // 使用加密器的matches方法验证原始密码与加密密码是否匹配
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
+
+    /**
+     * 验证用户角色（通过Token）
+     */
+    @Override
+    public Boolean verifyRole(Long userId, UserRoleEnum role) {
+        User user = selectUserById(userId);
+        if (user == null) {
+            return false;
+        }
+        return user.getRole().equals(role);
+    }
 }

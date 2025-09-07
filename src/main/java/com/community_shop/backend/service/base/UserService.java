@@ -99,6 +99,14 @@ public interface UserService {
     Boolean verifyPassword(String rawPassword, String encodedPassword);
 
     /**
+     * 验证用户角色（业务方法）
+     * @param userId
+     * @param role
+     * @return 验证结果（true/false）
+     */
+    Boolean verifyRole(Long userId, UserRoleEnum role);
+
+    /**
      * 用户注册（业务方法）
      * 核心逻辑：校验手机号/邮箱唯一性、验证码有效性，调用insertUser完成注册
      * @param registerVO 注册参数（手机号/邮箱、密码、验证码）

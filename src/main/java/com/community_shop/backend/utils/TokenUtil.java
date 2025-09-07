@@ -1,6 +1,8 @@
 package com.community_shop.backend.utils;
 
+import com.community_shop.backend.service.base.UserService;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -9,8 +11,12 @@ import java.util.function.Function;
 
 @Component
 public class TokenUtil {
+
     private static long EXPIRATION = 1000*60*60*24;  //过期时间
     private static String KEY = "z4Z6e7J9H0k3N5q8T1w4Z7C9v2B5y8D1f4G7j1K4m6P9s3U6x0A8t5F2w7R0"; //签名
+
+    @Autowired
+    private UserService userService;
 
     //生成令牌
     public String generateToken(String subject, String userID, String username, String role, String status){
@@ -60,7 +66,7 @@ public class TokenUtil {
     }
 
     //从令牌中获取用户ID
-    public Long getUserIDFromToken(String token){
+    public Long getUserIdByToken(String token){
         Long userID = null;
         Claims claims = getAllClaimsFromToken(token);
         String userIDString = claims.get("userId").toString();
@@ -121,8 +127,14 @@ public class TokenUtil {
 
     //判断令牌是否有效
     public Boolean validateToken(String token,Long userID){
-        final Long tokenUserID = getUserIDFromToken(token);
+        final Long tokenUserID = getUserIdByToken(token);
         return (tokenUserID.equals(userID) && !isTokenExpired(token));
+    }
+
+    public Boolean validateToken(String token){
+        final Long tokenUserID = getUserIdByToken(token);
+        userService.selectUserById(tokenUserID);
+        return !isTokenExpired(token);
     }
 
     //输出令牌信息

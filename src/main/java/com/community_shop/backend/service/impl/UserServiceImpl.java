@@ -1,7 +1,9 @@
 package com.community_shop.backend.service.impl;
 
+import com.community_shop.backend.dto.user.LoginDTO;
+import com.community_shop.backend.enums.simpleEnum.LoginTypeEnum;
 import com.community_shop.backend.vo.user.RegisterVO;
-import com.community_shop.backend.vo.user.UserProfileVO;
+import com.community_shop.backend.vo.user.UserProfileUpdateVO;
 import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
@@ -143,7 +145,7 @@ public class UserServiceImpl implements UserService {
      * 更新用户资料（仅允许修改非敏感字段）
      */
     @Override
-    public Boolean updateUserProfile(Long userId, UserProfileVO profileVO) {
+    public Boolean updateUserProfile(Long userId, UserProfileUpdateVO profileVO) {
         if (userId == null || profileVO == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }
@@ -293,6 +295,57 @@ public class UserServiceImpl implements UserService {
 
         // 4. 生成登录Token
         return tokenUtil.generateToken( "USER", user.getUserId().toString());
+    }
+
+    /**
+     * 用户登录（登录凭证+密码模式）
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public String login(LoginDTO loginDTO) {
+        // 1. 参数校验（保持不变）
+        if(loginDTO == null || !StringUtils.hasText(loginDTO.getCredential())
+                || loginDTO.getLoginType() == null || loginDTO.getLoginId() == null){
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        try {
+            // 2. 根据登录凭证查询用户
+            LoginTypeEnum loginType = loginDTO.getLoginType();
+            User user = null;
+            switch (loginType){
+                case EMAIL:
+                    user = userMapper.selectByEmail(loginDTO.getLoginId());
+                    if (user == null) {
+                        throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+                    }
+                    if (!verifyPassword(loginDTO.getCredential(), user.getPassword())) {
+                        throw new BusinessException(ErrorCode.PASSWORD_ERROR);
+                    }
+                    break;
+
+                case PHONE_NUMBER:
+                    user = userMapper.selectByPhone(loginDTO.getLoginId());
+                    if (user == null) {
+                        throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+                    }
+                    if (!verifyPassword(loginDTO.getCredential(), user.getPassword())) {
+                        throw new BusinessException(ErrorCode.PASSWORD_ERROR);
+                    }
+                    break;
+            }
+
+            // 3. 校验用户存在
+            if (user == null){
+                throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+            }
+            return tokenUtil.generateToken("USER", user.getUserId().toString());
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户登录失败：{}", e.getMessage());
+            throw new BusinessException(ErrorCode.FAILURE);
+        }
     }
 
     /**

@@ -40,7 +40,7 @@ public enum ErrorCode {
     STATUS_ERROR("USER_022","用户状态参数错误"),
 
     USER_NOT_EXISTS("USER_031", "用户不存在"),
-    PASSWORD_WRONG("USER_032", "密码错误"),
+    PASSWORD_ERROR("USER_032", "密码错误"),
 
     CREDIT_TOO_LOW("USER_051", "用户积分不足"),
 

@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.user;
 
+import com.community_shop.backend.enums.simpleEnum.LoginTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -14,7 +15,7 @@ public class LoginDTO {
      * 依据：系统设计文档“注册登录支持手机号+验证码、邮箱+密码”，需区分登录方式
      */
     @NotBlank(message = "登录类型不能为空")
-    private String loginType;
+    private LoginTypeEnum loginType;
 
     /**
      * 登录标识（用户名/手机号）
@@ -37,17 +38,13 @@ public class LoginDTO {
     private String verifyCode;
 
 
-    private String email;
-    private String phoneNumber;
-    private String password;
-
     // 辅助方法：判断是否为手机号登录（用于Controller层参数适配）
     public boolean isPhoneLogin() {
-        return "PHONE".equals(this.loginType);
+        return LoginTypeEnum.PHONE_NUMBER.equals(this.loginType);
     }
 
     // 辅助方法：判断是否为邮箱密码登录（用于Controller层参数适配）
     public boolean isEmailLogin() {
-        return "EMAIL".equals(this.loginType);
+        return LoginTypeEnum.EMAIL.equals(this.loginType);
     }
 }

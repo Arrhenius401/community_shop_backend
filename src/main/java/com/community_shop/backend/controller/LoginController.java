@@ -1,9 +1,6 @@
 package com.community_shop.backend.controller;
 
-import com.community_shop.backend.dto.user.LoginParam;
-import com.community_shop.backend.entity.User;
-import com.community_shop.backend.entity.LocalToken;
-import com.community_shop.backend.service.LoginService;
+import com.community_shop.backend.service.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +11,7 @@ public class LoginController {
 
     //接入数据库中user图表
     @Autowired
-    private LoginService loginService;
+    private UserService userService;
 
     //联网测试方法
     @RequestMapping("/api/hello")
@@ -22,34 +19,34 @@ public class LoginController {
         return  "hello Sping boot 333";
     }
 
-    //数据库测试方法
-    @RequestMapping("/api/getUser")
-    public List<User> getUser(){
-        return loginService.getUser();
-    }
+//    //数据库测试方法
+//    @RequestMapping("/api/getUser")
+//    public List<User> getUser(){
+//        return loginService.getUser();
+//    }
 
-    @RequestMapping({"/api/login/email"})
-    public LocalToken loginByEmail(@RequestBody LoginParam request){
-        String email = request.getEmail();
-        String password = request.getPassword();
+//    @RequestMapping({"/api/login/email"})
+//    public LocalToken loginByEmail(@RequestBody LoginDTO request){
+//        String email = request.getEmail();
+//        String password = request.getPassword();
+//
+//        System.out.println("收到登录请求: " + "email = " + email + "; password = " + password); // 添加日志
+//        LocalToken response = loginService.loginByEmail(email, password);
+//        System.out.println("登录请求状态: " + response.getStatus());  //添加日志
+//
+//        return response;
+//    }
 
-        System.out.println("收到登录请求: " + "email = " + email + "; password = " + password); // 添加日志
-        LocalToken response = loginService.loginByEmail(email, password);
-        System.out.println("登录请求状态: " + response.getStatus());  //添加日志
-
-        return response;
-    }
-
-    @RequestMapping({"/api/login/phoneNumber"})
-    public LocalToken loginByPhoneNumber(@RequestBody LoginParam request){
-        String phoneNumber = request.getPhoneNumber();
-        String password = request.getPassword();
-
-        System.out.println("收到登录请求: " + "phoneNumber = " + phoneNumber + "; password = " + password); // 添加日志
-        LocalToken response = loginService.loginByPhoneNumber(phoneNumber, password);
-        System.out.println("登录请求状态: " + response.getStatus());  //添加日志
-
-        return response;
-    }
+//    @RequestMapping({"/api/login/phoneNumber"})
+//    public LocalToken loginByPhoneNumber(@RequestBody LoginDTO request){
+//        String phoneNumber = request.getPhoneNumber();
+//        String password = request.getPassword();
+//
+//        System.out.println("收到登录请求: " + "phoneNumber = " + phoneNumber + "; password = " + password); // 添加日志
+//        LocalToken response = loginService.loginByPhoneNumber(phoneNumber, password);
+//        System.out.println("登录请求状态: " + response.getStatus());  //添加日志
+//
+//        return response;
+//    }
 
 }

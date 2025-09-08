@@ -1,7 +1,8 @@
 package com.community_shop.backend.service.base;
 
+import com.community_shop.backend.dto.user.LoginDTO;
 import com.community_shop.backend.vo.user.RegisterVO;
-import com.community_shop.backend.vo.user.UserProfileVO;
+import com.community_shop.backend.vo.user.UserProfileUpdateVO;
 import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
@@ -49,11 +50,11 @@ public interface UserService {
      * 更新用户资料（基础CRUD）
      * 核心逻辑：校验用户身份，调用UserMapper.updateById更新非敏感字段（昵称、头像等）
      * @param userId 用户ID（当前操作用户）
-     * @param userProfileVO 资料更新参数（含昵称、头像、兴趣标签）
+     * @param userProfileUpdateVO 资料更新参数（含昵称、头像、兴趣标签）
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.UserMapper#updateById(User)
      */
-    Boolean updateUserProfile(Long userId, UserProfileVO userProfileVO);
+    Boolean updateUserProfile(Long userId, UserProfileUpdateVO userProfileUpdateVO);
 
     /**
      * 按用户ID删除（基础CRUD，逻辑删除）
@@ -110,18 +111,27 @@ public interface UserService {
      * 用户注册（业务方法）
      * 核心逻辑：校验手机号/邮箱唯一性、验证码有效性，调用insertUser完成注册
      * @param registerVO 注册参数（手机号/邮箱、密码、验证码）
-     * @return "注册成功" 或抛出异常
+     * @return token 或抛出异常
      * @see #insertUser(User)
      * @see #selectUserByPhone(String)
      */
     String register(RegisterVO registerVO);
 
     /**
+     * 用户登录（业务方法）
+     * 核心逻辑：校验手机号/邮箱/密码，生成登录Token
+     * @param loginDTO 登录参数（手机号/邮箱、密码）
+     * @return token 或抛出异常
+     * @see #selectUserByPhone(String)
+     */
+    String login(LoginDTO loginDTO);
+
+    /**
      * 第三方登录（业务方法）
      * 核心逻辑：调用第三方接口获取OpenID，未绑定则自动注册，生成登录Token
      * @param platform 第三方平台（微信/QQ，枚举值："WECHAT"、"QQ"）
      * @param code 第三方授权码（由前端获取）
-     * @return 登录Token
+     * @return token 或抛出异常
      * @see com.community_shop.backend.config.OAuth2Config （适配《文档2》OAuth2.0集成）
      */
     String loginByThirdParty(ThirdPartyTypeEnum platform, String code);

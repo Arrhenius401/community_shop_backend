@@ -3,7 +3,7 @@ package com.community_shop.backend.interceptor;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.community_shop.backend.annotation.AdminRequired;
 import com.community_shop.backend.annotation.LoginRequired;
-import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.exception.NoPermissionException;
 import com.community_shop.backend.exception.UnLoginException;
 import com.community_shop.backend.service.base.UserService;

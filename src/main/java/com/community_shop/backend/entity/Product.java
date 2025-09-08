@@ -1,7 +1,7 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.enums.codeEnum.ProductConditionEnum;
-import com.community_shop.backend.enums.codeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.codeEnum;
+package com.community_shop.backend.enums.CodeEnum;
 
 public enum ProductConditionEnum {
     // 枚举值：名称（数据库存储码值，前端显示名称）

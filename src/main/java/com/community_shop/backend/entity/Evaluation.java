@@ -1,7 +1,7 @@
 package com.community_shop.backend.entity;
 
 import com.community_shop.backend.vo.evaluation.EvaluationCreateVO;
-import com.community_shop.backend.enums.codeEnum.EvaluationStatusEnum;
+import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;

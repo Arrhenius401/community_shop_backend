@@ -2,8 +2,8 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.enums.codeEnum.MessageTypeEnum;
-import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
+import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.mapper.MessageMapper;

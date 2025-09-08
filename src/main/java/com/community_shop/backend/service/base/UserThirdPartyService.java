@@ -1,6 +1,6 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
 import org.springframework.stereotype.Service;

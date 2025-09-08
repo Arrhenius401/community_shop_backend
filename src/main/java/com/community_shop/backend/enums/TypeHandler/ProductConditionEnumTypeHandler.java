@@ -1,6 +1,6 @@
-package com.community_shop.backend.enums.typeHandler;
+package com.community_shop.backend.enums.TypeHandler;
 
-import com.community_shop.backend.enums.codeEnum.ProductConditionEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

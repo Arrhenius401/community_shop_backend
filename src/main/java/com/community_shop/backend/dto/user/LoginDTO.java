@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.user;
 
-import com.community_shop.backend.enums.simpleEnum.LoginTypeEnum;
+import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

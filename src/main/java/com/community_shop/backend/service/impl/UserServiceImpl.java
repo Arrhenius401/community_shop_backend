@@ -1,17 +1,17 @@
 package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.user.LoginDTO;
-import com.community_shop.backend.enums.simpleEnum.LoginTypeEnum;
+import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import com.community_shop.backend.vo.user.RegisterVO;
 import com.community_shop.backend.vo.user.UserProfileUpdateVO;
-import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
-import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
 import com.community_shop.backend.mapper.UserMapper;
-import com.community_shop.backend.enums.errorcode.ErrorCode;
+import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.mapper.UserThirdPartyMapper;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;

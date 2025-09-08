@@ -4,7 +4,7 @@ import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.vo.product.ProductUpdateVO;
 import com.community_shop.backend.vo.product.ProductCreateVO;
-import com.community_shop.backend.enums.codeEnum.ProductConditionEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import com.community_shop.backend.entity.Product;
 import org.springframework.stereotype.Service;
 

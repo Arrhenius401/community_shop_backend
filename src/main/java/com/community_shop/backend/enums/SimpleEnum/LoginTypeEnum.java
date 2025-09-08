@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.simpleEnum;
+package com.community_shop.backend.enums.SimpleEnum;
 
 /**
  * 登录类型枚举

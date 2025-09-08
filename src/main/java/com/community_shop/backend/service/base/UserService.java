@@ -3,9 +3,9 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.dto.user.LoginDTO;
 import com.community_shop.backend.vo.user.RegisterVO;
 import com.community_shop.backend.vo.user.UserProfileUpdateVO;
-import com.community_shop.backend.enums.simpleEnum.ThirdPartyTypeEnum;
-import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.entity.User;
 import org.springframework.stereotype.Service;
 

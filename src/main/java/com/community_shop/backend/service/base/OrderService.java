@@ -3,7 +3,7 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.vo.order.OrderCreateVO;
-import com.community_shop.backend.enums.codeEnum.OrderStatusEnum;
+import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import org.springframework.stereotype.Service;
 

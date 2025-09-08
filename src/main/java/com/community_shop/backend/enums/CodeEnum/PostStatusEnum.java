@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.codeEnum;
+package com.community_shop.backend.enums.CodeEnum;
 
 
 public enum PostStatusEnum {

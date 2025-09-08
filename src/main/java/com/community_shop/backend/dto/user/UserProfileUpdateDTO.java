@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.user;
 
-import com.community_shop.backend.enums.codeEnum.GenderEnum;
+import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;

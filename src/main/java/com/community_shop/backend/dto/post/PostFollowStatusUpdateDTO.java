@@ -7,7 +7,7 @@ import lombok.Data;
  * 跟帖状态更新请求DTO（匹配PostFollowService.updatePostFollowStatus方法）
  */
 @Data
-public class PostFollowStatusDTO {
+public class PostFollowStatusUpdateDTO {
 
     /** 跟帖ID */
     @NotNull(message = "跟帖ID不能为空")

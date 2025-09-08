@@ -61,10 +61,9 @@ public interface UserMapper {
 
     // INSERT语句
     // 注册新用户,不显性设置userID和profilePicture
-    @Insert("INSERT user(username, email, phone_number, password, init_date, status) \n" +
-            "values(#{username}, #{email}, #{phoneNumber}, #{password},  #{initDate}, #{status});")
-    void insertDefaultUser(String username, String email, String phoneNumber, String password,
-                           String initDate, String role, String status);
+    @Insert("INSERT user(username, email, phone_number, password, create_time, status) \n" +
+            "values(#{username}, #{email}, #{phoneNumber}, #{password},  #{createTime}, #{status});")
+    void insertDefaultUser(User user);
 
     // 更新密码
     @Update("UPDATE user SET password = #{password} WHERE user_id = #{id}")
@@ -86,8 +85,8 @@ public interface UserMapper {
      * @param user 用户对象
      * @return 插入成功的记录数
      */
-    @Insert("INSERT INTO user(username, email, phone_number, password, init_date, status) " +
-            "VALUES(#{username}, #{email}, #{phoneNumber}, #{password}, #{initDate}, #{status})")
+    @Insert("INSERT INTO user(username, email, phone_number, password, create_time, status) " +
+            "VALUES(#{username}, #{email}, #{phoneNumber}, #{password}, #{createTime}, #{status})")
     int insert(User user);
 
     /**

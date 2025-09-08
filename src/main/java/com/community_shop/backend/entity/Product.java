@@ -5,6 +5,8 @@ import com.community_shop.backend.enums.codeEnum.ProductStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 public class Product {
@@ -16,6 +18,7 @@ public class Product {
     private Double price; // 价格
     private Integer stock; // 库存
     private Integer viewCount; // 浏览量
+    private LocalDateTime createTime; // 创建时间
     private ProductStatusEnum status;   // 商品状态
     private ProductConditionEnum condition; // 成色（全新/9成新等）
 

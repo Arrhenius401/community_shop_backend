@@ -1,7 +1,7 @@
 package com.community_shop.backend.entity;
 
 
-import com.community_shop.backend.enums.codeEnum.GenderEnum;
+import com.community_shop.backend.enums.simpleEnum.GenderEnum;
 import com.community_shop.backend.enums.codeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.codeEnum.UserStatusEnum;
 import jakarta.validation.constraints.Email;
@@ -104,15 +104,15 @@ public class User{
     // ===================== 4. 状态与时间信息（文档2系统设计要求） =====================
     /**
      * 注册时间
-     * 对应文档5原字段：initDate；记录用户创建时间
+     * 对应文档5原字段：createTime；记录用户创建时间
      */
-    private LocalDateTime initDate;
+    private LocalDateTime createTime;
 
     /**
      * 最后活跃时间（登录/发帖/交易时更新）
-     * 对应文档5原字段：activityDate；用于活跃度统计
+     * 对应文档5原字段：activityTime；用于活跃度统计
      */
-    private LocalDateTime activityDate;
+    private LocalDateTime activityTime;
 
     /**
      * 账号状态（激活/禁用/封禁）
@@ -141,8 +141,8 @@ public class User{
     public User(String password, String username) {
         this.password = password;
         this.username = username;
-        this.initDate = LocalDateTime.now();
-        this.activityDate = LocalDateTime.now();
+        this.createTime = LocalDateTime.now();
+        this.activityTime = LocalDateTime.now();
         this.creditScore = 100;
         this.status = UserStatusEnum.NORMAL;
         this.role = UserRoleEnum.USER;
@@ -152,7 +152,7 @@ public class User{
     /**
      * 完整构造（用于数据库查询）
      */
-    public User(Long userId, String password, String username, String email, String phoneNumber, String profilePicture, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initDate, LocalDateTime activityDate, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
+    public User(Long userId, String password, String username, String email, String phoneNumber, String profilePicture, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initTime, LocalDateTime activityTime, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
         this.userId = userId;
         this.password = password;
         this.username = username;
@@ -164,8 +164,8 @@ public class User{
         this.creditScore = creditScore;
         this.followerCount = followerCount;
         this.postCount = postCount;
-        this.initDate = initDate;
-        this.activityDate = activityDate;
+        this.createTime = initTime;
+        this.activityTime = activityTime;
         this.status = status;
         this.role = role;
         this.interestTags = interestTags;

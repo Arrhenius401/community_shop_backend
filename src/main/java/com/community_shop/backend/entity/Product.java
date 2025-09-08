@@ -2,14 +2,17 @@ package com.community_shop.backend.entity;
 
 import com.community_shop.backend.enums.codeEnum.ProductConditionEnum;
 import com.community_shop.backend.enums.codeEnum.ProductStatusEnum;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Product {
     private Long productId; // 商品ID
     private Long sellerId; // 卖家ID
     private String title; // 标题
     private String category; // 类别（如“二手手机”）
+    private String description; // 商品描述
     private Double price; // 价格
     private Integer stock; // 库存
     private Integer viewCount; // 浏览量

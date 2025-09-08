@@ -15,8 +15,8 @@ public interface ProductMapper {
      * @param product 商品实体
      * @return 插入结果影响行数
      */
-    @Insert("INSERT INTO product(title, category, price, stock, condition, seller_id, view_count) " +
-            "VALUES(#{title}, #{category}, #{price}, #{stock}, #{condition}, #{sellerId}, #{viewCount})")
+    @Insert("INSERT INTO product (title, category, description, price, stock, view_count, status, condition, seller_id) " +
+            ("VALUES ({#title}, #{category}, #{description}, #{price}, #{stock}, #{view_count}, #{status}, #{condition}, #{seller_id})"))
     int insert(Product product);
 
     /**

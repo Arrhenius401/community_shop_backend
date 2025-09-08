@@ -2,8 +2,8 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.evaluation.ProductScoreDTO;
 import com.community_shop.backend.dto.evaluation.SellerScoreDTO;
-import com.community_shop.backend.vo.evaluation.EvaluationCreateVO;
-import com.community_shop.backend.vo.evaluation.EvaluationUpdateVO;
+import com.community_shop.backend.dto.evaluation.EvaluationCreateDTO;
+import com.community_shop.backend.dto.evaluation.EvaluationUpdateDTO;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
@@ -120,15 +120,15 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     /**
      * 更新评价内容（带权限校验）
-     * @param evaluationUpdateVO 更新信息
+     * @param evaluationUpdateDTO 更新信息
      * @param userId 操作人ID
      * @return 是否成功
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateEvaluationContent(EvaluationUpdateVO evaluationUpdateVO, Long userId) {
-        Long evalId = evaluationUpdateVO.getEvalId();
-        String newContent = evaluationUpdateVO.getNewContent();
+    public Boolean updateEvaluationContent(EvaluationUpdateDTO evaluationUpdateDTO, Long userId) {
+        Long evalId = evaluationUpdateDTO.getEvalId();
+        String newContent = evaluationUpdateDTO.getNewContent();
 
         // 1. 参数校验
         if (evalId == null || !StringUtils.hasText(newContent) || userId == null) {
@@ -208,26 +208,26 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     /**
      * 提交评价（核心业务方法）
-     * @param evaluationCreateVO 评价VO
+     * @param evaluationCreateDTO 评价VO
      * @param buyerId 买家ID
      * @return 操作结果
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String submitEvaluation(EvaluationCreateVO evaluationCreateVO, Long buyerId) {
+    public String submitEvaluation(EvaluationCreateDTO evaluationCreateDTO, Long buyerId) {
         // 1. 参数校验
-        if (evaluationCreateVO == null || evaluationCreateVO.getOrderId() == null ||
-                evaluationCreateVO.getScore() == null || buyerId == null) {
+        if (evaluationCreateDTO == null || evaluationCreateDTO.getOrderId() == null ||
+                evaluationCreateDTO.getScore() == null || buyerId == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL, "评价参数不完整");
         }
 
         // 2. 验证评分范围（1-5星）
-        if (evaluationCreateVO.getScore() < 1 || evaluationCreateVO.getScore() > 5) {
+        if (evaluationCreateDTO.getScore() < 1 || evaluationCreateDTO.getScore() > 5) {
             throw new BusinessException(ErrorCode.PARAM_ERROR, "评分必须在1-5之间");
         }
 
         // 3. 校验订单状态
-        Long orderId = evaluationCreateVO.getOrderId();
+        Long orderId = evaluationCreateDTO.getOrderId();
         Order order = orderService.selectOrderById(orderId, buyerId);
         if (order == null) {
             throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS, "订单不存在或无权评价");
@@ -245,7 +245,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         }
 
         // 6. 构建评价实体
-        Evaluation evaluation = new Evaluation(evaluationCreateVO);
+        Evaluation evaluation = new Evaluation(evaluationCreateDTO);
         evaluation.setSellerId(order.getSellerId());
 
         // 7. 保存评价

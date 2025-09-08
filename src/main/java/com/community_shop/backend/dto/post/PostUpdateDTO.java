@@ -1,4 +1,4 @@
-package com.community_shop.backend.vo.post;
+package com.community_shop.backend.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import lombok.Data;
  * 仅包含用户有权限修改的内容，不包含状态、点赞数等系统维护字段
  */
 @Data
-public class PostUpdateVO {
+public class PostUpdateDTO {
 
     @NotNull(message = "帖子ID不能为空")
     private Long postId; // 必须携带，用于定位要更新的帖子

@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.vo.order.OrderCreateVO;
+import com.community_shop.backend.dto.order.OrderCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import lombok.Data;
@@ -38,14 +38,14 @@ public class Order {
         this.status = status;
     }
 
-    public Order(OrderCreateVO orderCreateVO){
-        this.productId = orderCreateVO.getProductId();
-        this.buyerId = orderCreateVO.getBuyerId();
-        this.quantity = orderCreateVO.getQuantity();
-        this.totalAmount = orderCreateVO.getTotalAmount();
-        this.address = orderCreateVO.getAddress();
-        this.buyerRemark = orderCreateVO.getBuyerRemark();
-        this.payType = orderCreateVO.getPayType();
+    public Order(OrderCreateDTO orderCreateDTO){
+        this.productId = orderCreateDTO.getProductId();
+        this.buyerId = orderCreateDTO.getBuyerId();
+        this.quantity = orderCreateDTO.getQuantity();
+        this.totalAmount = orderCreateDTO.getTotalAmount();
+        this.address = orderCreateDTO.getAddress();
+        this.buyerRemark = orderCreateDTO.getBuyerRemark();
+        this.payType = orderCreateDTO.getPayType();
 
         this.status = OrderStatusEnum.PENDING_PAYMENT;
         this.createTime = LocalDateTime.now();

@@ -1,4 +1,4 @@
-package com.community_shop.backend.vo.evaluation;
+package com.community_shop.backend.dto.evaluation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 用于接收前端传递的评价修改参数，适配评价内容更新的业务场景
  */
 @Data
-public class EvaluationUpdateVO implements Serializable {
+public class EvaluationUpdateDTO implements Serializable {
 
     /**
      * 关于Serializable
@@ -67,9 +67,9 @@ public class EvaluationUpdateVO implements Serializable {
     private String newContent;
 
 
-    public EvaluationUpdateVO() {}
+    public EvaluationUpdateDTO() {}
 
-    public EvaluationUpdateVO(Long evalId, Integer newScore, String newContent, Long operatorId) {
+    public EvaluationUpdateDTO(Long evalId, Integer newScore, String newContent, Long operatorId) {
         this.evalId = evalId;
         this.newScore = newScore;
         this.newContent = newContent;

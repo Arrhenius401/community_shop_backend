@@ -1,7 +1,7 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.vo.post.PostFollowCreateVO;
-import com.community_shop.backend.vo.post.PostFollowUpdateVO;
+import com.community_shop.backend.dto.post.PostFollowPublishDTO;
+import com.community_shop.backend.dto.post.PostFollowUpdateDTO;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
@@ -119,7 +119,7 @@ public class PostFollowServiceImpl implements PostFollowService {
      * 基础更新：编辑跟帖内容
      */
     @Override
-    public int updatePostFollowContent(PostFollowUpdateVO vo, Long userId) {
+    public int updatePostFollowContent(PostFollowUpdateDTO vo, Long userId) {
         try {
             // 1. 参数校验：VO、跟帖ID、操作用户ID非空，内容非空
             if (vo == null || vo.getPostFollowId() == null || userId == null
@@ -267,7 +267,7 @@ public class PostFollowServiceImpl implements PostFollowService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public Long publishPostFollow(PostFollowCreateVO vo, Long userId) {
+    public Long publishPostFollow(PostFollowPublishDTO vo, Long userId) {
         try {
             // 1. 参数校验：VO、帖子ID、操作用户ID非空，内容非空
             if (vo == null || vo.getPostId() == null || userId == null
@@ -299,9 +299,9 @@ public class PostFollowServiceImpl implements PostFollowService {
             Long postFollowId = insertPostFollow(postFollow);
 
             // 6. 同步更新帖子的评论数（+1）
-            int updateRows = postMapper.updateCommentCount(vo.getPostId(), post.getCommentCount() + 1);
+            int updateRows = postMapper.updatePostFollowCount(vo.getPostId(), post.getPostFollowCount() + 1);
             if (updateRows <= 0) {
-                log.error("同步帖子评论数失败，帖子ID：{}，当前评论数：{}", vo.getPostId(), post.getCommentCount());
+                log.error("同步帖子评论数失败，帖子ID：{}，当前评论数：{}", vo.getPostId(), post.getPostFollowCount());
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED); // 触发事务回滚
             }
 

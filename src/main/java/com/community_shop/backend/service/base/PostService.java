@@ -2,8 +2,8 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.vo.post.PostDetailVO;
-import com.community_shop.backend.vo.post.PostUpdateVO;
+import com.community_shop.backend.dto.post.PostDetailDTO;
+import com.community_shop.backend.dto.post.PostUpdateDTO;
 import com.community_shop.backend.entity.Post;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public interface PostService {
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.PostMapper#updateById(Post)
      */
-    Boolean updatePostContent(PostUpdateVO postVO, Long userId);
+    Boolean updatePostContent(PostUpdateDTO postVO, Long userId);
 
     /**
      * 按帖子ID删除（基础CRUD，逻辑删除）
@@ -68,7 +68,7 @@ public interface PostService {
      * @see UserService#selectUserById(Long)
      * @see com.community_shop.backend.utils.OssUtil （阿里云OSS上传工具）
      */
-    String publishPost(PostDetailVO postVO, Long userId);
+    String publishPost(PostDetailDTO postVO, Long userId);
 
     /**
      * 更新帖子点赞数（业务方法）
@@ -102,7 +102,7 @@ public interface PostService {
      * @return 最热帖子列表
      * @see com.community_shop.backend.mapper.PostMapper#selectHotPosts(int)
      */
-    List<PostDetailVO> selectHotPosts(Integer limit);
+    List<PostDetailDTO> selectHotPosts(Integer limit);
 
     /**
      * 获取帖子列表（业务方法）
@@ -110,7 +110,7 @@ public interface PostService {
      * @return 置顶帖子列表
      * @see com.community_shop.backend.mapper.PostMapper#selectEssencePosts(int, int)
      */
-    PageResult<PostDetailVO> selectEssencePosts(PageParam pageParam);
+    PageResult<PostDetailDTO> selectEssencePosts(PageParam pageParam);
 
     /**
      * 获取帖子列表（业务方法）
@@ -118,10 +118,10 @@ public interface PostService {
      * @return 置顶帖子列表
      * @see com.community_shop.backend.mapper.PostMapper#selectTopPosts(int)
      */
-    List<PostDetailVO> selectTopPosts();
+    List<PostDetailDTO> selectTopPosts();
 
     /**
      * 辅助方法：将Post实体+关联User信息转换为PostDetailVO
      */
-    PostDetailVO convertToDetailVO(Post post);
+    PostDetailDTO convertToDetailVO(Post post);
 }

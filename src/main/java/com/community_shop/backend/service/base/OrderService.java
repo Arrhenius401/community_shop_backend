@@ -2,7 +2,7 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.vo.order.OrderCreateVO;
+import com.community_shop.backend.dto.order.OrderCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import org.springframework.stereotype.Service;
@@ -76,7 +76,7 @@ public interface OrderService {
     /**
      * 创建订单（业务方法，事务控制）
      * 核心逻辑：事务隔离级别READ_COMMITTED，校验买家信用分≥60分、商品库存充足，创建订单并扣减库存
-     * @param orderCreateVO 订单创建参数（商品ID、收货地址、支付方式）
+     * @param orderCreateDTO 订单创建参数（商品ID、收货地址、支付方式）
      * @param buyerId 买家ID
      * @return 订单信息+支付链接
      * @see #insertOrder(Order)
@@ -84,7 +84,7 @@ public interface OrderService {
      * @see UserService#selectUserById(Long)
      * @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
      */
-    Order createOrder(OrderCreateVO orderCreateVO, Long buyerId);
+    Order createOrder(OrderCreateDTO orderCreateDTO, Long buyerId);
 
     /**
      * 订单支付（业务方法）

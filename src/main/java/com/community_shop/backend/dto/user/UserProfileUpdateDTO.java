@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 用户资料更新请求DTO（匹配Service层updateUserProfile方法的UserProfileUpdateVO）
+ * 用户资料更新请求VO
  */
 @Data
 public class UserProfileUpdateDTO {

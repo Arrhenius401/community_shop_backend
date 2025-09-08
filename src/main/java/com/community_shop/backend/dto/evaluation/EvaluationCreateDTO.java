@@ -1,4 +1,4 @@
-package com.community_shop.backend.vo.evaluation;
+package com.community_shop.backend.dto.evaluation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 用于接收前端传递的创建参数，适配评价内容更新的业务场景
  */
 @Data
-public class EvaluationCreateVO implements Serializable {
+public class EvaluationCreateDTO implements Serializable {
 
     /**
      * 序列化ID
@@ -52,9 +52,9 @@ public class EvaluationCreateVO implements Serializable {
     @Length(min = 1, max = 500, message = "评价内容长度必须在1-500字符之间")
     private String content;
 
-    public EvaluationCreateVO() {}
+    public EvaluationCreateDTO() {}
 
-    public EvaluationCreateVO(Long orderId, Long userId, Integer score, String content) {
+    public EvaluationCreateDTO(Long orderId, Long userId, Integer score, String content) {
         this.orderId = orderId;
         this.userId = userId;
         this.score = score;

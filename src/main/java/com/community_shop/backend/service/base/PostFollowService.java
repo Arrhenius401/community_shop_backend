@@ -1,7 +1,7 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.vo.post.PostFollowCreateVO;
-import com.community_shop.backend.vo.post.PostFollowUpdateVO;
+import com.community_shop.backend.dto.post.PostFollowPublishDTO;
+import com.community_shop.backend.dto.post.PostFollowUpdateDTO;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public interface PostFollowService {
      * @param userId 操作用户ID（需为跟帖作者）
      * @return 影响行数（1=成功，0=未找到或无权限）
      */
-    int updatePostFollowContent(PostFollowUpdateVO vo, Long userId);
+    int updatePostFollowContent(PostFollowUpdateDTO vo, Long userId);
 
     /**
      * 基础删除：逻辑删除跟帖
@@ -66,7 +66,7 @@ public interface PostFollowService {
      * @param userId 发布用户ID
      * @return 新增跟帖的自增主键postFollowId
      */
-    Long publishPostFollow(PostFollowCreateVO vo, Long userId);
+    Long publishPostFollow(PostFollowPublishDTO vo, Long userId);
 
 //    /**
 //     * 业务方法：更新跟帖点赞数

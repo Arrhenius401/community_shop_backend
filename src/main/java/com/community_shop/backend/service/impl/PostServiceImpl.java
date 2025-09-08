@@ -2,8 +2,8 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.vo.post.PostDetailVO;
-import com.community_shop.backend.vo.post.PostUpdateVO;
+import com.community_shop.backend.dto.post.PostDetailDTO;
+import com.community_shop.backend.dto.post.PostUpdateDTO;
 import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
@@ -88,7 +88,7 @@ public class PostServiceImpl implements PostService {
             // 1. 自动填充基础字段
             post.setCreateTime(LocalDateTime.now());
             post.setLikeCount(0);
-            post.setCommentCount(0);
+            post.setPostFollowCount(0);
             post.setStatus(PostStatusEnum.NORMAL); // 默认正常状态，新用户校验在publishPost中处理
 
             // 2. 调用Mapper插入
@@ -148,7 +148,7 @@ public class PostServiceImpl implements PostService {
      * @return 操作结果
      */
     @Override
-    public Boolean updatePostContent(PostUpdateVO postVO, Long userId) {
+    public Boolean updatePostContent(PostUpdateDTO postVO, Long userId) {
         Long postId = postVO.getPostId();
         String newTitle = postVO.getTitle();
         String newContent = postVO.getContent();
@@ -223,7 +223,7 @@ public class PostServiceImpl implements PostService {
      * @return 帖子ID字符串
      */
     @Override
-    public String publishPost(PostDetailVO postVO, Long userId) {
+    public String publishPost(PostDetailDTO postVO, Long userId) {
         if (postVO == null || userId == null || !StringUtils.hasText(postVO.getTitle()) || !StringUtils.hasText(postVO.getContent())) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }
@@ -364,7 +364,7 @@ public class PostServiceImpl implements PostService {
      * @return 热门帖子详情VO列表
      */
     @Override
-    public List<PostDetailVO> selectHotPosts(Integer limit) {
+    public List<PostDetailDTO> selectHotPosts(Integer limit) {
         // 参数校验
         if (limit == null || limit <= 0) {
             throw new BusinessException(ErrorCode.PARAM_ERROR);
@@ -406,7 +406,7 @@ public class PostServiceImpl implements PostService {
      * @return 精华帖子详情VO分页列表
      */
     @Override
-    public PageResult<PostDetailVO> selectEssencePosts(PageParam pageParam) {
+    public PageResult<PostDetailDTO> selectEssencePosts(PageParam pageParam) {
         // 参数校验
         validatePageParam(pageParam);
 
@@ -421,12 +421,12 @@ public class PostServiceImpl implements PostService {
         Integer total = postMapper.countEssencePosts();
 
         // 4. 转换为VO列表
-        List<PostDetailVO> voList = essencePosts.stream()
+        List<PostDetailDTO> voList = essencePosts.stream()
                 .map(this::convertToDetailVO)
                 .collect(Collectors.toList());
 
         // 5. 构建分页结果
-        PageResult<PostDetailVO> pageResult = new PageResult<>();
+        PageResult<PostDetailDTO> pageResult = new PageResult<>();
         pageResult.setList(voList);
         pageResult.setTotal(total);
         pageResult.setPageNum(pageParam.getPageNum());
@@ -444,7 +444,7 @@ public class PostServiceImpl implements PostService {
      * @return 置顶帖子详情VO列表（最多返回5条，符合MAX_TOP_POST_COUNT约束）
      */
     @Override
-    public List<PostDetailVO> selectTopPosts() {
+    public List<PostDetailDTO> selectTopPosts() {
         // 1. 查询置顶帖子（isTop=true），最多返回MAX_TOP_POST_COUNT条
         List<Post> topPosts = postMapper.selectTopPosts(MAX_TOP_POST_COUNT);
         if (topPosts.isEmpty()) {
@@ -453,7 +453,7 @@ public class PostServiceImpl implements PostService {
         }
 
         // 2. 转换为VO列表
-        List<PostDetailVO> voList = topPosts.stream()
+        List<PostDetailDTO> voList = topPosts.stream()
                 .map(this::convertToDetailVO)
                 .collect(Collectors.toList());
 
@@ -481,29 +481,29 @@ public class PostServiceImpl implements PostService {
      * 辅助方法：将Post实体+关联User信息转换为PostDetailVO（补充发帖者信息）
      */
     @Override
-    public PostDetailVO convertToDetailVO(Post post) {
+    public PostDetailDTO convertToDetailVO(Post post) {
         if (post == null) {
             return null;
         }
 
         // 1. 构建VO并填充帖子基础信息
-        PostDetailVO postVO = new PostDetailVO();
+        PostDetailDTO postVO = new PostDetailDTO();
         BeanUtils.copyProperties(post, postVO); // 使用Spring的BeanUtils快速复制同名字段
-        postVO.setPublisherId(post.getUserId()); // 发帖者ID即Post的userId
+        postVO.getPublisher().setUserId(post.getUserId()); // 发帖者ID即Post的userId
 
         // 2. 关联查询发帖者信息并填充VO
         try {
             User publisher = userService.selectUserById(post.getUserId());
             if (publisher != null) {
-                postVO.setPublisherName(publisher.getUsername());       // 用户名
-                postVO.setPublisherAvatar(publisher.getProfilePicture()); // 头像
-                postVO.setPublisherCredit(publisher.getCreditScore());   // 信用分（可选）
+                postVO.getPublisher().setUsername(publisher.getUsername());       // 用户名
+                postVO.getPublisher().setAvatarUrl(publisher.getProfilePicture()); // 头像
+                postVO.getPublisher().setCreditScore(publisher.getCreditScore());   // 信用分（可选）
             }
         } catch (Exception e) {
             log.error("转换帖子VO时查询用户信息失败，帖子ID：{}", post.getPostId(), e);
             // 即使用户信息查询失败，仍返回帖子基础信息，避免整体功能不可用
-            postVO.setPublisherName("未知用户");
-            postVO.setPublisherAvatar("/default-avatar.png");
+            postVO.getPublisher().setUsername("未知用户");
+            postVO.getPublisher().setAvatarUrl("/default-avatar.png");
         }
 
         return postVO;

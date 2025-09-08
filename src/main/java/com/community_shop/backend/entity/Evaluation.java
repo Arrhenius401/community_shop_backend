@@ -1,6 +1,6 @@
 package com.community_shop.backend.entity;
 
-import com.community_shop.backend.vo.evaluation.EvaluationCreateVO;
+import com.community_shop.backend.dto.evaluation.EvaluationCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import lombok.Data;
 
@@ -33,11 +33,11 @@ public class Evaluation {
         this.status = status;
     }
 
-    public Evaluation(EvaluationCreateVO evaluationCreateVO) {
-        this.orderId = evaluationCreateVO.getOrderId();
-        this.userId = evaluationCreateVO.getUserId();
-        this.content = evaluationCreateVO.getContent();
-        this.score = evaluationCreateVO.getScore();
+    public Evaluation(EvaluationCreateDTO evaluationCreateDTO) {
+        this.orderId = evaluationCreateDTO.getOrderId();
+        this.userId = evaluationCreateDTO.getUserId();
+        this.content = evaluationCreateDTO.getContent();
+        this.score = evaluationCreateDTO.getScore();
 
         this.createTime = LocalDateTime.now();
 

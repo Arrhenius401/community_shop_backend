@@ -20,8 +20,8 @@ public interface PostMapper {
      * @param post 帖子实体
      * @return 插入结果影响行数
      */
-    @Insert("INSERT INTO post(title, content, user_id, like_count, comment_count, create_time, status, is_hot) " +
-            "VALUES(#{title}, #{content}, #{userID}, #{likeCount}, #{commentCount}, #{createTime}, #{status}, #{ishot})")
+    @Insert("INSERT INTO post(title, content, user_id, like_count, post_follow_count, create_time, status, is_hot) " +
+            "VALUES(#{title}, #{content}, #{userID}, #{likeCount}, #{postFollowCount}, #{createTime}, #{status}, #{ishot})")
     int insert(Post post);
 
     /**
@@ -40,7 +40,7 @@ public interface PostMapper {
      * @return 更新结果影响行数
      */
     @Update("UPDATE post SET title = #{title}, content = #{content}, user_id = #{userID}, like_count = #{likeCount}, " +
-            "comment_count = #{commentCount}, create_time = #{createTime}, status = #{status}, is_hot = #{ishot} " +
+            "post_follow_count = #{postFollowCount}, create_time = #{createTime}, status = #{status}, is_hot = #{ishot} " +
             "WHERE post_id = #{postID}")
     int updateById(Post post);
 
@@ -89,8 +89,8 @@ public interface PostMapper {
      * @param post 帖子实体对象
      * @return 插入结果影响行数
      */
-    @Insert("INSERT INTO post (title, content, user_id, like_count, comment_count, create_time, status, is_hot) \n" +
-            "VALUES(#{title}, #{content}, #{userID}, #{likeCount}, #{commentCount}, #{createTime}, #{status}, #{ishot});")
+    @Insert("INSERT INTO post (title, content, user_id, like_count, post_follow_count, create_time, status, is_hot) \n" +
+            "VALUES(#{title}, #{content}, #{userID}, #{likeCount}, #{postFollowCount}, #{createTime}, #{status}, #{ishot});")
     int addPost(Post post);
 
     // 局部查询
@@ -119,7 +119,7 @@ public interface PostMapper {
      * @param post 帖子实体对象
      * @return 更新结果影响行数
      */
-    @Update("UPDATE post SET title = #{title}, content = #{content}, user_id = #{userID}, like_count = #{likeCount}, comment_count = #{commentCount}, create_time = #{createTime}, status = #{status}, is_hot = #{ishot} where post_id = #{postID}")
+    @Update("UPDATE post SET title = #{title}, content = #{content}, user_id = #{userID}, like_count = #{likeCount}, post_follow_count = #{postFollowCount}, create_time = #{createTime}, status = #{status}, is_hot = #{ishot} where post_id = #{postID}")
     int updatePost(Post post);
 
     /**
@@ -133,14 +133,14 @@ public interface PostMapper {
     int updateLikeCount(@Param("postId") Long postId, @Param("count") int count);
 
     /**
-     * 更新评论数
+     * 更新跟帖数
      *
      * @param postId 帖子ID
      * @param count 评论数
      * @return 更新结果影响行数
      */
-    @Update("UPDATE post SET comment_count = #{count} WHERE post_id = #{postId}")
-    int updateCommentCount(@Param("postId") Long postId, @Param("count") int count);
+    @Update("UPDATE post SET post_follow_count = #{count} WHERE post_id = #{postId}")
+    int updatePostFollowCount(@Param("postId") Long postId, @Param("count") int count);
 
     /**
      * 设置帖子为精华/置顶
@@ -205,7 +205,7 @@ public interface PostMapper {
      * @param limit 限制数量
      * @return 热门帖子列表
      */
-    @Select("SELECT * FROM post WHERE is_hot = 1 ORDER BY like_count DESC, comment_count DESC LIMIT #{limit}")
+    @Select("SELECT * FROM post WHERE is_hot = 1 ORDER BY like_count DESC, post_follow_count DESC LIMIT #{limit}")
     List<Post> selectHotPosts(@Param("limit") int limit);
 
     /**

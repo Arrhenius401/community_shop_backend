@@ -1,4 +1,4 @@
-package com.community_shop.backend.vo.post;
+package com.community_shop.backend.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import lombok.Data;
  * 用于接收前端编辑跟帖的请求参数
  */
 @Data
-public class PostFollowUpdateVO {
+public class PostFollowUpdateDTO {
 
     /**
      * 跟帖ID

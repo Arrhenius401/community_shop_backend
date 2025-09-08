@@ -2,8 +2,8 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.vo.product.ProductUpdateVO;
-import com.community_shop.backend.vo.product.ProductCreateVO;
+import com.community_shop.backend.dto.product.ProductUpdateDTO;
+import com.community_shop.backend.dto.product.ProductCreateVO;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import com.community_shop.backend.entity.Product;
 import org.springframework.stereotype.Service;
@@ -51,12 +51,12 @@ public interface ProductService {
      * 更新商品信息（基础CRUD）
      * 核心逻辑：校验仅卖家可操作，调用ProductMapper.updateById更新价格、库存等信息
      * @param productId 商品ID
-     * @param productUpdateVO 商品更新参数（价格、库存、描述）
+     * @param productUpdateDTO 商品更新参数（价格、库存、描述）
      * @param sellerId 卖家ID（需与商品seller_id一致）
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.ProductMapper#updateById(Product)
      */
-    Boolean updateProductInfo(Long productId, ProductUpdateVO productUpdateVO, Long sellerId);
+    Boolean updateProductInfo(Long productId, ProductUpdateDTO productUpdateDTO, Long sellerId);
 
     /**
      * 按商品ID删除（基础CRUD，逻辑删除）

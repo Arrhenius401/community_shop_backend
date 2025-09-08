@@ -1,4 +1,4 @@
-package com.community_shop.backend.vo.post;
+package com.community_shop.backend.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,11 +6,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * 跟帖创建请求VO
+ * 跟帖创建请求DTO
  * 用于接收前端发布跟帖的请求参数
  */
 @Data
-public class PostFollowCreateVO {
+public class PostFollowPublishDTO {
     /**
      * 关联帖子ID
      * 约束：非空（必须绑定具体帖子），匹配post表post_id类型

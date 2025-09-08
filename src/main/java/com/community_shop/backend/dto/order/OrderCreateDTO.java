@@ -1,8 +1,9 @@
-package com.community_shop.backend.vo.order;
+package com.community_shop.backend.dto.order;
 
-import com.community_shop.backend.enums.simpleEnum.PayTypeEnum;
+import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -12,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
  * 对应文档中"订单创建"功能的前端入参封装
  */
 @Data
-public class OrderCreateVO {
+public class OrderCreateDTO {
 
     /**
      * 订单创建者ID
@@ -44,6 +45,8 @@ public class OrderCreateVO {
      * 商品购买数量，默认1件，支持批量购买
      * 对应文档4中product表的stock字段扣减依据
      */
+    @NotNull(message = "金额不能为空")
+    @Positive(message = "金额必须大于0")
     private Integer quantity = 1;
 
     /**
@@ -51,6 +54,8 @@ public class OrderCreateVO {
      * 订单总价，默认为商品单价*购买数量
      * 对应文档4中order表total_amount字段
      */
+    @NotNull(message = "数量不能为空")
+    @Positive(message = "数量必须大于0")
     private Double totalAmount;
 
     /**

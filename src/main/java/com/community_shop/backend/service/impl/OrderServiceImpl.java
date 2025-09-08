@@ -2,7 +2,7 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.vo.order.OrderCreateVO;
+import com.community_shop.backend.dto.order.OrderCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
@@ -295,11 +295,11 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public Order createOrder(OrderCreateVO orderCreateVO, Long buyerId) {
+    public Order createOrder(OrderCreateDTO orderCreateDTO, Long buyerId) {
         try {
             // 1. 参数校验
-            if (orderCreateVO == null || orderCreateVO.getProductId() == null ||
-                    !StringUtils.hasText(orderCreateVO.getAddress()) || buyerId == null) {
+            if (orderCreateDTO == null || orderCreateDTO.getProductId() == null ||
+                    !StringUtils.hasText(orderCreateDTO.getAddress()) || buyerId == null) {
                 throw new BusinessException(ErrorCode.PARAM_NULL);
             }
 
@@ -310,7 +310,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // 3. 校验商品信息与库存
-            Product product = productService.selectProductById(orderCreateVO.getProductId());
+            Product product = productService.selectProductById(orderCreateDTO.getProductId());
             if (product == null) {
                 throw new BusinessException(ErrorCode.PRODUCT_NOT_EXISTS);
             }
@@ -319,7 +319,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // 4. 构建订单实体
-            Order order = new Order(orderCreateVO);
+            Order order = new Order(orderCreateDTO);
             order.setSellerId(product.getSellerId());
 
             // 5. 调用基础方法插入订单

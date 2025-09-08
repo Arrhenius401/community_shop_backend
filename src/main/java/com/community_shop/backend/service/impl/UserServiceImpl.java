@@ -2,8 +2,8 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.user.LoginDTO;
 import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
-import com.community_shop.backend.vo.user.RegisterVO;
-import com.community_shop.backend.vo.user.UserProfileUpdateVO;
+import com.community_shop.backend.dto.user.RegisterDTO;
+import com.community_shop.backend.dto.user.UserProfileUpdateDTO;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
      * 更新用户资料（仅允许修改非敏感字段）
      */
     @Override
-    public Boolean updateUserProfile(Long userId, UserProfileUpdateVO profileVO) {
+    public Boolean updateUserProfile(Long userId, UserProfileUpdateDTO profileVO) {
         if (userId == null || profileVO == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }
@@ -260,20 +260,20 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String register(RegisterVO registerVO) {
+    public String register(RegisterDTO registerDTO) {
         // 1. 参数校验（保持不变）
-        if (registerVO == null || !StringUtils.hasText(registerVO.getPassword())) {
+        if (registerDTO == null || !StringUtils.hasText(registerDTO.getPassword())) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }
 
         // 2. 校验手机号/邮箱是否已注册（保持不变）
-        if (StringUtils.hasText(registerVO.getPhoneNumber())) {
-            User phoneUser = userMapper.selectByPhone(registerVO.getPhoneNumber());
+        if (StringUtils.hasText(registerDTO.getPhoneNumber())) {
+            User phoneUser = userMapper.selectByPhone(registerDTO.getPhoneNumber());
             if (phoneUser != null) {
                 throw new BusinessException(ErrorCode.PHONE_EXISTS);
             }
-        } else if (StringUtils.hasText(registerVO.getEmail())) {
-            User emailUser = userMapper.selectByEmail(registerVO.getEmail());
+        } else if (StringUtils.hasText(registerDTO.getEmail())) {
+            User emailUser = userMapper.selectByEmail(registerDTO.getEmail());
             if (emailUser != null) {
                 throw new BusinessException(ErrorCode.EMAIL_EXISTS);
             }
@@ -282,15 +282,15 @@ public class UserServiceImpl implements UserService {
         }
 
 //        // 3. 验证码校验（此处简化，实际需对接短信服务）
-//        if (!"123456".equals(registerVO.getVerifyCode())) { // 示例验证码，实际需动态生成
+//        if (!"123456".equals(registerDTO.getVerifyCode())) { // 示例验证码，实际需动态生成
 //            throw new BusinessException(ErrorCodeEnum.VERIFY_CODE_ERROR);
 //        }
 
         // 3. 插入用户数据
         User user = new User();
-        user.setPhoneNumber(registerVO.getPhoneNumber());
-        user.setPassword(registerVO.getPassword());
-        user.setUsername(registerVO.getUsername()); // 生成默认用户名
+        user.setPhoneNumber(registerDTO.getPhoneNumber());
+        user.setPassword(registerDTO.getPassword());
+        user.setUsername(registerDTO.getUsername()); // 生成默认用户名
         insertUser(user);
 
         // 4. 生成登录Token

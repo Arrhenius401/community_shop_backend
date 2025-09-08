@@ -1,4 +1,4 @@
-package com.community_shop.backend.vo.product;
+package com.community_shop.backend.dto.product;
 
 import lombok.Data;
 

@@ -2,8 +2,8 @@ package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.vo.product.ProductUpdateVO;
-import com.community_shop.backend.vo.product.ProductCreateVO;
+import com.community_shop.backend.dto.product.ProductUpdateDTO;
+import com.community_shop.backend.dto.product.ProductCreateVO;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
@@ -161,10 +161,10 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateProductInfo(Long productId, ProductUpdateVO productUpdateVO, Long sellerId) {
+    public Boolean updateProductInfo(Long productId, ProductUpdateDTO productUpdateDTO, Long sellerId) {
         try {
             // 1. 参数校验
-            if (productId == null || productUpdateVO == null || sellerId == null) {
+            if (productId == null || productUpdateDTO == null || sellerId == null) {
                 throw new BusinessException(ErrorCode.PARAM_NULL);
             }
 
@@ -184,12 +184,12 @@ public class ProductServiceImpl implements ProductService {
             Product updateProduct = new Product();
             updateProduct.setProductId(productId);
             // 复制更新字段（价格、库存、描述等）
-            BeanUtils.copyProperties(productUpdateVO, updateProduct);
+            BeanUtils.copyProperties(productUpdateDTO, updateProduct);
 
             // 5. 执行更新
             int updateRows = productMapper.updateById(updateProduct);
             if (updateRows <= 0) {
-                log.error("更新商品信息失败，商品ID：{}，更新参数：{}", productId, productUpdateVO);
+                log.error("更新商品信息失败，商品ID：{}，更新参数：{}", productId, productUpdateDTO);
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
             }
 

@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.post;
 
+import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.enums.SortEnum.PostSortFieldEnum;
 import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import lombok.Data;
  * 帖子列表查询DTO（匹配PostService分页查询方法）
  */
 @Data
-public class PostQueryDTO {
+public class PostQueryDTO extends PageParam {
 
     /** 搜索关键词（模糊匹配标题/内容） */
     private String keyword;

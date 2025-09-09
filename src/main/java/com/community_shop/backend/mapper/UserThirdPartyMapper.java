@@ -6,52 +6,88 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
-//XML文件可帮助处理复杂动态SQL场景，实现SQL与代码分离和满足高级映射需求（即多表查询）三方面
-//因而辅助mapper功能的XML文件是必要的
 /**
- * 第三方账号关联Mapper（注解式，无需XML）
- * 匹配《代码文档1 Mapper层设计.docx》的接口设计规范
+ * 第三方账号关联模块Mapper接口，严格对应user_third_party表结构（文档4_数据库设计.docx）
  */
 @Mapper
 public interface UserThirdPartyMapper {
+
+    // ==================== 基础CRUD ====================
     /**
-     * 新增第三方绑定记录（对应《代码文档1》的insert方法规范）
+     * 新增第三方账号绑定记录
+     * @param userThirdParty 第三方关联实体（含用户ID、openid、平台类型等核心字段）
+     * @return 影响行数
      */
-    @Insert("INSERT INTO user_third_party (user_id, third_type, openid, access_token, bind_time, is_valid) " +
-            "VALUES (#{userId}, #{thirdType}, #{openid}, #{accessToken}, #{bindTime}, #{isValid})")
-    @Options(useGeneratedKeys = true, keyProperty = "id") // 自增主键返回
     int insert(UserThirdParty userThirdParty);
 
     /**
-     * 按第三方类型+openid查询绑定记录（用于登录校验）
-     * 参考《代码文档1》UserPostLikeMapper.selectIsLiked的条件查询风格
+     * 通过绑定记录ID查询详情
+     * @param id 自增主键ID
+     * @return 第三方关联实体
      */
-    @Select("SELECT id, user_id, third_type, openid, access_token, bind_time, is_valid " +
-            "FROM user_third_party " +
-            "WHERE third_type = #{thirdType} AND openid = #{openid} AND isValid = 1")
-    UserThirdParty selectByThirdTypeAndOpenid(@Param("thirdType") ThirdPartyTypeEnum thirdType, @Param("openid") String openid);
+    UserThirdParty selectById(@Param("id") Long id);
+
+
+    // ==================== 关联查询 ====================
+    /**
+     * 通过平台类型+openid查询有效绑定记录（第三方登录校验）
+     * @param thirdType 第三方平台类型（枚举）
+     * @param openid 第三方平台用户唯一标识
+     * @return 第三方关联实体（null表示未绑定）
+     */
+    UserThirdParty selectByThirdTypeAndOpenid(
+            @Param("thirdType") ThirdPartyTypeEnum thirdType,
+            @Param("openid") String openid
+    );
 
     /**
-     * 按用户ID查询有效绑定列表（用于个人中心展示）
-     * 参考《代码文档1》PostMapper.selectByUserId的分页查询逻辑
+     * 查询用户所有有效绑定的第三方账号
+     * @param userId 关联平台用户ID
+     * @return 第三方关联列表
      */
-    @Select("SELECT id, user_id, third_type, openid, access_token, bind_time, is_valid " +
-            "FROM user_third_party " +
-            "WHERE user_id = #{userId} AND isValid = 1 " +
-            "ORDER BY bind_time DESC")
     List<UserThirdParty> selectValidByUserId(@Param("userId") Long userId);
 
     /**
-     * 解绑第三方账号（逻辑删除，参考《文档4》post_follow表的is_deleted设计）
+     * 统计用户某类第三方账号的绑定数量（限制同一平台仅绑定一个）
+     * @param userId 用户ID
+     * @param thirdType 第三方平台类型（枚举）
+     * @return 绑定数量（0=未绑定，1=已绑定）
      */
-    @Update("UPDATE user_third_party SET is_valid = 0 " +
-            "WHERE id = #{id} AND user_id = #{userId}")
-    int updateInvalidById(@Param("id") Long id, @Param("userId") Long userId);
+    int countByUserIdAndThirdType(
+            @Param("userId") Long userId,
+            @Param("thirdType") ThirdPartyTypeEnum thirdType
+    );
+
+
+    // ==================== 状态与凭证更新 ====================
+    /**
+     * 解绑第三方账号（逻辑删除，更新绑定状态为无效）
+     * @param id 绑定记录ID
+     * @param userId 用户ID（身份校验）
+     * @return 影响行数
+     */
+    int updateInvalidById(
+            @Param("id") Long id,
+            @Param("userId") Long userId
+    );
 
     /**
-     * 更新第三方access_token（用于凭证刷新）
+     * 更新第三方登录临时凭证（access_token过期刷新）
+     * @param thirdType 第三方平台类型（枚举）
+     * @param openid 第三方平台用户唯一标识
+     * @param newToken 新的access_token
+     * @return 影响行数
      */
-    @Update("UPDATE user_third_party SET access_token = #{newToken} " +
-            "WHERE third_type = #{thirdType} AND openid = #{openid} AND isValid = 1")
-    int updateAccessToken(@Param("thirdType") ThirdPartyTypeEnum thirdType, @Param("openid") String openid, @Param("newToken") String newToken);
+    int updateAccessToken(
+            @Param("thirdType") ThirdPartyTypeEnum thirdType,
+            @Param("openid") String openid,
+            @Param("newToken") String newToken
+    );
+
+    /**
+     * 批量解绑用户所有第三方账号（用户注销时联动清理）
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    int batchUpdateInvalidByUserId(@Param("userId") Long userId);
 }

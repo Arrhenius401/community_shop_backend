@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.TypeHandler;
+package com.community_shop.backend.handler;
 
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;

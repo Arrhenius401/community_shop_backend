@@ -22,17 +22,17 @@
     <!-- 3. 类型别名（与application.properties中的mybatis.type-aliases-package功能一致，二者选其一） -->
     <typeAliases>
         <!-- 方式1：指定单个类的别名 -->
-        <typeAlias type="com.example.entity.Order" alias="Order"/>
+        <typeAlias type="com.community_shop.backend.entity.Order" alias="Order"/>
         <!-- 方式2：扫描包，自动将类名作为别名（推荐，与application.properties配置冲突时以xml为准） -->
-        <package name="com.example.entity"/>
+        <package name="com.community_shop.backend.entity"/>
     </typeAliases>
 
     <!-- 4. 类型处理器（与application.properties中的mybatis.type-handlers-package功能一致，二者选其一） -->
     <typeHandlers>
         <!-- 方式1：注册单个处理器 -->
-        <typeHandler handler="com.example.handler.OrderStatusEnumTypeHandler"/>
+        <typeHandler handler="com.community_shop.backend.handler.OrderStatusEnumTypeHandler"/>
         <!-- 方式2：扫描包，自动注册所有处理器（推荐） -->
-        <package name="com.example.handler"/>
+        <package name="com.community_shop.backend.handler"/>
     </typeHandlers>
 
     <!-- 5. 插件（如分页插件、逻辑删除插件等，需引入对应依赖） -->
@@ -56,8 +56,8 @@
     <!-- 7. 映射器（与application.properties中的mybatis.mapper-locations功能一致，二者选其一） -->
     <mappers>
         <!-- 方式1：注册单个Mapper.xml -->
-        <mapper resource="mapper/OrderMapper.xml"/>
+        <mapper resource="mybatis/mapper/UserMapper.xm"/>
         <!-- 方式2：扫描包，注册所有Mapper接口（推荐，需接口与XML同包同名） -->
-        <package name="com.example.mapper"/>
+        <package name="com.community_shop.backend.mapper"/>
     </mappers>
 </configuration>

@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.TypeHandler;
+package com.community_shop.backend.handler;
 
 import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;

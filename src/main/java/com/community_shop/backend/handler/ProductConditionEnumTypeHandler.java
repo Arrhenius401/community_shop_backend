@@ -3,6 +3,7 @@ package com.community_shop.backend.handler;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 /**
  * 商品状态枚举类型处理器，实现ProductConditionEnum与varchar的转换
  */
+@MappedTypes(ProductConditionEnum.class)    // 声明该处理器用于处理ProductConditionEnum
 public class ProductConditionEnumTypeHandler extends BaseTypeHandler<ProductConditionEnum> {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, ProductConditionEnum parameter, JdbcType jdbcType) throws SQLException {

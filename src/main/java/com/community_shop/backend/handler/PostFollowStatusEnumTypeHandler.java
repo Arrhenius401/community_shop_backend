@@ -3,6 +3,7 @@ package com.community_shop.backend.handler;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 /**
  * 跟帖状态枚举类型处理器，实现PostFollowStatusEnum与varchar的转换
  */
+@MappedTypes(PostFollowStatusEnum.class)
 public class PostFollowStatusEnumTypeHandler extends BaseTypeHandler<PostFollowStatusEnum> {
 
     @Override

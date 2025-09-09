@@ -3,6 +3,7 @@ package com.community_shop.backend.handler;
 import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 /**
  * 评价状态枚举类型处理器，实现EvaluationStatusEnum与varchar的转换
  */
+@MappedTypes(EvaluationStatusEnum.class)
 public class EvaluationStatusEnumTypeHandler extends BaseTypeHandler<EvaluationStatusEnum> {
 
     /**

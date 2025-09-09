@@ -3,6 +3,7 @@ package com.community_shop.backend.handler;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 /**
  * 用户状态枚举类型处理器，实现UserStatusEnum与varchar的转换
  */
+@MappedTypes(UserStatusEnum.class)  // 声明该处理器用于处理UserStatusEnum
 public class UserStatusEnumTypeHandler extends BaseTypeHandler<UserStatusEnum> {
 
     @Override

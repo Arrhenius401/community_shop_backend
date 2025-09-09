@@ -421,7 +421,7 @@ public class PostFollowServiceImpl implements PostFollowService {
 //            User author = authorMap.get(postFollow.getUserId());
 //            if (author != null) {
 //                postFollow.setAuthorName(author.getUsername());
-//                postFollow.setAuthorAvatar(author.getProfilePicture());
+//                postFollow.setAuthorAvatar(author.getAvatarUrl());
 //            }
 //        }
 //    }

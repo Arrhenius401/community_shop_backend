@@ -57,9 +57,9 @@ public class User{
     // ===================== 2. 个人资料信息（文档1个人中心需求） =====================
     /**
      * 头像路径（阿里云OSS存储URL）
-     * 对应文档4 user表：profile_picture（varchar(512)）；文档2云服务集成
+     * 对应文档4 user表：avatar_url（varchar(512)）；文档2云服务集成
      */
-    private String profilePicture;
+    private String avatarUrl;
 
     /**
      * 个人简介
@@ -152,13 +152,13 @@ public class User{
     /**
      * 完整构造（用于数据库查询）
      */
-    public User(Long userId, String password, String username, String email, String phoneNumber, String profilePicture, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initTime, LocalDateTime activityTime, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
+    public User(Long userId, String password, String username, String email, String phoneNumber, String avatarUrl, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initTime, LocalDateTime activityTime, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
         this.userId = userId;
         this.password = password;
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.profilePicture = profilePicture;
+        this.avatarUrl = avatarUrl;
         this.bio = bio;
         this.gender = gender;
         this.creditScore = creditScore;

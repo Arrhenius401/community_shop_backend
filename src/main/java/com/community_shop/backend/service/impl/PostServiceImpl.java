@@ -496,7 +496,7 @@ public class PostServiceImpl implements PostService {
             User publisher = userService.selectUserById(post.getUserId());
             if (publisher != null) {
                 postVO.getPublisher().setUsername(publisher.getUsername());       // 用户名
-                postVO.getPublisher().setAvatarUrl(publisher.getProfilePicture()); // 头像
+                postVO.getPublisher().setAvatarUrl(publisher.getAvatarUrl()); // 头像
                 postVO.getPublisher().setCreditScore(publisher.getCreditScore());   // 信用分（可选）
             }
         } catch (Exception e) {

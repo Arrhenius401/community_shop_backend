@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
         User updateUser = new User();
         updateUser.setUserId(userId);
         updateUser.setUsername(profileVO.getUsername());
-        updateUser.setProfilePicture(profileVO.getAvatarUrl());
+        updateUser.setAvatarUrl(profileVO.getAvatarUrl());
         updateUser.setInterestTags(profileVO.getInterestTags());
 
         int rows = userMapper.updateById(updateUser);

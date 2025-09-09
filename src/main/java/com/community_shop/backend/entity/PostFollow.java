@@ -6,15 +6,36 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 帖子跟帖实体类
+ */
 @Data
 public class PostFollow {
+    /** 跟帖ID */
     private Long postFollowId;
+
+    /** 帖子ID */
     private Long postId;
+
+    /** 用户ID */
     private Long userId;
+
+    /** 跟帖父ID */
+    private Long parentId;
+
+    /** 跟帖内容 */
     private String content;
+
+    /** 点赞数 */
     private int likeCount;
+
+    /** 创建时间 */
     private LocalDateTime createTime;
+
+    /** 更新时间 */
     private LocalDateTime updateTime;
+
+    /** 状态 */
     private PostFollowStatusEnum status;
 
 

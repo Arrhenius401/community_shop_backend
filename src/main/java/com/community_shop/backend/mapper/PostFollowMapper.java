@@ -7,79 +7,104 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 跟帖Mapper接口
- * 完全匹配《代码文档1 Mapper层设计.docx》第8节PostFollowMapper的方法定义
+ * 帖子评论模块Mapper接口，对应post_follow表操作
  */
 @Mapper
 public interface PostFollowMapper {
 
-    // 基础 CRUD
+
+    // ==================== 基础CRUD ====================
     /**
-     * 基础新增：发布跟帖（插入跟帖记录）
-     * 对应《代码文档1》PostFollowMapper.insert方法
+     * 添加帖子评论
+     * @param postFollow 评论实体（含帖子ID、用户ID、评论内容等信息）
+     * @return 影响行数
      */
-    @Insert("INSERT INTO post_follow (post_id, user_id, content, like_count, create_time, update_time, is_deleted, status) " +
-            "VALUES (#{postId}, #{userId}, #{content}, #{likeCount}, #{createTime}, #{updateTime}, #{isDeleted}, #{status})")
-    @Options(useGeneratedKeys = true, keyProperty = "postFollowId") // 返回自增主键
     int insert(PostFollow postFollow);
 
     /**
-     * 基础查询：通过跟帖ID查询详情
-     * 对应《代码文档1》PostFollowMapper.selectById方法
+     * 通过评论ID查询评论详情
+     * @param postFollowId 评论唯一标识
+     * @return 评论完整实体
      */
-    @Select("SELECT post_follow_id, post_id, user_id, content, like_count, create_time, update_time, is_deleted, status " +
-            "FROM post_follow " +
-            "WHERE post_follow_id = #{postFollowId}")
-    PostFollow selectById(Long postFollowId);
+    PostFollow selectById(@Param("postFollowId") Long postFollowId);
 
     /**
-     * 基础更新：更新跟帖内容（仅作者编辑）
-     * 对应《代码文档1》PostFollowMapper.updateById方法
+     * 更新评论内容
+     * @param postFollow 评论实体（含需更新的字段）
+     * @return 影响行数
      */
-    @Update("UPDATE post_follow " +
-            "SET content = #{content}, update_time = #{updateTime}, status = #{status} " +
-            "WHERE post_follow_id = #{postFollowId} AND user_id = #{userId} AND is_deleted = 0")
     int updateById(PostFollow postFollow);
 
     /**
-     * 基础删除：逻辑删除跟帖（更新is_deleted=1）
-     * 对应《代码文档1》PostFollowMapper.deleteById方法
+     * 删除评论（逻辑删除，更新状态）
+     * @param postFollowId 评论ID
+     * @return 影响行数
      */
-    @Update("UPDATE post_follow " +
-            "SET is_deleted = 1, update_time = NOW() " +
-            "WHERE post_follow_id = #{postFollowId}")
-    int deleteById(Long postFollowId);
+    int deleteById(@Param("postFollowId") Long postFollowId);
 
-    // 列表查询（多维度排序）
-    /**
-     * 列表查询：按帖子ID查询跟帖列表（分页）
-     * 对应《代码文档1》PostFollowMapper.selectByPostId方法
-     */
-    @Select("SELECT post_follow_id, post_id, user_id, content, like_count, create_time, update_time, is_deleted, status " +
-            "FROM post_follow " +
-            "WHERE post_id = #{postId} AND is_deleted = 0 AND status = 'NORMAL' " +
-            "ORDER BY create_time DESC " +
-            "LIMIT #{offset}, #{limit}")
-    List<PostFollow> selectByPostId(@Param("postId") Long postId, @Param("offset") int offset, @Param("limit") int limit);
 
+    // ==================== 关联查询 ====================
     /**
-     * 统计查询：按帖子ID统计跟帖总数
-     * 对应《代码文档1》PostFollowMapper.countByPostId方法
+     * 查询指定帖子的所有跟帖（分页）
+     * @param postId 帖子ID
+     * @param offset 偏移量
+     * @param limit 每页条数
+     * @return 评论分页列表
      */
-    @Select("SELECT COUNT(*) " +
-            "FROM post_follow " +
-            "WHERE post_id = #{postId} AND is_deleted = 0 AND status = 'NORMAL'")
-    int countByPostId(Long postId);
+    List<PostFollow> selectByPostId(
+            @Param("postId") Long postId,
+            @Param("offset") int offset,
+            @Param("limit") int limit
+    );
 
     /**
-     * 互动更新：更新跟帖点赞数
-     * 对应《代码文档1》PostFollowMapper.updateLikeCount方法
+     * 查询指定用户发布的所有跟帖
+     * @param userId 用户ID
+     * @return 评论列表
      */
-    @Update("UPDATE post_follow " +
-            "SET like_count = #{likeCount}, update_time = NOW() " +
-            "WHERE post_follow_id = #{postFollowId} AND is_deleted = 0")
-    int updateLikeCount(@Param("postFollowId") Long postFollowId, @Param("likeCount") int likeCount);
+    List<PostFollow> selectByUserId(@Param("userId") Long userId);
 
+    /**
+     * 查询指定跟帖的回复列表
+     * @param parentId 父跟帖ID
+     * @return 回复列表
+     */
+    List<PostFollow> selectByParentId(@Param("parentId") Long parentId);
+
+
+    // ==================== 统计功能 ====================
+    /**
+     * 统计指定帖子的跟帖总数
+     * @param postId 帖子ID
+     * @return 跟帖总数
+     */
+    int countByPostId(@Param("postId") Long postId);
+
+    /**
+     * 统计指定用户的跟帖总数
+     * @param userId 用户ID
+     * @return 评跟帖数
+     */
+    int countByUserId(@Param("userId") Long userId);
+
+
+    // ==================== 批量操作 ====================
+    /**
+     * 批量删除指定帖子的所有评论（帖子删除时联动）
+     * @param postId 帖子ID
+     * @return 影响行数
+     */
+    int batchDeleteByPostId(@Param("postId") Long postId);
+
+    /**
+     * 批量删除指定用户的所有评论（用户注销时联动）
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    int batchDeleteByUserId(@Param("userId") Long userId);
+
+
+    // ==================== 管理功能 ====================
     /**
      * 管理更新：更新跟帖状态（管理员操作）
      * 对应《代码文档1》PostFollowMapper.updateStatus方法

@@ -5,19 +5,45 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 帖子实体类
+ */
 @Data
 public class Post {
+    /** 帖子ID */
     private Long postId;
+
+    /** 用户ID */
     private Long userId;
+
+    /** 点赞数 */
     private Integer likeCount;
+
+    /** 跟帖数 */
     private Integer postFollowCount;
+
+    /** 标题 */
     private String title;
+
+    /** 内容 */
     private String content;
+
+    /** 创建时间 */
     private LocalDateTime createTime;
+
+    /** 更新时间 */
     private LocalDateTime updateTime;
+
+    /** 是否为热门帖 */
     private Boolean isHot;
+
+    /** 是否为精华帖 */
     private Boolean isEssence;
+
+    /** 是否为置顶帖 */
     private Boolean isTop;
+
+    /** 帖子状态 */
     private PostStatusEnum status;
 
     public Post(){}

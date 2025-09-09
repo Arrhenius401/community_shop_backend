@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community_shop.backend.mapper.OrderMapper">
+
+    <!-- 结果集映射：严格匹配order表字段与Order实体 -->
+    <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.Order">
+        <id column="order_id" property="orderId"/>
+        <result column="product_id" property="productId"/>
+        <result column="buyer_id" property="buyerId"/>
+        <result column="seller_id" property="sellerId"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="quantity" property="quantity"/>
+        <result column="receiver_name" property="receiverName"/>
+        <result column="address" property="address"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="buyer_remark" property="buyerRemark"/>
+        <result column="status" property="status"/> <!-- 自动匹配OrderStatusEnumTypeHandler -->
+        <result column="pay_type" property="payType"/> <!-- 自动匹配PayTypeEnumTypeHandler -->
+        <result column="create_time" property="createTime"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="ship_time" property="shipTime"/>
+        <result column="receive_time" property="receiveTime"/>
+    </resultMap>
+
+    <!-- 基础字段SQL片段（严格对应数据库表字段） -->
+    <sql id="Base_Column_List">
+        order_id, product_id, buyer_id, seller_id, total_amount, quantity,
+        receiver_name, address, phone_number, buyer_remark, status, pay_type,
+        create_time, pay_time, ship_time, receive_time
+    </sql>
+
+
+    <!-- ==================== 基础CRUD ==================== -->
+    <insert id="insert" parameterType="com.community_shop.backend.entity.Order">
+        INSERT INTO `order` (
+            product_id, buyer_id, seller_id, total_amount, quantity,
+            receiver_name, address, phone_number, buyer_remark, status, pay_type,
+            create_time, pay_time, ship_time, receive_time
+        ) VALUES (
+                     #{productId}, #{buyerId}, #{sellerId}, #{totalAmount}, #{quantity},
+                     #{receiverName}, #{address}, #{phoneNumber}, #{buyerRemark},
+                     #{status.code,jdbcType=VARCHAR}, #{payType.code,jdbcType=VARCHAR},
+                     #{createTime}, #{payTime}, #{shipTime}, #{receiveTime}
+                 )
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        WHERE order_id = #{orderId}
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM `order`
+        WHERE order_id = #{orderId}
+          AND status = 'PENDING_PAY' -- 仅允许删除未支付订单
+    </delete>
+
+
+    <!-- ==================== 状态与时间更新 ==================== -->
+    <update id="updateStatus">
+        UPDATE `order`
+        SET status = #{status.code,jdbcType=VARCHAR},
+            update_time = NOW()
+        WHERE order_id = #{orderId}
+    </update>
+
+    <update id="updatePayInfo">
+        UPDATE `order`
+        SET pay_time = #{payTime},
+            pay_type = #{payType.code,jdbcType=VARCHAR},
+            status = 'PENDING_SHIP', -- 支付后自动更新为待发货状态
+            update_time = NOW()
+        WHERE order_id = #{orderId}
+          AND status = 'PENDING_PAY' -- 仅允许未支付订单更新支付信息
+    </update>
+
+    <update id="updateShipTime">
+        UPDATE `order`
+        SET ship_time = #{shipTime},
+            status = 'PENDING_RECEIVE', -- 发货后自动更新为待收货状态
+            update_time = NOW()
+        WHERE order_id = #{orderId}
+          AND status = 'PENDING_SHIP' -- 仅允许待发货订单更新发货时间
+    </update>
+
+    <update id="updateReceiveTime">
+        UPDATE `order`
+        SET receive_time = #{receiveTime},
+            status = 'COMPLETED', -- 收货后自动更新为已完成状态
+            update_time = NOW()
+        WHERE order_id = #{orderId}
+          AND status = 'PENDING_RECEIVE' -- 仅允许待收货订单更新收货时间
+    </update>
+
+
+    <!-- ==================== 条件查询 ==================== -->
+    <select id="selectByBuyerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        WHERE buyer_id = #{buyerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectBySellerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        WHERE seller_id = #{sellerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByBuyerId" resultType="int">
+        SELECT COUNT(*) FROM `order`
+        WHERE buyer_id = #{buyerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="countBySellerId" resultType="int">
+        SELECT COUNT(*) FROM `order`
+        WHERE seller_id = #{sellerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="selectByCreateTimeRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        <where>
+            <!-- 按角色区分查询条件 -->
+            <if test="role == 'BUYER'">
+                buyer_id = #{userId}
+            </if>
+            <if test="role == 'SELLER'">
+                seller_id = #{userId}
+            </if>
+            <!-- 时间范围筛选 -->
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+</mapper>

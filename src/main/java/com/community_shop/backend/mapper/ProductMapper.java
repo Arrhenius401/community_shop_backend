@@ -1,41 +1,47 @@
 package com.community_shop.backend.mapper;
 
 import com.community_shop.backend.entity.Product;
+import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+/**
+ * 商品模块Mapper接口，对应product表操作
+ */
 @Mapper
 public interface ProductMapper {
 
-    // 基础 CRUD 操作
-
+    // ==================== 基础CRUD ====================
     /**
-     * 发布商品
-     * @param product 商品实体
-     * @return 插入结果影响行数
+     * 发布商品（插入商品数据）
+     * @param product 商品实体（含标题、类别、价格等核心字段）
+     * @return 影响行数
      */
-    @Insert("INSERT INTO product (title, category, description, price, stock, view_count, status, condition, seller_id) " +
-            ("VALUES ({#title}, #{category}, #{description}, #{price}, #{stock}, #{view_count}, #{status}, #{condition}, #{seller_id})"))
     int insert(Product product);
 
     /**
-     * 查询商品详情
-     * @param productId 商品ID
-     * @return 商品实体
+     * 通过商品ID查询商品详情
+     * @param productId 商品唯一标识
+     * @return 商品完整实体
      */
-    @Select("SELECT * FROM product WHERE product_id = #{productId}")
-    Product selectById(Long productId);
+    Product selectById(@Param("productId") Long productId);
 
     /**
-     * 更新商品信息
-     * @param product 商品实体
-     * @return 更新结果影响行数
+     * 更新商品完整信息
+     * @param product 商品实体（含需更新的字段）
+     * @return 影响行数
      */
-    @Update("UPDATE product SET title = #{title}, category = #{category}, price = #{price}, " +
-            "stock = #{stock}, condition = #{condition}, seller_id = #{sellerId}, view_count = #{viewCount} " +
-            "WHERE product_id = #{productID}")
     int updateById(Product product);
+
+    /**
+     * 删除商品（逻辑删除，更新status状态）
+     * @param productId 商品ID
+     * @param status 目标状态（如"DELETED"）
+     * @return 影响行数
+     */
+    int deleteById(@Param("productId") Long productId, @Param("status") ProductStatusEnum status);
 
     /**
      * 删除商品信息
@@ -45,97 +51,104 @@ public interface ProductMapper {
     @Delete("DELETE FROM product WHERE product_id = #{productId}")
     int deleteById(Long productId);
 
-    // 搜索与筛选功能
 
+    // ==================== 搜索与筛选 ====================
     /**
-     * 按类别、价格、成色等条件查询商品
-     * @param category 类别
+     * 多条件分页查询商品（按类别、价格、成色筛选）
+     * @param category 商品类别（如"二手手机"）
      * @param minPrice 最低价格
      * @param maxPrice 最高价格
-     * @param condition 成色
+     * @param condition 商品成色（枚举）
      * @param offset 偏移量
-     * @param limit 限制数量
-     * @return 商品列表
+     * @param limit 每页条数
+     * @return 商品分页列表
      */
-    @Select("<script>" +
-            "SELECT * FROM product " +
-            "WHERE 1=1 " +
-            "<if test='category != null and category != \"\"'>AND category = #{category}</if> " +
-            "<if test='minPrice != null'>AND price >= #{minPrice}</if> " +
-            "<if test='maxPrice != null'>AND price <= #{maxPrice}</if> " +
-            "<if test='condition != null and condition != \"\"'>AND condition = #{condition}</if> " +
-            "LIMIT #{offset}, #{limit}" +
-            "</script>")
-    List<Product> selectByCondition(@Param("category") String category,
-                                    @Param("minPrice") Double minPrice,
-                                    @Param("maxPrice") Double maxPrice,
-                                    @Param("condition") String condition,
-                                    @Param("offset") int offset,
-                                    @Param("limit") int limit);
+    List<Product> selectByCondition(
+            @Param("category") String category,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            @Param("condition") ProductConditionEnum condition,
+            @Param("offset") int offset,
+            @Param("limit") int limit
+    );
 
     /**
      * 按关键词模糊搜索商品
-     * @param keyword 关键词
+     * @param keyword 搜索关键词（匹配标题/描述）
      * @param offset 偏移量
-     * @param limit 限制数量
-     * @return 商品列表
+     * @param limit 每页条数
+     * @return 商品分页列表
      */
-    @Select("SELECT * FROM product " +
-            "WHERE title LIKE CONCAT('%', #{keyword}, '%') " +
-            "LIMIT #{offset}, #{limit}")
-    List<Product> selectByKeyword(@Param("keyword") String keyword,
-                                  @Param("offset") int offset,
-                                  @Param("limit") int limit);
-
-    // 库存与状态管理
+    List<Product> selectByKeyword(
+            @Param("keyword") String keyword,
+            @Param("offset") int offset,
+            @Param("limit") int limit
+    );
 
     /**
-     * 更新商品库存
-     * @param productId 商品ID
-     * @param stock 库存数量
-     * @return 更新结果影响行数
+     * 统计关键词搜索的商品总数
+     * @param keyword 搜索关键词
+     * @return 商品总数
      */
-    @Update("UPDATE product SET stock = #{stock} WHERE product_id = #{productId}")
-    int updateStock(@Param("productId") Long productId, @Param("stock") int stock);
-
-    /**
-     * 查询卖家发布的商品
-     * @param sellerId 卖家ID
-     * @param offset 偏移量
-     * @param limit 限制数量
-     * @return 商品列表
-     */
-    @Select("SELECT * FROM product WHERE seller_id = #{sellerId} LIMIT #{offset}, #{limit}")
-    List<Product> selectBySellerId(@Param("sellerId") Long sellerId,
-                                   @Param("offset") int offset,
-                                   @Param("limit") int limit);
-
-    /**
-     * 根据关键词模糊查询商品数量
-     * @param keyword 关键词
-     * @return 商品数量
-     */
-    @Select("SELECT COUNT(*) FROM product WHERE title LIKE CONCAT('%', #{keyword}, '%')")
     int countByKeyword(@Param("keyword") String keyword);
 
     /**
-     * 根据类别、价格、成色等条件查询商品数量
-     * @param category 类别
+     * 统计多条件筛选后的商品总数
+     * @param category 商品类别
      * @param minPrice 最低价格
      * @param maxPrice 最高价格
-     * @param condition 成色
-     * @return 商品数量
+     * @param condition 商品成色
+     * @return 商品总数
      */
-    @Select("<script>" +
-            "SELECT * FROM product " +
-            "WHERE 1=1 " +
-            "<if test='category != null and category != \"\"'>AND category = #{category}</if> " +
-            "<if test='minPrice != null'>AND price >= #{minPrice}</if> " +
-            "<if test='maxPrice != null'>AND price <= #{maxPrice}</if> " +
-            "<if test='condition != null and condition != \"\"'>AND condition = #{condition}</if> " +
-            "</script>")
-    int countByCondition(@Param("category") String category,
-                        @Param("minPrice") Double minPrice,
-                        @Param("maxPrice") Double maxPrice,
-                        @Param("condition") String condition);
+    int countByCondition(
+            @Param("category") String category,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            @Param("condition") ProductConditionEnum condition
+    );
+
+
+    // ==================== 库存与卖家查询 ====================
+    /**
+     * 更新商品库存
+     * @param productId 商品ID
+     * @param stock 调整后的库存数量
+     * @return 影响行数
+     */
+    int updateStock(@Param("productId") Long productId, @Param("stock") int stock);
+
+    /**
+     * 分页查询卖家发布的商品
+     * @param sellerId 卖家ID
+     * @param offset 偏移量
+     * @param limit 每页条数
+     * @return 商品分页列表
+     */
+    List<Product> selectBySellerId(
+            @Param("sellerId") Long sellerId,
+            @Param("offset") int offset,
+            @Param("limit") int limit
+    );
+
+    /**
+     * 按卖家ID+商品状态分页查询商品
+     * @param sellerId 卖家ID
+     * @param status 商品状态（枚举）
+     * @param offset 偏移量
+     * @param limit 每页条数
+     * @return 商品分页列表
+     */
+    List<Product> selectBySellerIdAndStatus(
+            @Param("sellerId") Long sellerId,
+            @Param("status") ProductStatusEnum status,
+            @Param("offset") int offset,
+            @Param("limit") int limit
+    );
+
+    /**
+     * 更新商品浏览量（自增1）
+     * @param productId 商品ID
+     * @return 影响行数
+     */
+    int updateViewCount(@Param("productId") Long productId);
 }

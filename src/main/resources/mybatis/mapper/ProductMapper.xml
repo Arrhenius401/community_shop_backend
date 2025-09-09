@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community_shop.backend.mapper.ProductMapper">
+
+    <!-- 结果集映射：严格匹配product表字段与Product实体 -->
+    <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.Product">
+        <id column="product_id" property="productId"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="category" property="category"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="condition" property="condition"/> <!-- 自动匹配ProductConditionEnumTypeHandler -->
+        <result column="seller_id" property="sellerId"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="status" property="status"/> <!-- 自动匹配ProductStatusEnumTypeHandler -->
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 基础字段SQL片段（严格对应数据库表字段） -->
+    <sql id="Base_Column_List">
+        product_id, title, description, category, price, stock,
+        `condition`, seller_id, view_count, status,
+        create_time, update_time
+    </sql>
+
+
+    <!-- ==================== 基础CRUD ==================== -->
+    <insert id="insert" parameterType="com.community_shop.backend.entity.Product">
+        INSERT INTO product (
+            title, description, category, price, stock,
+            `condition`, seller_id, view_count, status,
+            create_time, update_time
+        ) VALUES (
+                     #{title}, #{description}, #{category}, #{price}, #{stock},
+                     #{condition.code,jdbcType=VARCHAR},
+                     #{sellerId}, #{viewCount}, #{status.code,jdbcType=VARCHAR},
+                     #{createTime}, #{updateTime}
+                 )
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE product_id = #{productId}
+    </select>
+
+    <update id="updateById" parameterType="com.community_shop.backend.entity.Product">
+        UPDATE product
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="condition != null">`condition` = #{condition.code,jdbcType=VARCHAR},</if>
+            <if test="status != null">status = #{status.code,jdbcType=VARCHAR},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="deleteById">
+        UPDATE product
+        SET status = #{status.code,jdbcType=VARCHAR},
+            update_time = NOW()
+        WHERE product_id = #{productId}
+    </update>
+
+
+    <!-- ==================== 搜索与筛选 ==================== -->
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        <where>
+            <!-- 默认查询上架状态商品 -->
+            <if test="status == null">status = 'ON_SALE'</if>
+            <if test="status != null">status = #{status.code,jdbcType=VARCHAR}</if>
+
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="minPrice != null">AND price &gt;= #{minPrice}</if>
+            <if test="maxPrice != null">AND price &lt;= #{maxPrice}</if>
+            <if test="condition != null">
+                AND `condition` = #{condition.code,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectByKeyword" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE status = 'ON_SALE'
+        AND (title LIKE CONCAT('%', #{keyword}, '%')
+        OR description LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByKeyword" resultType="int">
+        SELECT COUNT(*) FROM product
+        WHERE status = 'ON_SALE'
+          AND (title LIKE CONCAT('%', #{keyword}, '%')
+            OR description LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*) FROM product
+        <where>
+            <if test="status == null">status = 'ON_SALE'</if>
+            <if test="status != null">status = #{status.code,jdbcType=VARCHAR}</if>
+
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="minPrice != null">AND price &gt;= #{minPrice}</if>
+            <if test="maxPrice != null">AND price &lt;= #{maxPrice}</if>
+            <if test="condition != null">
+                AND `condition` = #{condition.code,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- ==================== 库存与卖家查询 ==================== -->
+    <update id="updateStock">
+        UPDATE product
+        SET stock = #{stock},
+            update_time = NOW()
+        WHERE product_id = #{productId}
+    </update>
+
+    <select id="selectBySellerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE seller_id = #{sellerId}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectBySellerIdAndStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE seller_id = #{sellerId}
+        AND status = #{status.code,jdbcType=VARCHAR}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <update id="updateViewCount">
+        UPDATE product
+        SET view_count = view_count + 1,
+            update_time = NOW()
+        WHERE product_id = #{productId}
+    </update>
+
+</mapper>

@@ -2,10 +2,12 @@ package com.community_shop.backend.dto.evaluation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 评价创建请求VO（视图对象）
@@ -51,6 +53,13 @@ public class EvaluationCreateDTO implements Serializable {
     @NotBlank(message = "评价内容不能为空")
     @Length(min = 1, max = 500, message = "评价内容长度必须在1-500字符之间")
     private String content;
+
+//    /** 评价图片URL列表（最多5张，可选） */
+//    private List<String> imageUrls;
+//
+//    /** 评价标签（如“质量好”“物流快”，最多3个，可选） */
+//    @Size(max = 3, message = "最多选择3个标签")
+//    private List<String> tags;
 
     public EvaluationCreateDTO() {}
 

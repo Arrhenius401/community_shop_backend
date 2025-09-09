@@ -45,11 +45,11 @@ public class OrderDetailDTO {
     /** 支付时间（null表示未支付） */
     private LocalDateTime payTime;
 
-//    /** 发货时间（null表示未发货） */
-//    private LocalDateTime shipTime;
-//
-//    /** 确认收货时间（null表示未确认） */
-//    private LocalDateTime receiveTime;
+    /** 发货时间（null表示未发货） */
+    private LocalDateTime shipTime;
+
+    /** 确认收货时间（null表示未确认） */
+    private LocalDateTime receiveTime;
 
     /** 订单创建时间 */
     private LocalDateTime createTime;

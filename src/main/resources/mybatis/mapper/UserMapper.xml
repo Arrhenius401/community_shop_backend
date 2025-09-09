@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.community_shop.backend.mapper.UserMapper">
 
-    <!-- 结果集映射：匹配User实体与user表字段 -->
-    <resultMap id="BaseResultMap" type="com.community_shop.entity.User">
+    <!-- 结果集映射：匹配User实体与user表字段（无需重复指定typeHandler） -->
+    <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.User">
         <id column="user_id" property="userId"/>
         <result column="username" property="username"/>
         <result column="email" property="email"/>
@@ -11,13 +11,12 @@
         <result column="password" property="password"/>
         <result column="avatar_url" property="avatarUrl"/>
         <result column="bio" property="bio"/>
-        <!-- 枚举类型映射：通过code匹配数据库varchar字段 -->
-        <result column="gender" property="gender" typeHandler="com.community_shop.handler.GenderEnumTypeHandler"/>
-        <result column="role" property="role" typeHandler="com.community_shop.handler.UserRoleEnumTypeHandler"/>
+        <result column="gender" property="gender"/> <!-- 自动匹配GenderEnumTypeHandler -->
+        <result column="role" property="role"/> <!-- 自动匹配UserRoleEnumTypeHandler -->
         <result column="credit_score" property="creditScore"/>
         <result column="post_count" property="postCount"/>
         <result column="follower_count" property="followerCount"/>
-        <result column="interest_tags" property="interestTags" typeHandler="com.community_shop.handler.ListStringTypeHandler"/>
+        <result column="interest_tags" property="interestTags"/> <!-- 自动匹配ListStringTypeHandler -->
         <result column="activity_time" property="activityTime"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
@@ -30,25 +29,25 @@
 
 
     <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.entity.User">
+    <insert id="insert" parameterType="com.community_shop.backend.entity.User">
         INSERT INTO user (
-            username, email, phone_number, password, avatar_url, bio, gender, role,
-            credit_score, post_count, follower_count, interest_tags, activity_time, create_time
+        username, email, phone_number, password, avatar_url, bio, gender, role,
+        credit_score, post_count, follower_count, interest_tags, activity_time, create_time
         ) VALUES (
-                     #{username}, #{email}, #{phoneNumber}, #{password}, #{avatarUrl}, #{bio},
-                     #{gender.code,jdbcType=VARCHAR,typeHandler=com.community_shop.handler.GenderEnumTypeHandler},
-                     #{role.code,jdbcType=VARCHAR,typeHandler=com.community_shop.handler.UserRoleEnumTypeHandler},
-                     #{creditScore}, #{postCount}, #{followerCount},
-                     #{interestTags,jdbcType=VARCHAR,typeHandler=com.community_shop.handler.ListStringTypeHandler},
-                     #{activityTime}, #{createTime}
-                 )
+        #{username}, #{email}, #{phoneNumber}, #{password}, #{avatarUrl}, #{bio},
+        #{gender.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+        #{role.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+        #{creditScore}, #{postCount}, #{followerCount},
+        #{interestTags,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+        #{activityTime}, #{createTime}
+        )
     </insert>
 
     <select id="selectById" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user WHERE user_id = #{userId}
     </select>
 
-    <update id="updateById" parameterType="com.community_shop.entity.User">
+    <update id="updateById" parameterType="com.community_shop.backend.entity.User">
         UPDATE user
         <set>
             <if test="username != null">username = #{username},</if>
@@ -58,10 +57,10 @@
             <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
             <if test="bio != null">bio = #{bio},</if>
             <if test="gender != null">
-                gender = #{gender.code,jdbcType=VARCHAR,typeHandler=com.community_shop.handler.GenderEnumTypeHandler},
+                gender = #{gender.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
             </if>
             <if test="role != null">
-                role = #{role.code,jdbcType=VARCHAR,typeHandler=com.community_shop.handler.UserRoleEnumTypeHandler},
+                role = #{role.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
             </if>
             <if test="activityTime != null">activity_time = #{activityTime},</if>
         </set>
@@ -104,7 +103,7 @@
     <!-- ==================== 条件查询 ==================== -->
     <select id="selectByInterestTags" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user
-        WHERE FIND_IN_SET(interest_tags, #{tags,typeHandler=com.community_shop.handler.ListStringTypeHandler})
+        WHERE FIND_IN_SET(interest_tags, #{tags,jdbcType=VARCHAR}) <!-- 简化：无需显式指定typeHandler -->
     </select>
 
     <select id="getUsersByAllParam" resultMap="BaseResultMap">
@@ -122,7 +121,7 @@
 
     <select id="selectByRole" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user
-        WHERE role = #{role.code,jdbcType=VARCHAR,typeHandler=com.community_shop.handler.UserRoleEnumTypeHandler}
+        WHERE role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
     </select>
 
 </mapper>

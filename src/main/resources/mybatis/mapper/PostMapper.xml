@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community_shop.backend.mapper.PostMapper">
+
+    <!-- 结果集映射：匹配Post实体与post表字段（无需重复指定typeHandler） -->
+    <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.Post">
+        <id column="post_id" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="user_id" property="userId"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="post_follow_count" property="postFollowCount"/>
+        <result column="is_hot" property="isHot"/>
+        <result column="is_essence" property="isEssence"/>
+        <result column="is_top" property="isTop"/>
+        <result column="status" property="status"/> <!-- 自动匹配PostStatusEnumTypeHandler -->
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 基础字段SQL片段 -->
+    <sql id="Base_Column_List">
+        post_id, title, content, user_id, like_count, post_follow_count,
+        is_hot, is_essence, is_top, status, create_time, update_time
+    </sql>
+
+
+    <!-- ==================== 基础CRUD ==================== -->
+    <insert id="insert" parameterType="com.community_shop.backend.entity.Post">
+        INSERT INTO post (
+        title, content, user_id, like_count, post_follow_count,
+        is_hot, is_essence, is_top, status, create_time, update_time
+        ) VALUES (
+        #{title}, #{content}, #{userId}, #{likeCount}, #{postFollowCount},
+        #{isHot}, #{isEssence}, #{isTop},
+        #{status.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+        #{createTime}, #{updateTime}
+        )
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post WHERE post_id = #{postId}
+    </select>
+
+    <update id="updateById" parameterType="com.community_shop.backend.entity.Post">
+        UPDATE post
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="postFollowCount != null">post_follow_count = #{postFollowCount},</if>
+            <if test="isHot != null">is_hot = #{isHot},</if>
+            <if test="isEssence != null">is_essence = #{isEssence},</if>
+            <if test="isTop != null">is_top = #{isTop},</if>
+            <if test="status != null">
+                status = #{status.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        WHERE post_id = #{postId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM post WHERE post_id = #{postId}
+    </delete>
+
+
+    <!-- ==================== 列表查询（多维度排序） ==================== -->
+    <select id="getAllPostByUserID" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getAllPostAddLimit" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        WHERE status = #{status.code,jdbcType=VARCHAR} <!-- 简化：直接用枚举code -->
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectHotPosts" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        WHERE is_hot = 1 AND status = 'NORMAL'
+        ORDER BY like_count DESC, post_follow_count DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectEssencePosts" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        WHERE is_essence = 1 AND status = 'NORMAL'
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectTopPosts" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        WHERE is_top = 1 AND status = 'NORMAL'
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <if test="status == null or status == ''">
+                AND status = 'NORMAL'
+            </if>
+        </where>
+        <if test="orderBy != null and orderBy != '' and direction != null and direction != ''">
+            ORDER BY ${orderBy} ${direction}
+        </if>
+        <if test="(orderBy == null or orderBy == '') or (direction == null or direction == '')">
+            ORDER BY create_time DESC
+        </if>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+
+    <!-- ==================== 互动数据更新 ==================== -->
+    <update id="updateLikeCount">
+        UPDATE post SET like_count = #{count} WHERE post_id = #{postId}
+    </update>
+
+    <update id="updatePostFollowCount">
+        UPDATE post SET post_follow_count = #{count} WHERE post_id = #{postId}
+    </update>
+
+
+    <!-- ==================== 管理功能 ==================== -->
+    <update id="updatePostStatus">
+        UPDATE post
+        SET status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+        WHERE post_id = #{postID}
+    </update>
+
+    <update id="updatePostStatus" parameterType="map">
+        UPDATE post
+        <set>
+            <if test="isEssence != null">is_essence = #{isEssence},</if>
+            <if test="isTop != null">is_top = #{isTop},</if>
+        </set>
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="updatePostContent">
+        UPDATE post
+        SET title = #{newTitle},
+            content = #{newContent},
+            update_time = #{updateTime}
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="batchUpdateStatus">
+        UPDATE post
+        SET status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+        WHERE post_id IN
+        <foreach collection="postIds" item="postId" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </update>
+
+</mapper>

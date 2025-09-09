@@ -20,6 +20,9 @@ public class Message {
     // 接收者ID（-1表示所有用户）
     private Long receiverId;
 
+    // 消息标题
+    private String title;
+
     // 消息内容
     private String content;
 
@@ -27,13 +30,10 @@ public class Message {
     private Long orderId;
 
     // 阅读状态（0=未读，1=已读）
-    private Integer isRead;
-
-    // 创建时间
-    private LocalDateTime createTime;
+    private Boolean isRead;
 
     // 删除状态（0=未删除，1=已删除）
-    private Integer isDeleted;
+    private Boolean isDeleted;
 
     // 消息类型（SYSTEM=系统消息，ORDER=订单消息）
     private MessageTypeEnum type;
@@ -41,18 +41,12 @@ public class Message {
     // 消息状态
     private MessageStatusEnum status;
 
+    // 创建时间
+    private LocalDateTime createTime;
+
+    // 更新时间
+    private LocalDateTime updateTime;
+
     public Message(){}
 
-    public Message(Long msgId, Long senderId, Long receiverId, String content, Long orderId, Integer isRead, LocalDateTime createTime, Integer isDeleted, MessageTypeEnum type, MessageStatusEnum status) {
-        this.msgId = msgId;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.content = content;
-        this.orderId = orderId;
-        this.isRead = isRead;
-        this.createTime = createTime;
-        this.isDeleted = isDeleted;
-        this.type = type;
-        this.status = status;
-    }
 }

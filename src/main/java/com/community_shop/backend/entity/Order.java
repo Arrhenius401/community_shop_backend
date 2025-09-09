@@ -3,24 +3,62 @@ package com.community_shop.backend.entity;
 import com.community_shop.backend.dto.order.OrderCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 订单实体类
+ */
+@AllArgsConstructor
 @Data
 public class Order {
-    private Long orderId; // 订单ID
-    private Long productId; // 商品ID
-    private Long buyerId; // 买家ID
-    private Long sellerId; // 卖家ID
-    private Integer quantity;   // 商品数量
-    private Double totalAmount; // 交易金额
-    private String address; // 收货地址
-    private String buyerRemark; // 买家留言
-    private LocalDateTime createTime; // 下单时间
-    private LocalDateTime payTime; // 支付时间
-    private OrderStatusEnum status; // 订单状态
-    private PayTypeEnum payType;     // 支付方式
+    /** 订单ID */
+    private Long orderId;
+
+    /** 商品ID */
+    private Long productId;
+
+    /** 买家ID */
+    private Long buyerId;
+
+    /** 卖家ID */
+    private Long sellerId;
+
+    /** 交易金额 */
+    private Double totalAmount;
+
+    /** 订单数量 */
+    private Integer quantity;
+
+    /** 买家名称 */
+    private String receiverName;
+
+    /** 收货地址 */
+    private String address;
+
+    /** 买家留言 */
+    private String buyerRemark;
+
+    /** 订单状态 */
+    private OrderStatusEnum status;
+
+    /** 支付方式 */
+    private PayTypeEnum payType;
+
+    /** 创建时间 */
+    private LocalDateTime createTime;
+
+    /** 支付时间 */
+    private LocalDateTime payTime;
+
+    /** 发货时间 */
+    private LocalDateTime shipTime;
+
+    /** 收货时间 */
+    private LocalDateTime receiveTime;
+
 
     public Order(){}
 

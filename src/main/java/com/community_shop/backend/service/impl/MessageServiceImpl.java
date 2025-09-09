@@ -43,9 +43,9 @@ public class MessageServiceImpl implements MessageService {
         message.setContent(content);
         message.setType(MessageTypeEnum.ORDER); // 订单相关通知
         message.setOrderId(orderId);
-        message.setIsRead(0); // 0=未读，1=已读
+        message.setIsRead(false); // 0=未读，1=已读
         message.setCreateTime(LocalDateTime.now());
-        message.setIsDeleted(0); // 0=未删除
+        message.setIsDeleted(false); // 0=未删除
 
         // 插入消息
         int rows = messageMapper.insert(message);
@@ -71,9 +71,9 @@ public class MessageServiceImpl implements MessageService {
         message.setContent(content);
         message.setType(MessageTypeEnum.ORDER);
         message.setOrderId(orderId);
-        message.setIsRead(0);
+        message.setIsRead(false);
         message.setCreateTime(LocalDateTime.now());
-        message.setIsDeleted(0);
+        message.setIsDeleted(false);
 
         // 插入消息
         int rows = messageMapper.insert(message);
@@ -101,9 +101,9 @@ public class MessageServiceImpl implements MessageService {
         message.setReceiverId(-1L); // -1表示所有用户可见
         message.setContent(content);
         message.setType(MessageTypeEnum.SYSTEM);
-        message.setIsRead(0);
+        message.setIsRead(false);
         message.setCreateTime(LocalDateTime.now());
-        message.setIsDeleted(0);
+        message.setIsDeleted(false);
 
         int rows = messageMapper.insert(message);
         if (rows <= 0) {
@@ -113,7 +113,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public PageResult<Message> selectUserMessages(Long userId, String msgType, PageParam pageParam) {
+    public PageResult<Message> selectUserMessages(Long userId, MessageTypeEnum msgType, PageParam pageParam) {
         // 计算分页参数
         int offset = (pageParam.getPageNum() - 1) * pageParam.getPageSize();
         int limit = pageParam.getPageSize();
@@ -142,7 +142,7 @@ public class MessageServiceImpl implements MessageService {
     public Boolean markAsRead(Long msgId, Long userId) {
         // 校验消息是否存在且属于当前用户
         Message message = messageMapper.selectById(msgId);
-        if (message == null || message.getIsDeleted() == 1) {
+        if (message == null || message.getIsDeleted()) {
             throw new RuntimeException("消息不存在或已删除");
         }
         if (!message.getReceiverId().equals(userId) && message.getReceiverId() != -1) {
@@ -167,7 +167,7 @@ public class MessageServiceImpl implements MessageService {
     public Boolean deleteMessage(Long msgId, Long userId) {
         // 校验消息权限
         Message message = messageMapper.selectById(msgId);
-        if (message == null || message.getIsDeleted() == 1) {
+        if (message == null || message.getIsDeleted()) {
             throw new RuntimeException("消息不存在或已删除");
         }
         if (!message.getReceiverId().equals(userId) && message.getReceiverId() != -1) {

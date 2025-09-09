@@ -3,6 +3,7 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.entity.Message;
+import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import org.springframework.stereotype.Service;
 
 /**
@@ -50,7 +51,7 @@ public interface MessageService {
      * @param pageParam 分页参数（页码、每页条数）
      * @return 分页消息列表
      */
-    PageResult<Message> selectUserMessages(Long userId, String msgType, PageParam pageParam);
+    PageResult<Message> selectUserMessages(Long userId, MessageTypeEnum msgType, PageParam pageParam);
 
     /**
      * 标记消息为已读

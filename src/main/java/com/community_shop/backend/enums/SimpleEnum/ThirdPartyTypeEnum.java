@@ -4,20 +4,14 @@ package com.community_shop.backend.enums.SimpleEnum;
  * 第三方登录类型枚举（文档1第三方注册需求）
  */
 public enum ThirdPartyTypeEnum {
-    // 微信登录
-    WECHAT("WECHAT"),
-    // QQ登录
-    QQ("QQ"),
-    // github登录
-    GITHUB("GITHUB");
+    /** 微信登录 */
+    WECHAT,
 
-    private final String type;
+    /** QQ登录 */
+    QQ,
 
-    ThirdPartyTypeEnum(String type) {
-        this.type = type;
-    }
+    /** Github登录 */
+    GITHUB;
 
-    public String getType() {
-        return type;
-    }
+
 }

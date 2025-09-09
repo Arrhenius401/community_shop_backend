@@ -1,14 +1,16 @@
 package com.community_shop.backend.enums.SimpleEnum;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
+/**
+ * 性别枚举类
+ */
 public enum GenderEnum {
-    MALE("MALE"),
-    FEMALE("FEMALE"),
-    UNKNOWN("UNKNOWN");
+    /** 男 */
+    MALE,
 
-    private final String code;
+    /** 女 */
+    FEMALE,
+
+    /** 未知 */
+    UNKNOWN;
+
 }

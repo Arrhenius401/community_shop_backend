@@ -205,7 +205,7 @@ public class PostServiceImpl implements PostService {
         }
 
         // 3. 同步删除关联点赞记录（设计文档要求删除帖子时同步清理关联数据）
-        userPostLikeMapper.deleteByPostId(postId);
+        userPostLikeMapper.batchDeleteByPostId(postId);
 
         // 4. 清除缓存（帖子详情+热门缓存）
         redisTemplate.delete(String.format(CACHE_KEY_POST_DETAIL, postId));

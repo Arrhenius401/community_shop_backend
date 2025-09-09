@@ -11,24 +11,37 @@ import java.util.List;
  */
 @Mapper
 public interface UserPostLikeMapper {
+
+
+    // ==================== 基础操作 ====================
     /**
      * 新增点赞记录
-     * @param userPostLike 点赞实体（含userId、postId、likeTime）
-     * @return 插入影响行数（1=成功，0=失败）
+     * @param userPostLike 点赞实体（含用户ID、帖子ID等信息）
+     * @return 影响行数
      */
-    @Insert("INSERT INTO user_post_like (user_id, post_id, like_time) " +
-            "VALUES (#{userId}, #{postId}, #{likeTime})")
     int insert(UserPostLike userPostLike);
 
     /**
-     * 取消点赞（按用户和帖子删除）
+     * 取消点赞（逻辑删除）
      * @param userId 用户ID
      * @param postId 帖子ID
-     * @return 删除影响行数（1=成功，0=无匹配记录）
+     * @return 影响行数
      */
-    @Delete("DELETE FROM user_post_like " +
-            "WHERE user_id = #{userId} AND post_id = #{postId}")
-    int deleteByUserAndPost(@Param("userId") Long userId, @Param("postId") Long postId);
+    int deleteByUserAndPost(
+            @Param("userId") Long userId,
+            @Param("postId") Long postId
+    );
+
+    /**
+     * 查询用户是否已点赞该帖子
+     * @param userId 用户ID
+     * @param postId 帖子ID
+     * @return 点赞记录（非null表示已点赞）
+     */
+    UserPostLike selectByUserAndPost(
+            @Param("userId") Long userId,
+            @Param("postId") Long postId
+    );
 
     /**
      * 判断用户是否已点赞该帖子
@@ -40,14 +53,14 @@ public interface UserPostLikeMapper {
             "WHERE user_id = #{userId} AND post_id = #{postId}")
     Integer selectIsLiked(@Param("userId") Long userId, @Param("postId") Long postId);
 
+
+    // ==================== 统计与列表查询 ====================
     /**
-     * 统计帖子的总点赞数
+     * 统计帖子的点赞数
      * @param postId 帖子ID
      * @return 点赞总数
      */
-    @Select("SELECT COUNT(1) FROM user_post_like " +
-            "WHERE post_id = #{postId}")
-    Integer selectLikeCountByPostId(Long postId);
+    int countByPostId(@Param("postId") Long postId);
 
     /**
      * 查询用户点赞的所有帖子ID
@@ -60,21 +73,31 @@ public interface UserPostLikeMapper {
     List<Long> selectPostIdsByUserId(Long userId);
 
     /**
-     * 查询帖子的所有点赞用户ID
+     * 查询点赞某帖子的用户ID列表
      * @param postId 帖子ID
-     * @return 用户ID列表（按点赞时间倒序）
+     * @param limit 限制条数
+     * @return 用户ID列表
      */
-    @Select("SELECT user_id FROM user_post_like " +
-            "WHERE post_id = #{postId} " +
-            "ORDER BY like_time DESC")
-    List<Long> selectUserIdsByPostId(Long postId);
+    List<Long> selectUserIdsByPostId(
+            @Param("postId") Long postId,
+            @Param("limit") int limit
+    );
+
+
+
+    // ==================== 批量操作 ====================
+    /**
+     * 批量删除帖子的所有点赞记录（帖子删除时调用）
+     * @param postId 帖子ID
+     * @return 影响行数
+     */
+    int batchDeleteByPostId(@Param("postId") Long postId);
 
     /**
-     * 批量删除某帖子的所有点赞记录（帖子删除时调用）
-     * @param postId 帖子ID
-     * @return 删除影响行数
+     * 批量删除用户的所有点赞记录（用户注销时调用）
+     * @param userId 用户ID
+     * @return 影响行数
      */
-    @Delete("DELETE FROM user_post_like " +
-            "WHERE post_id = #{postId}")
-    int deleteByPostId(Long postId);
+    int batchDeleteByUserId(@Param("userId") Long userId);
+
 }

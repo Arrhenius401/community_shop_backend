@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community_shop.backend.mapper.UserPostLikeMapper">
+
+    <!-- 结果集映射：匹配UserPostLike实体与user_post_like表字段 -->
+    <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.UserPostLike">
+        <id column="like_id" property="likeId"/>
+        <result column="user_id" property="userId"/>
+        <result column="post_id" property="postId"/>
+        <result column="status" property="status"/> <!-- 自动匹配LikeStatusEnumTypeHandler -->
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 基础字段SQL片段 -->
+    <sql id="Base_Column_List">
+        like_id, user_id, post_id, status, create_time
+    </sql>
+
+
+    <!-- ==================== 基础操作 ==================== -->
+    <insert id="insert" parameterType="com.community_shop.backend.entity.UserPostLike">
+        INSERT INTO user_post_like (
+            user_id, post_id, status, create_time
+        ) VALUES (
+                     #{userId}, #{postId},
+                     #{status.code,jdbcType=VARCHAR},
+                     #{createTime}
+                 )
+    </insert>
+
+    <delete id="deleteByUserAndPost">
+        UPDATE user_post_like
+        SET status = 'CANCELLED'
+        WHERE user_id = #{userId} AND post_id = #{postId}
+    </delete>
+
+    <select id="selectByUserAndPost" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user_post_like
+        WHERE user_id = #{userId} AND post_id = #{postId}
+        AND status = 'ACTIVE'
+    </select>
+
+
+    <!-- ==================== 统计与列表查询 ==================== -->
+    <select id="countByPostId" resultType="int">
+        SELECT COUNT(*) FROM user_post_like
+        WHERE post_id = #{postId} AND status = 'ACTIVE'
+    </select>
+
+    <select id="selectPostIdsByUserId" resultType="java.lang.Long">
+        SELECT post_id FROM user_post_like
+        WHERE user_id = #{userId} AND status = 'ACTIVE'
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectUserIdsByPostId" resultType="java.lang.Long">
+        SELECT user_id FROM user_post_like
+        WHERE post_id = #{postId} AND status = 'ACTIVE'
+        ORDER BY create_time DESC
+            LIMIT #{limit}
+    </select>
+
+
+    <!-- ==================== 批量操作 ==================== -->
+    <update id="batchDeleteByPostId">
+        UPDATE user_post_like
+        SET status = 'CANCELLED'
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="batchDeleteByUserId">
+        UPDATE user_post_like
+        SET status = 'CANCELLED'
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>

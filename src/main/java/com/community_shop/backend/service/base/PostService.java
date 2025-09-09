@@ -54,7 +54,7 @@ public interface PostService {
      * @param operatorId 操作用户ID（作者或管理员）
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.PostMapper#deleteById(Long)
-     * @see com.community_shop.backend.mapper.UserPostLikeMapper#deleteByPostId(Long)
+     * @see com.community_shop.backend.mapper.UserPostLikeMapper#batchDeleteByPostId(Long)
      */
     Boolean deletePostById(Long postId, Long operatorId);
 

@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 public class Post {
     private Long postId;
     private Long userId;
-    private int likeCount;
-    private int postFollowCount;
+    private Integer likeCount;
+    private Integer postFollowCount;
     private String title;
     private String content;
     private LocalDateTime createTime;

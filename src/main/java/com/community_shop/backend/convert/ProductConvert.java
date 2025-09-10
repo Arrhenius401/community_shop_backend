@@ -1,142 +1,114 @@
 package com.community_shop.backend.convert;
 
+import com.community_shop.backend.dto.product.ProductCreateVO;
 import com.community_shop.backend.dto.product.ProductDetailDTO;
 import com.community_shop.backend.dto.product.ProductPublishDTO;
 import com.community_shop.backend.dto.product.ProductUpdateDTO;
 import com.community_shop.backend.entity.Product;
-import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
-import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Product 模块 Entity 与 DTO 转换接口
+ * Product 模块对象转换器
+ * 基于 MapStruct 实现实体与 DTO 之间的映射
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ObjectMapper.class) // 引入 ObjectMapper 处理 JSON 字符串与数组转换
 public interface ProductConvert {
 
-    // 单例实例（非Spring环境使用）
+    // 单例实例（非 Spring 环境使用）
     ProductConvert INSTANCE = Mappers.getMapper(ProductConvert.class);
 
-    // 时间格式化器
-    DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    // 提取JSON数组中URL的正则（适配"[\"url1\",\"url2\"]"格式）
-    Pattern URL_EXTRACT_PATTERN = Pattern.compile("\"([^\"]+)\"");
-
+    /**
+     * Product 实体 -> ProductDetailDTO（商品详情响应）
+     * 映射说明：
+     * 1. 将实体中 JSON 格式的 imageUrls 字符串转为 DTO 中的 String 数组
+     * 2. 枚举类型因类型一致可自动映射
+     */
+    @Mapping(target = "imageUrls", expression = "java(jsonToList(product.getImageUrls()))")
+    ProductDetailDTO productToProductDetailDTO(Product product);
 
     /**
-     * ProductPublishDTO → ProductEntity（发布场景：请求参数转数据库实体）
-     * 适配文档：
-     * - imageUrls（JSON字符串）直接存储到product表的image_urls字段
-     * - 初始化view_count=0、status=ON_SALE
-     * - ProductConditionEnum转字符串存储
+     * ProductPublishDTO（商品发布请求）-> Product 实体
+     * 映射说明：
+     * 1. 发布时默认初始化浏览量 0、状态为在售
+     * 2. 忽略实体中自动生成的字段
      */
-    @Mapping(target = "productId", ignore = true) // 自增ID忽略
-    @Mapping(target = "viewCount", constant = "0") // 初始浏览量0
-    @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.ProductStatusEnum.ON_SALE.name())") // 初始在售
-    @Mapping(target = "imageUrls", source = "imageUrls", qualifiedByName = "validateJsonFormat") // 校验JSON格式
-    @Mapping(target = "condition", source = "condition", qualifiedByName = "conditionEnumToString") // 成色枚举转字符串
-    @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())") // 发布时间
-    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())") // 更新时间初始化
-    Product publishDtoToEntity(ProductPublishDTO publishDTO);
-
+    @Mappings({
+            @Mapping(target = "productId", ignore = true), // 主键自增
+            @Mapping(target = "viewCount", constant = "0"), // 初始浏览量 0
+            @Mapping(target = "createTime", ignore = true), // 发布时间由系统生成
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.ProductStatusEnum.ON_SALE)"), // 默认在售
+            @Mapping(target = "imageUrls", source = "imageUrls") // 直接接收 JSON 字符串，存储到实体
+    })
+    Product productPublishDtoToProduct(ProductPublishDTO dto);
 
     /**
-     * ProductEntity → ProductDetailDTO（详情场景：数据库实体转响应DTO）
-     * 适配文档：
-     * - image_urls（JSON字符串）转字符串数组（适配前端展示）
-     * - condition（数据库字符串）转ProductConditionEnum
-     * - createTime格式化显示
+     * ProductCreateVO（商品创建 VO）-> Product 实体
+     * 映射说明：适配旧版创建接口，逻辑与发布接口类似
      */
-    @Mapping(target = "imageUrls", source = "imageUrls", qualifiedByName = "jsonStrToArray") // JSON字符串转数组
-    @Mapping(target = "condition", source = "condition", qualifiedByName = "strToConditionEnum") // 字符串转成色枚举
-    @Mapping(target = "createTime", source = "createTime", qualifiedByName = "formatDateTime") // 时间格式化
-    ProductDetailDTO entityToDetailDto(Product productEntity);
-
+    @Mappings({
+            @Mapping(target = "productId", ignore = true),
+            @Mapping(target = "sellerId", ignore = true), // 由上下文传入，不依赖 VO
+            @Mapping(target = "viewCount", constant = "0"),
+            @Mapping(target = "createTime", ignore = true),
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.ProductStatusEnum.ON_SALE)"),
+            @Mapping(target = "imageUrls", expression = "java(listToJson(vo.getImageUrls()))") // 将 List 转为 JSON 字符串存储
+    })
+    Product productCreateVoToProduct(ProductCreateVO vo);
 
     /**
-     * ProductUpdateDTO → ProductEntity（更新场景：请求参数转实体）
-     * 适配文档：仅更新可修改字段，忽略sellerId、viewCount等不可改字段
+     * ProductUpdateDTO（商品更新请求）-> Product 实体
+     * 映射说明：仅更新请求中携带的非空字段，忽略不可修改的字段
      */
-    @Mapping(target = "sellerId", ignore = true) // 卖家ID不可改
-    @Mapping(target = "viewCount", ignore = true) // 浏览量自动增长
-    @Mapping(target = "createTime", ignore = true) // 发布时间不可改
-    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())") // 刷新更新时间
-    @Mapping(target = "condition", source = "condition", qualifiedByName = "conditionEnumToString")
-    @Mapping(target = "status", source = "status", qualifiedByName = "statusEnumToString")
-    Product updateDtoToEntity(ProductUpdateDTO updateDTO);
-
-
-    // ------------------------------ 自定义转换方法（Java原生实现，无第三方依赖） ------------------------------
-    /**
-     * 校验JSON格式（确保imageUrls符合"[\"url1\",\"url2\"]"格式，避免非法数据存入数据库）
-     */
-    @Named("validateJsonFormat")
-    default String validateJsonFormat(String jsonStr) {
-        if (jsonStr == null || !jsonStr.startsWith("[") || !jsonStr.endsWith("]")) {
-            throw new IllegalArgumentException("图片URL列表格式错误，需为JSON数组格式（如[\"url1\",\"url2\"]）");
-        }
-        return jsonStr;
-    }
+    @Mappings({
+            @Mapping(target = "productId", source = "productId"), // 仅用于定位商品，不修改
+            @Mapping(target = "sellerId", ignore = true), // 卖家 ID 不可修改
+            @Mapping(target = "viewCount", ignore = true), // 浏览量由系统维护
+            @Mapping(target = "createTime", ignore = true), // 创建时间不可修改
+            @Mapping(target = "imageUrls", ignore = true) // 图片更新需单独处理（如需替换需重新上传）
+    })
+    void updateProductFromUpdateDto(ProductUpdateDTO dto, @MappingTarget Product product);
 
     /**
-     * JSON字符串 → 字符串数组（原生正则提取，适配ProductDetailDTO的imageUrls字段）
-     * 示例："[\"https://img1.jpg\",\"https://img2.jpg\"]" → ["https://img1.jpg", "https://img2.jpg"]
+     * 批量转换 Product 列表 -> ProductDetailDTO 列表
      */
-    @Named("jsonStrToArray")
-    default String[] jsonStrToArray(String jsonStr) {
-        if (jsonStr == null || jsonStr.isEmpty()) {
+    List<ProductDetailDTO> productListToProductDetailList(List<Product> products);
+
+    /**
+     * 辅助方法：JSON 字符串转 String 数组
+     * @param json JSON 格式的 URL 列表（如 "[\"url1\",\"url2\"]"）
+     * @return String 数组，转换失败返回空数组
+     */
+    default String[] jsonToList(String json) {
+        if (json == null || json.isEmpty()) {
             return new String[0];
         }
-        Matcher matcher = URL_EXTRACT_PATTERN.matcher(jsonStr);
-        List<String> urls = new ArrayList<>();
-        while (matcher.find()) {
-            urls.add(matcher.group(1)); // 提取匹配的URL（去除双引号）
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(json, String[].class);
+        } catch (JsonProcessingException e) {
+            return new String[0];
         }
-        return urls.toArray(new String[0]);
     }
 
     /**
-     * ProductConditionEnum → 字符串（适配product表condition字段存储）
+     * 辅助方法：List<String> 转 JSON 字符串
+     * @param list URL 列表
+     * @return JSON 字符串，转换失败返回空字符串
      */
-    @Named("conditionEnumToString")
-    default String conditionEnumToString(ProductConditionEnum conditionEnum) {
-        return conditionEnum == null ? null : conditionEnum.name();
-    }
-
-    /**
-     * 字符串 → ProductConditionEnum（适配ProductDetailDTO的condition枚举展示）
-     */
-    @Named("strToConditionEnum")
-    default ProductConditionEnum strToConditionEnum(String str) {
-        if (str == null || str.isEmpty()) {
-            return null;
+    default String listToJson(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return "";
         }
-        return ProductConditionEnum.valueOf(str);
-    }
-
-    /**
-     * ProductStatusEnum → 字符串（适配product表status字段存储）
-     */
-    @Named("statusEnumToString")
-    default String statusEnumToString(ProductStatusEnum statusEnum) {
-        return statusEnum == null ? null : statusEnum.name();
-    }
-
-    /**
-     * LocalDateTime → 格式化字符串（yyyy-MM-dd HH:mm:ss，适配前端展示）
-     */
-    @Named("formatDateTime")
-    default String formatDateTime(LocalDateTime time) {
-        return time == null ? null : time.format(DATE_FORMATTER);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(list);
+        } catch (JsonProcessingException e) {
+            return "";
+        }
     }
 }

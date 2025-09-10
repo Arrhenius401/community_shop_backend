@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.post;
 
+import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class PostFollowDetailDTO {
     private Boolean isLiked;
 
     /** 跟帖状态（NORMAL-正常；HIDDEN-隐藏） */
-    private String status;
+    private PostFollowStatusEnum status;
 
     /** 发布时间 */
     private LocalDateTime createTime;

@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.product;
 
+import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -28,9 +29,6 @@ public class ProductDetailDTO {
     /** 剩余库存 */
     private Integer stock;
 
-    /** 商品成色 */
-    private String condition;
-
     /** 商品描述（支持富文本格式） */
     private String description;
 
@@ -42,5 +40,11 @@ public class ProductDetailDTO {
 
     /** 发布时间 */
     private LocalDateTime createTime;
+
+    /** 商品状态 */
+    private ProductStatusEnum status;
+
+    /** 商品成色 */
+    private String condition;
 
 }

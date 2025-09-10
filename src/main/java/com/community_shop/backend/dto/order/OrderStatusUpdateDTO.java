@@ -25,10 +25,6 @@ public class OrderStatusUpdateDTO {
     @NotNull(message = "操作人ID不能为空")
     private Long operatorId;
 
-    /** 操作人类型（枚举：BUYER-买家；SELLER-卖家；SYSTEM-系统，非空） */
-    @NotBlank(message = "操作人类型不能为空")
-    private String operatorType;
-
     /** 附加信息（如支付流水号、物流单号，可选） */
     private String extraInfo;
 }

@@ -15,6 +15,10 @@ public class PostUpdateDTO {
     @NotNull(message = "帖子ID不能为空")
     private Long postId; // 必须携带，用于定位要更新的帖子
 
+    /** 操作人ID（非空，用于权限校验） */
+    @NotNull(message = "操作人ID不能为空")
+    private Long operatorId;
+
     @NotBlank(message = "帖子标题不能为空")
     @Size(max = 100, message = "标题长度不能超过100个字符")
     private String title; // 允许修改标题

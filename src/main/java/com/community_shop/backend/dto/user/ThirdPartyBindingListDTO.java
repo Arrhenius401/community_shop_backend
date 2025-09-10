@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.user;
 
+import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class ThirdPartyBindingListDTO {
         private Long bindingId;
 
         /** 第三方平台类型（WECHAT/QQ/ALIPAY） */
-        private String thirdType;
+        private ThirdPartyTypeEnum thirdType;
 
         /** 第三方账号标识（脱敏显示，如“微信用户****1234”） */
         private String openidDesensitized;

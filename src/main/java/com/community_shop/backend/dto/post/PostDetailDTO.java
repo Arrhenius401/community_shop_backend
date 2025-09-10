@@ -29,8 +29,14 @@ public class PostDetailDTO extends Post {
     /** 评论数（跟帖数） */
     private Integer commentCount;
 
-    /** 是否热门帖（0-否；1-是） */
-    private Integer isHot;
+    /** 是否为热门帖 */
+    private Boolean isHot;
+
+    /** 是否为精华帖 */
+    private Boolean isEssence;
+
+    /** 是否为置顶帖 */
+    private Boolean isTop;
 
     /** 当前用户是否已点赞（true/false，用于前端状态） */
     private Boolean isLiked;

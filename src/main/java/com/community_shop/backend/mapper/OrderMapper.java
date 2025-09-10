@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
@@ -12,7 +13,7 @@ import java.util.List;
  * 订单管理模块Mapper接口，严格对应order表结构（文档4_数据库设计.docx）
  */
 @Mapper
-public interface OrderMapper {
+public interface OrderMapper extends BaseMapper<Order> {
 
 
     /**

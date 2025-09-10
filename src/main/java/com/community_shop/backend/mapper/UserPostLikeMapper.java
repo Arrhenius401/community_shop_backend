@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.entity.UserPostLike;
 import org.apache.ibatis.annotations.*;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * 对应数据库表：user_post_like
  */
 @Mapper
-public interface UserPostLikeMapper {
+public interface UserPostLikeMapper extends BaseMapper<UserPostLike> {
 
 
     // ==================== 基础操作 ====================

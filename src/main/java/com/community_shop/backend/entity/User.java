@@ -1,6 +1,9 @@
 package com.community_shop.backend.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
@@ -12,17 +15,28 @@ import org.hibernate.validator.constraints.Length;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//无参构造方法（如public User(){}）的作用是创建一个 "空对象"（所有字段为默认值）
-//校验注解（@NotBlank等）本身不会阻止创建对象，只会在触发校验时（如 Controller 层接收请求参数时）生效
-//直接通过new User()创建对象时，即使字段为空也不会触发校验，只有在校验器执行时才会检查
-//当使用校验框架（如 Spring Validation）对通过无参构造创建的对象进行校验时，会触发注解规则，导致校验失败
+
+
+/**
+ * 用户实体类
+ */
 @Data
+@TableName("user")
 public class User{
+
+    /**
+     * 无参构造方法（如public User(){}）的作用是创建一个 "空对象"（所有字段为默认值）
+     * 校验注解（@NotBlank等）本身不会阻止创建对象，只会在触发校验时（如 Controller 层接收请求参数时）生效
+     * 直接通过new User()创建对象时，即使字段为空也不会触发校验，只有在校验器执行时才会检查
+     * 当使用校验框架（如 Spring Validation）对通过无参构造创建的对象进行校验时，会触发注解规则，导致校验失败
+     */
+
     // ===================== 1. 基础主键与账号信息（严格匹配数据库表） =====================
     /**
      * 用户唯一标识（数据库主键，自动递增）
      * 对应文档4 user表：user_id（bigint AI PK）
      */
+    @TableId(value = "user_id", type = IdType.AUTO)
     private Long userId;
 
     /**

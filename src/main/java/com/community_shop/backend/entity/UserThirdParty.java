@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import lombok.Data;
 
@@ -10,8 +13,11 @@ import java.time.LocalDateTime;
  * 对应数据库表：user_third_party
  */
 @Data
+@TableName("user_third_party")
 public class UserThirdParty {
+
     /** 自增主键 */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /** 关联平台用户ID（外键关联user.user_id） */

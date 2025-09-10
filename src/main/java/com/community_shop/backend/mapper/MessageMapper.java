@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * 消息Mapper接口，提供message表的CRUD操作
  */
-public interface MessageMapper {
+public interface MessageMapper extends BaseMapper<Message> {
 
 
     // ==================== 基础CRUD ====================

@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.dto.order.OrderCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
@@ -13,8 +16,11 @@ import java.time.LocalDateTime;
  */
 @AllArgsConstructor
 @Data
+@TableName("`order`")
 public class Order {
+
     /** 订单ID */
+    @TableId(value = "order_id", type = IdType.AUTO)
     private Long orderId;
 
     /** 商品ID */

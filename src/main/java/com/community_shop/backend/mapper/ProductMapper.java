@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
@@ -11,7 +12,7 @@ import java.util.List;
  * 商品模块Mapper接口，对应product表操作
  */
 @Mapper
-public interface ProductMapper {
+public interface ProductMapper extends BaseMapper<Product> {
 
     // ==================== 基础CRUD ====================
     /**

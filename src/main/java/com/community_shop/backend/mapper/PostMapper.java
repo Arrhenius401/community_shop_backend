@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.entity.Post;
 import org.apache.ibatis.annotations.*;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * 帖子管理模块Mapper接口，对应post表操作
  */
 @Mapper
-public interface PostMapper {
+public interface PostMapper extends BaseMapper<Post> {
 
     //MyBatis不支持Java的重载特性
     //MyBatis 会把 Mapper 接口里的每个方法映射成一个唯一的 SQL 语句

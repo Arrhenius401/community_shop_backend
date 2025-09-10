@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import lombok.Data;
 
@@ -9,8 +12,11 @@ import java.time.LocalDateTime;
  * 帖子实体类
  */
 @Data
+@TableName("post")
 public class Post {
+
     /** 帖子ID */
+    @TableId(value = "post_id", type = IdType.AUTO)
     private Long postId;
 
     /** 用户ID */

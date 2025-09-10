@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.entity.Evaluation;
 import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import org.apache.ibatis.annotations.*;
@@ -10,7 +11,7 @@ import java.util.List;
  * 评价模块Mapper接口，严格对应evaluation表结构（文档4_数据库设计.docx）
  */
 @Mapper
-public interface EvaluationMapper {
+public interface EvaluationMapper extends BaseMapper<Evaluation> {
 
 
 

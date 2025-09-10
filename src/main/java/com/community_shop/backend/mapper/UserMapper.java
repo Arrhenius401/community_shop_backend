@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.entity.User;
@@ -11,7 +12,7 @@ import java.util.List;
  * 用户管理模块Mapper接口，对应user表操作
  */
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
     // SQL知识补充
     // CONCAT() 是 SQL 标准函数，是一个字符串函数，用于将两个或多个字符串连接（拼接）成一个字符串。它的基本作用是将多个字符串参数合并为一个单一的字符串结果。
     // LIKE 是一个用于字符串匹配的运算符，主要用于 WHERE 子句中，判断某列的值是否符合指定的字符串模式。它通常与通配符配合使用，实现模糊查询。

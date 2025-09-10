@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.dto.post.PostFollowPublishDTO;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import lombok.Data;
@@ -10,8 +13,11 @@ import java.time.LocalDateTime;
  * 帖子跟帖实体类
  */
 @Data
+@TableName("post_follow")
 public class PostFollow {
+
     /** 跟帖ID */
+    @TableId(value = "post_follow_id", type = IdType.AUTO)
     private Long postFollowId;
 
     /** 帖子ID */

@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import org.apache.ibatis.annotations.*;
@@ -10,7 +11,7 @@ import java.util.List;
  * 帖子评论模块Mapper接口，对应post_follow表操作
  */
 @Mapper
-public interface PostFollowMapper {
+public interface PostFollowMapper extends BaseMapper<PostFollow> {
 
 
     // ==================== 基础CRUD ====================

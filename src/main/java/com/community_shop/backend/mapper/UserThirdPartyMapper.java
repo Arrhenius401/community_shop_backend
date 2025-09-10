@@ -1,5 +1,6 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.UserThirdParty;
 import org.apache.ibatis.annotations.*;
@@ -10,7 +11,7 @@ import java.util.List;
  * 第三方账号关联模块Mapper接口，严格对应user_third_party表结构（文档4_数据库设计.docx）
  */
 @Mapper
-public interface UserThirdPartyMapper {
+public interface UserThirdPartyMapper extends BaseMapper<UserThirdParty> {
 
     // ==================== 基础CRUD ====================
     /**

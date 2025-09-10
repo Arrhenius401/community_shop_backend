@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import lombok.AllArgsConstructor;
@@ -9,18 +12,42 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@TableName("product")
 public class Product {
-    private Long productId; // 商品ID
-    private Long sellerId; // 卖家ID
-    private String title; // 标题
-    private String category; // 类别（如“二手手机”）
-    private String description; // 商品描述
-    private Double price; // 价格
-    private Integer stock; // 库存
-    private Integer viewCount; // 浏览量
-    private LocalDateTime createTime; // 创建时间
-    private ProductStatusEnum status;   // 商品状态
-    private ProductConditionEnum condition; // 成色（全新/9成新等）
+
+    /** 商品ID */
+    @TableId(value = "product_id", type = IdType.AUTO)
+    private Long productId;
+
+    /** 卖家ID */
+    private Long sellerId;
+
+    /** 商品标题 */
+    private String title;
+
+    /** 商品类别 */
+    private String category;
+
+    /** 商品描述 */
+    private String description;
+
+    /** 商品价格 */
+    private Double price;
+
+    /** 商品库存 */
+    private Integer stock;
+
+    /** 浏览量 */
+    private Integer viewCount;
+
+    /** 创建时间 */
+    private LocalDateTime createTime;
+
+    /** 商品状态 */
+    private ProductStatusEnum status;
+
+    /** 商品成色 */
+    private ProductConditionEnum condition;
 
     public Product(){}
 

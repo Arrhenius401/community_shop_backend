@@ -1,5 +1,8 @@
 package com.community_shop.backend.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.dto.evaluation.EvaluationCreateDTO;
 import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import lombok.AllArgsConstructor;
@@ -12,16 +15,36 @@ import java.time.LocalDateTime;
  */
 @AllArgsConstructor
 @Data
+@TableName("evaluation")    // 表名
 public class Evaluation {
-    private Long evalId; // 评价ID
-    private Long orderId; // 关联订单ID
-    private Long userId; // 评价者ID
-    private Long sellerId;  // 卖家ID
-    private String content; // 评价内容
-    private Integer score; // 评分（1-5星）
-    private EvaluationStatusEnum status;    // 评价状态
-    private LocalDateTime createTime; // 评价时间
-    private LocalDateTime updateTime;   // 更新时间
+
+    /** 评价ID */
+    @TableId(value = "eval_id", type = IdType.AUTO) // 主键自增长
+    private Long evalId;
+
+    /** 关联订单ID */
+    private Long orderId;
+
+    /** 评价者ID */
+    private Long userId;
+
+    /** 卖家ID */
+    private Long sellerId;
+
+    /** 评价内容 */
+    private String content;
+
+    /** 评分 */
+    private Integer score;
+
+    /** 评价状态 */
+    private EvaluationStatusEnum status;
+
+    /** 创建时间 */
+    private LocalDateTime createTime;
+
+    /** 更新时间 */
+    private LocalDateTime updateTime;
 
     public Evaluation(){}
 

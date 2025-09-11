@@ -19,10 +19,6 @@ public class PostFollowUpdateDTO {
     @NotNull(message = "跟帖ID不能为空")
     private Long postFollowId;
 
-    /** 操作人ID（非空，用于权限校验） */
-    @NotNull(message = "操作人ID不能为空")
-    private Long operatorId;
-
     /**
      * 新跟帖内容
      * 约束：非空、长度1-500字（同创建规则），匹配post_follow表content字段长度

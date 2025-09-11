@@ -16,14 +16,6 @@ import org.hibernate.validator.constraints.Length;
 public class OrderCreateDTO {
 
     /**
-     * 订单创建者ID
-     * 创建订单的用户ID，必传，用于定位下单用户
-     * 对应文档4中order表外键字段
-     */
-    @NotNull(message = "创建者ID不能为空")
-    private Long buyerId;
-
-    /**
      * 商品ID
      * 关联product表的product_id，必传，用于定位下单商品
      * 对应文档4中product表的主键字段

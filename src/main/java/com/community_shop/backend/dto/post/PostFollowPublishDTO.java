@@ -19,13 +19,6 @@ public class PostFollowPublishDTO {
     private Long postId;
 
     /**
-     * 创建者ID
-     * 约束：非空，匹配user表user_id字段类型
-     */
-    @NotNull(message = "创建者ID不能为空")
-    private Long userId;
-
-    /**
      * 跟帖内容
      * 约束：非空、长度1-500字（防止空内容或刷屏），匹配post_follow表content字段长度
      */

@@ -16,10 +16,6 @@ public class MessageSendDTO {
     /** 接收者ID（私信必填，系统通知可为null） */
     private Long receiverId;
 
-    /** 发送者ID（非空，私信为用户ID，系统通知为固定系统账号ID） */
-    @NotNull(message = "发送者ID不能为空")
-    private Long senderId;
-
     /** 消息内容（1-1000字，非空） */
     @NotBlank(message = "消息内容不能为空")
     @Size(max = 1000, message = "消息内容不超过1000字")

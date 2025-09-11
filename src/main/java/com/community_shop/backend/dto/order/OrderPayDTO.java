@@ -20,12 +20,6 @@ public class OrderPayDTO {
     private Long orderId;
 
     /**
-     * 支付用户ID（当前登录用户，非空，需与订单的user_id一致）
-     */
-    @NotNull(message = "支付用户ID不能为空")
-    private Long userId;
-
-    /**
      * 支付方式（枚举：ALIPAY-支付宝；WECHAT-微信支付；CARD-银行卡）
      */
     @NotBlank(message = "支付方式不能为空")

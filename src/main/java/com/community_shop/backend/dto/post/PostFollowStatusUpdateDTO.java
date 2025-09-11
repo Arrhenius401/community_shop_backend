@@ -14,10 +14,6 @@ public class PostFollowStatusUpdateDTO {
     @NotNull(message = "跟帖ID不能为空")
     private Long postFollowId;
 
-    /** 操作人ID（非空，用于权限校验） */
-    @NotNull(message = "操作人ID不能为空")
-    private Long operatorId;
-
     /** 目标状态（枚举：NORMAL-正常；HIDDEN-隐藏） */
     @NotNull(message = "目标状态不能为空")
     private PostFollowStatusEnum targetStatus;

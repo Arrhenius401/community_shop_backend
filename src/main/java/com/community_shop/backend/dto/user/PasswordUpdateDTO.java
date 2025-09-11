@@ -11,10 +11,6 @@ import lombok.Data;
 @Data
 public class PasswordUpdateDTO {
 
-    /** 用户ID（当前登录用户） */
-    @NotNull(message = "用户ID不能为空")
-    private Long userId;
-
     /** 原密码（校验身份） */
     @NotBlank(message = "原密码不能为空")
     private String oldPassword;

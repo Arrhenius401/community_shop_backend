@@ -10,10 +10,6 @@ import lombok.Data;
 @Data
 public class ThirdPartyBindDTO {
 
-    /** 用户ID（当前登录用户，必填） */
-    @NotNull(message = "用户ID不能为空")
-    private Long userId;
-
     /** 第三方平台类型（WECHAT/QQ/ALIPAY，必填） */
     @NotBlank(message = "第三方平台类型不能为空")
     private String thirdType;

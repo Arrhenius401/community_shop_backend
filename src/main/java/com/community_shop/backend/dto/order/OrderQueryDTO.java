@@ -21,10 +21,6 @@ public class OrderQueryDTO {
     @NotBlank(message = "目标状态不能为空")
     private String targetStatus;
 
-    /** 操作人ID（非空，用于权限校验） */
-    @NotNull(message = "操作人ID不能为空")
-    private Long operatorId;
-
     /** 操作人类型（枚举：BUYER-买家；SELLER-卖家；SYSTEM-系统，非空） */
     @NotBlank(message = "操作人类型不能为空")
     private String operatorType;

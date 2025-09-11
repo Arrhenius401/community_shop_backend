@@ -42,14 +42,6 @@ public class EvaluationUpdateDTO implements Serializable {
     private Long evalId;
 
     /**
-     * 操作人ID
-     * 必传参数，用于验证操作权限（仅评价者本人可修改）
-     * 关联user表的user_id字段
-     */
-    @NotNull(message = "操作人ID不能为空")
-    private Long operatorId;
-
-    /**
      * 新评价分数
      * 必传参数，用于更新评价的分数
      * 值范围在1-5之间，确保分数合规
@@ -69,10 +61,4 @@ public class EvaluationUpdateDTO implements Serializable {
 
     public EvaluationUpdateDTO() {}
 
-    public EvaluationUpdateDTO(Long evalId, Integer newScore, String newContent, Long operatorId) {
-        this.evalId = evalId;
-        this.newScore = newScore;
-        this.newContent = newContent;
-        this.operatorId = operatorId;
-    }
 }

@@ -17,20 +17,12 @@ public class PageResult<T> {
     // 当前页数据列表
     private List<T> list;
     // 当前页码
-    private Integer pageNum;
+    private Long pageNum;
     // 每页条数
-    private Integer pageSize;
+    private Long pageSize;
 
     // @Data 不会提供构造函数
     // 添加无参构造函数
     public PageResult() {}
 
-    // 添加全参构造函数
-    public PageResult(Integer total, Integer totalPages, List<T> list, Integer pageNum, Integer pageSize) {
-        this.total = total;
-        this.totalPages = totalPages;
-        this.list = list;
-        this.pageNum = pageNum;
-        this.pageSize = pageSize;
-    }
 }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 import java.util.function.Function;
@@ -74,12 +75,25 @@ public class TokenUtil {
     }
 
     /**
-     * 获取令牌中的过期时间
+     * 获取令牌中的过期时间（Date）
      * @param token
      * @return 过期时间
      */
     public Date getExpirationFromToken(String token){
         return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    /**
+     * 获取令牌中的过期时间（LocalDateTime）
+     * @param token
+     * @return 过期时间
+     */
+    public LocalDateTime getExpirationTimeFromToken(String token){
+        Date expiration = getExpirationFromToken(token);
+        LocalDateTime expirationTime = expiration.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())   //  转换为系统默认时区的ZonedDateTime
+                .toLocalDateTime(); // 转换为LocalDateTime
+        return expirationTime;
     }
 
     /**

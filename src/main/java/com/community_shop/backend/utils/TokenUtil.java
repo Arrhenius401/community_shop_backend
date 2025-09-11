@@ -161,6 +161,14 @@ public class TokenUtil {
         }
     }
 
+    /**
+     * 获取令牌过期时间（毫秒 ）
+     * @return 令牌过期时间
+     */
+    public Long getExpiration(){
+        return EXPIRATION;
+    }
+
 
     /**
      * 打印令牌

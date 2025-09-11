@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
  * 分页查询结果封装，适配《文档》中分页方法的返回数据（如selectPostListByBar、selectProductByKeyword）
  * @param <T> 泛型参数，存储分页数据列表（如Post、Product）
  */
+@AllArgsConstructor
 @Data
 public class PageResult<T> {
     // 总记录数

@@ -11,15 +11,15 @@ import java.util.List;
 @Data
 public class PageResult<T> {
     // 总记录数
-    private Integer total;
+    private Long total;
     // 总页数
-    private Integer totalPages;
+    private Long totalPages;
     // 当前页数据列表
     private List<T> list;
     // 当前页码
-    private Long pageNum;
+    private Integer pageNum;
     // 每页条数
-    private Long pageSize;
+    private Integer pageSize;
 
     // @Data 不会提供构造函数
     // 添加无参构造函数

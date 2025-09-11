@@ -1,71 +1,65 @@
 package com.community_shop.backend.utils;
 
-import com.community_shop.backend.service.base.UserService;
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.UUID;
 import java.util.function.Function;
 
+/**
+ * 令牌工具类
+ */
+@Slf4j
 @Component
 public class TokenUtil {
 
-    private static long EXPIRATION = 1000*60*60*24;  //过期时间
-    private static String KEY = "z4Z6e7J9H0k3N5q8T1w4Z7C9v2B5y8D1f4G7j1K4m6P9s3U6x0A8t5F2w7R0"; //签名
+    /**
+     * "::" 是 Java 8 引入的 方法引用（Method Reference）语法，用于简化 Lambda 表达式
+     * 方法引用允许你直接引用现有方法，而不必显式编写 Lambda 表达式的完整形式。
+     * Lambda 表达式的基本语法结构为: (参数列表) -> { 函数体 }
+     */
 
-    @Autowired
-    private UserService userService;
+    /** 令牌过期时间 */
+    @Value("${jwt.expiration}")
+    private long EXPIRATION;
 
-    //生成令牌
-    public String generateToken(String subject, String userID, String username, String role, String status){
+    /** 密钥 */
+    @Value("${jwt.secret}")
+    private static String KEY;
+
+
+    /**
+     * 生成令牌
+     * @param userID 用户ID
+     * @return 令牌
+     */
+    public String generateToken(Long userID){
         JwtBuilder jwtBuilder = Jwts.builder();
         String token = jwtBuilder
-                //header
+                // 首部（header）
                 .setHeaderParam("typ", "JWT")   //类型
                 .setHeaderParam("alg", "HS256") //算法
-                //payload
-                .claim("userId", userID)    //自定义参数1
-                .claim("username", username)
-                .claim("role", role)            //自定义参数2
-                .claim("status", status)
-                .setSubject(subject)    //主题
+                // 负载（payload）
+                .claim("userId", userID.toString())    //自定义参数1
+                .setSubject("USER")    //主题
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .setId(UUID.randomUUID().toString())
-                //signature
+                //  签名（signature）
                 .signWith(SignatureAlgorithm.HS256, KEY)  //加密算法及其密钥
-                .compact();     //将三部分拼装
-
-        //生成日志
-        System.out.println("生成令牌: " + token);
+                // 三部分拼装
+                .compact();
 
         return token;
     }
 
-    //生成令牌
-    public String generateToken(String subject, String userID){
-        JwtBuilder jwtBuilder = Jwts.builder();
-        String token = jwtBuilder
-                //header
-                .setHeaderParam("typ", "JWT")   //类型
-                .setHeaderParam("alg", "HS256") //算法
-                //payload
-                .claim("userId", userID)    //自定义参数1
-                .setSubject(subject)    //主题
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .setId(UUID.randomUUID().toString())
-                //signature
-                .signWith(SignatureAlgorithm.HS256, KEY)  //加密算法及其密钥
-                .compact();     //将三部分拼装
-
-        //生成日志
-        System.out.println("生成令牌: " + token);
-
-        return token;
-    }
-
-    //从令牌中获取用户ID
+    /**
+     * 获取令牌中的用户ID
+     * @param token
+     * @return 用户ID
+     */
     public Long getUserIdByToken(String token){
         Long userID = null;
         Claims claims = getAllClaimsFromToken(token);
@@ -79,73 +73,110 @@ public class TokenUtil {
         return userID;
     }
 
-    //从令牌中获取用户身份
-    public String getUserRoleFromToken(String token){
-        Claims claims = getAllClaimsFromToken(token);
-        String userRole = claims.get("role").toString();
-
-        return userRole;
-    }
-
-    //从令牌中获取用户状态
-    public String getUserStatusFromToken(String token){
-        Claims claims = getAllClaimsFromToken(token);
-        String userStatus = claims.get("status").toString();
-
-        return userStatus;
-    }
-
-    //"::" 是 Java 8 引入的 方法引用（Method Reference）语法，用于简化 Lambda 表达式
-    //方法引用允许你直接引用现有方法，而不必显式编写 Lambda 表达式的完整形式。
-    //Lambda 表达式的基本语法结构为: (参数列表) -> { 函数体 }
-    //从令牌中获取过期时间
-    public Date getExpirationDateFromToken(String token){
+    /**
+     * 获取令牌中的过期时间
+     * @param token
+     * @return 过期时间
+     */
+    public Date getExpirationFromToken(String token){
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    //冲令牌中获取自定义声明
+    /**
+     * 获取令牌中的签发时间
+     * @param token
+     * @return 令牌中的某个字段
+     */
+    public Date getIssuedAtFromToken(String token){
+        return getClaimFromToken(token, Claims::getIssuedAt);
+    }
+
+    /**
+     * 获取令牌中的某个字段
+     * @param token
+     * @param claimResolver
+     * @return 令牌中的某个字段
+     */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimResolver){
         final Claims claims = getAllClaimsFromToken(token);
         return claimResolver.apply(claims);
     }
 
-    //解析令牌
+    /**
+     * 获取令牌中的所有字段
+     * @param token
+     * @return 令牌中的所有字段
+     */
     private Claims getAllClaimsFromToken(String token){
         Claims claims =  Jwts.parser()
                 .setSigningKey(KEY)
                 .parseClaimsJws(token)
                 .getBody();
-
         return claims;
     }
 
-    //判断令牌是否超时
-    private Boolean isTokenExpired(String token){
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-
-    //判断令牌是否有效
-    public Boolean validateToken(String token,Long userID){
-        final Long tokenUserID = getUserIdByToken(token);
-        return (tokenUserID.equals(userID) && !isTokenExpired(token));
-    }
-
+    /**
+     * 验证令牌
+     * @param token
+     * @return true: 验证通过
+     */
     public Boolean validateToken(String token){
-        final Long tokenUserID = getUserIdByToken(token);
-        userService.selectUserById(tokenUserID);
-        return !isTokenExpired(token);
+        // 1. 空令牌直接无效
+        if (token == null || token.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            // 3. 验证令牌是否过期，以及签发时间是否合理（如防止未来签发的令牌）
+            if (isTokenExpired(token) || !isTokenIssuedAtReasonable(token)) {
+                return false; // 令牌已过期
+            }
+
+            // 4. 可选：业务层面验证（如检查令牌是否被注销）
+            // 例如：从Redis黑名单中检查是否存在该token
+            // if (redisTemplate.hasKey("blacklist:" + token)) {
+            //     return false; // 令牌已被注销
+            // }
+
+            // 所有验证通过
+            return true;
+
+        } catch (Exception e) {
+            // 捕获所有JWT相关异常，任何异常都表示令牌无效
+            return false;
+        }
     }
 
-    //输出令牌信息
+
+    /**
+     * 打印令牌
+     * @param token
+     */
     public void printToken(String token){
         Claims claims = getAllClaimsFromToken(token);
-        System.out.println();
         System.out.println("解析token: " + "ID = " + claims.getId() + "; subject: " + claims.getSubject() + "; expiration = " + claims.getExpiration()
                 + "; userId = "+ claims.get("userId") + "; username = " + claims.get("username") + "; role = " + claims.get("role")
                 + "; status = " + claims.get("status"));
 
     }
 
+    /**
+     * 判断令牌是否过期
+     * @param token
+     * @return true: 过期
+     */
+    private Boolean isTokenExpired(String token){
+        final Date expiration = getExpirationFromToken(token);
+        return expiration.before(new Date());
+    }
 
+    /**
+     * 判断令牌签发时间是否合理
+     * @param token
+     * @return 新的令牌
+     */
+    private Boolean isTokenIssuedAtReasonable(String token){
+        final Date issuedAt = getIssuedAtFromToken(token);
+        return issuedAt.before(new Date());
+    }
 }

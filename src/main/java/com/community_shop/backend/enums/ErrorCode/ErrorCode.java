@@ -29,6 +29,9 @@ public enum ErrorCode {
     PHONE_EXISTS("USER_003", "手机号已被注册"),
     USERNAME_EXISTS("USER_004", "用户名已存在"),
 
+    PASSWORD_CONFIRM_NOT_MATCH("USER_005", "密码确认不一致"),
+    OLD_PASSWORD_ERROR("USER_006", "旧密码错误"),
+
     EMAIL_NULL("USER_011", "邮箱为空"),
     PHONE_NULL("USER_012", "手机号为空"),
     USERNAME_NULL("USER_013", "用户名为空"),
@@ -38,11 +41,20 @@ public enum ErrorCode {
 
     ROLE_ERROR("USER_021","用户角色参数错误"),
     STATUS_ERROR("USER_022","用户状态参数错误"),
+    USERNAME_FORMAT_INVALID("USER_023", "用户名格式错误"),
+    PHONE_FORMAT_INVALID("USER_024", "手机号格式错误"),
+    EMAIL_FORMAT_INVALID("USER_025", "邮箱格式错误"),
+    PASSWORD_FORMAT_INVALID("USER_027", "密码格式错误"),
+    USERNAME_LENGTH_INVALID("USER_028", "用户名长度错误"),
+    AVATAR_URL_FORMAT_INVALID("USER_029", "头像URL格式错误"),
+    VERIFY_CODE_INVALID("USER_030", "验证码错误"),
 
-    USER_NOT_EXISTS("USER_031", "用户不存在"),
-    PASSWORD_ERROR("USER_032", "密码错误"),
 
-    CREDIT_TOO_LOW("USER_051", "用户积分不足"),
+    USER_NOT_EXISTS("USER_051", "用户不存在"),
+    PASSWORD_ERROR("USER_052", "密码错误"),
+
+
+    CREDIT_TOO_LOW("USER_081", "用户积分不足"),
 
     // 用户第三方绑定相关
     THIRD_AUTH_FAILED("USER_071", "第三方授权失败"),

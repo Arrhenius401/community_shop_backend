@@ -12,8 +12,7 @@ import lombok.Getter;
 public enum UserSortFieldEnum {
 
     CREDIT_SCORE("creditScore", "credit_score", "信用分"), // Java字段→数据库字段映射
-    CREATE_TIME("createTime", "create_time", "发布时间"),
-    PRICE("price", "price", "价格"),
+    CREATE_TIME("createTime", "create_time", "创建时间"),
     POST_COUNT("postCount", "post_count", "发帖数"),
     FOLLOWER_COUNT("followerCount", "follower_count", "粉丝数");
 

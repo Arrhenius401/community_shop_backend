@@ -2,9 +2,14 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
+import com.community_shop.backend.dto.message.*;
 import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
+import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 站内消息服务接口，负责系统通知、用户私信等消息的发送与管理
@@ -13,7 +18,40 @@ import org.springframework.stereotype.Service;
  * 2. 《文档4_数据库工作（新）.docx》：message表结构（msg_id、sender_id、receiver_id等）
  */
 @Service
-public interface MessageService {
+public interface MessageService extends BaseService<Message>{
+
+    /**
+     * 发送业务触发消息（如订单支付通知、评价提醒）
+     * @param messageSendDTO 消息参数（接收人、内容、类型、关联业务ID）
+     * @return 消息ID
+     * @throws BusinessException 接收人不存在、内容超限时抛出
+     */
+    Long sendBusinessMessage(MessageSendDTO messageSendDTO);
+
+    /**
+     * 标记消息状态（已读/删除）
+     * @param statusUpdateDTO 状态更新参数（消息ID、目标状态、操作人）
+     * @return 标记成功数量
+     * @throws BusinessException 无权限（非接收人）时抛出
+     */
+    int updateMessageStatus(MessageStatusUpdateDTO statusUpdateDTO);
+
+    /**
+     * 分页查询用户消息列表
+     * @param messageQueryDTO 查询参数（用户ID、类型、状态、分页）
+     * @return 分页消息列表
+     */
+    PageResult<MessageListItemDTO> queryUserMessages(MessageQueryDTO messageQueryDTO);
+
+    /**
+     * 获取用户最近3条未读消息预览
+     * @param userId 用户ID
+     * @return 未读消息预览列表
+     */
+    List<MessagePreviewDTO> getRecentUnreadPreviews(Long userId);
+
+    //===================================================================================================================
+
     /**
      * 发送卖家通知（订单相关）
      * 核心逻辑：创建系统通知消息，标记为"未读"，关联订单ID

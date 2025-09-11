@@ -101,11 +101,6 @@
 
 
     <!-- ==================== 条件查询 ==================== -->
-    <select id="selectByInterestTags" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user
-        WHERE FIND_IN_SET(interest_tags, #{tags,jdbcType=VARCHAR}) <!-- 简化：无需显式指定typeHandler -->
-    </select>
-
     <select id="getUsersByAllParam" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user
         <where>
@@ -122,6 +117,52 @@
     <select id="selectByRole" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user
         WHERE role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+    </select>
+
+    <!-- 1. 多条件统计用户总数 -->
+    <select id="countByAllParam" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM user
+        <where>
+            <!-- 条件1：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
+            <if test="interestTags != null and interestTags.size() > 0">
+                AND (
+                <foreach collection="interestTags" item="tag" separator="OR">
+                    FIND_IN_SET(#{tag,jdbcType=VARCHAR}, interest_tags)
+                </foreach>
+                )
+            </if>
+            <!-- 条件2：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
+            <if test="filterField != null and filterValue != null">
+                AND ${filterField} = #{filterValue,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!-- 2. 多条件查询用户列表（支持标签、筛选、排序、分页） -->
+    <select id="selectByAllParam" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user
+        <where>
+            <!-- 条件1：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
+            <if test="interestTags != null and interestTags.size() > 0">
+                AND (
+                <foreach collection="interestTags" item="tag" separator="OR">
+                    FIND_IN_SET(#{tag,jdbcType=VARCHAR}, interest_tags)
+                </foreach>
+                )
+            </if>
+            <!-- 条件2：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
+            <if test="filterField != null and filterValue != null">
+                AND ${filterField} = #{filterValue,jdbcType=VARCHAR}
+            </if>
+        </where>
+        <!-- 排序：支持枚举指定的排序字段（如createTime、followerCount）和排序方向（ASC/DESC） -->
+        <if test="sortField != null and sortDir != null">
+            ORDER BY ${sortField} ${sortDir}
+        </if>
+        <!-- 分页：基于PageParam的pageNum和pageSize计算偏移量（offset = (pageNum-1)*pageSize） -->
+        <if test="pageNum != null and pageSize != null">
+            LIMIT #{offset,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+        </if>
     </select>
 
 </mapper>

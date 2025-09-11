@@ -1,6 +1,6 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.entity.LocalToken;
+import com.community_shop.backend.dto.user.LoginResultDTO;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 @Service
 public interface LocalTokenService {
     //检验token有效性
-    boolean checkToken(LocalToken localToken);
+    boolean checkToken(LoginResultDTO loginResultDTO);
 
     //检验admin身份
-    boolean checkAdmin(LocalToken localToken);
+    boolean checkAdmin(LoginResultDTO loginResultDTO);
 
     //检验teacher身份
-    boolean checkTeacher(LocalToken localToken);
+    boolean checkTeacher(LoginResultDTO loginResultDTO);
 
     //检验normal状态
-    boolean checkNormal(LocalToken localToken);
+    boolean checkNormal(LoginResultDTO loginResultDTO);
 }

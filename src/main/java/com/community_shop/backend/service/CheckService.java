@@ -1,7 +1,7 @@
 package com.community_shop.backend.service;
 
+import com.community_shop.backend.dto.user.LoginResultDTO;
 import com.community_shop.backend.utils.TokenUtil;
-import com.community_shop.backend.entity.LocalToken;
 import com.community_shop.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,9 @@ public class CheckService {
     private TokenUtil tokenUtil;
 
     //验证令牌有效性
-    public boolean checkToken(LocalToken localToken){
-        User tokenUser = localToken.getUser();
-        String token = localToken.getToken();
+    public boolean checkToken(LoginResultDTO loginResultDTO){
+        User tokenUser = loginResultDTO.getUser();
+        String token = loginResultDTO.getToken();
 
         boolean isValid = false;
 
@@ -34,13 +34,13 @@ public class CheckService {
     }
 
     //从令牌中验证管理员身份有效性
-    public boolean checkAdmin(LocalToken localToken){
+    public boolean checkAdmin(LoginResultDTO loginResultDTO){
         //判断令牌有效性
-        boolean isTokenValid = checkToken(localToken);
+        boolean isTokenValid = checkToken(loginResultDTO);
         boolean isAdmin = false;
 
         if(isTokenValid){
-            String token = localToken.getToken();
+            String token = loginResultDTO.getToken();
             String role = tokenUtil.getUserRoleFromToken(token);
             isAdmin =  role.equals(ADMIN_STRING);
         }else {

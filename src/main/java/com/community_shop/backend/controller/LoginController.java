@@ -26,24 +26,24 @@ public class LoginController {
 //    }
 
 //    @RequestMapping({"/api/login/email"})
-//    public LocalToken loginByEmail(@RequestBody LoginDTO request){
+//    public LoginResultDTO loginByEmail(@RequestBody LoginDTO request){
 //        String email = request.getEmail();
 //        String password = request.getPassword();
 //
 //        System.out.println("收到登录请求: " + "email = " + email + "; password = " + password); // 添加日志
-//        LocalToken response = loginService.loginByEmail(email, password);
+//        LoginResultDTO response = loginService.loginByEmail(email, password);
 //        System.out.println("登录请求状态: " + response.getStatus());  //添加日志
 //
 //        return response;
 //    }
 
 //    @RequestMapping({"/api/login/phoneNumber"})
-//    public LocalToken loginByPhoneNumber(@RequestBody LoginDTO request){
+//    public LoginResultDTO loginByPhoneNumber(@RequestBody LoginDTO request){
 //        String phoneNumber = request.getPhoneNumber();
 //        String password = request.getPassword();
 //
 //        System.out.println("收到登录请求: " + "phoneNumber = " + phoneNumber + "; password = " + password); // 添加日志
-//        LocalToken response = loginService.loginByPhoneNumber(phoneNumber, password);
+//        LoginResultDTO response = loginService.loginByPhoneNumber(phoneNumber, password);
 //        System.out.println("登录请求状态: " + response.getStatus());  //添加日志
 //
 //        return response;

@@ -56,6 +56,15 @@ public interface ProductMapper extends BaseMapper<Product> {
 
 
     // ==================== 搜索与筛选 ====================
+
+    /**
+     * 验证卖家ID是否存在
+     * @param sellerId
+     * @return
+     */
+    @Select("SELECT * FROM product WHERE seller_id = #{sellerId}")
+    int verifySellerExists(@Param("sellerId") Long sellerId);
+
     /**
      * 多条件分页查询商品（按类别、价格、成色筛选）
      * @param category 商品类别（如"二手手机"）

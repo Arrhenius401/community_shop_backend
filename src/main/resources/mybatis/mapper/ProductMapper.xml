@@ -122,11 +122,201 @@
         </where>
     </select>
 
+    <!-- 按ProductQueryDTO条件统计商品数量 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(*) FROM product
+        <where>
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 类别筛选 -->
+            <if test="query.category != null and query.category != ''">
+                AND category = #{query.category}
+            </if>
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+            <!-- 成色筛选 -->
+            <if test="query.condition != null">
+                AND `condition` = #{query.condition.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 卖家ID筛选 -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 关键词搜索（标题/描述） -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR description LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 按ProductQueryDTO条件分页查询商品 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        <where>
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 类别筛选 -->
+            <if test="query.category != null and query.category != ''">
+                AND category = #{query.category}
+            </if>
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+            <!-- 成色筛选 -->
+            <if test="query.condition != null">
+                AND `condition` = #{query.condition.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 卖家ID筛选 -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 关键词搜索（标题/描述） -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR description LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+        <!-- 排序：默认按创建时间倒序 -->
+        <if test="query.orderBy != null and query.orderBy != ''">
+            ORDER BY ${query.orderBy}
+        </if>
+        <if test="query.orderBy == null or query.orderBy == ''">
+            ORDER BY create_time DESC
+        </if>
+        <!-- 分页 -->
+        LIMIT #{query.offset}, #{query.limit}
+    </select>
+
+    <!-- 按卖家查询条件统计商品数量 -->
+    <select id="countBySellerQuery" resultType="int">
+        SELECT COUNT(*) FROM product
+        <where>
+            <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+
+            <!-- 商品状态筛选（卖家视角的状态筛选） -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+
+            <!-- 商品标题关键词搜索 -->
+            <if test="query.titleKeyword != null and query.titleKeyword != ''">
+                AND title LIKE CONCAT('%', #{query.titleKeyword}, '%')
+            </if>
+
+            <!-- 上架时间范围筛选 -->
+            <if test="query.startTime != null">
+                AND create_time &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                AND create_time &lt;= #{query.endTime}
+            </if>
+
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+
+            <!-- 销量筛选 -->
+            <if test="query.minSales != null">
+                AND sales &gt;= #{query.minSales}
+            </if>
+            <if test="query.maxSales != null">
+                AND sales &lt;= #{query.maxSales}
+            </if>
+        </where>
+    </select>
+
+    <!-- 按卖家查询条件分页查询商品 -->
+    <select id="selectBySellerQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        <where>
+            <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+
+            <!-- 商品状态筛选（卖家视角的状态筛选） -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+
+            <!-- 商品标题关键词搜索 -->
+            <if test="query.titleKeyword != null and query.titleKeyword != ''">
+                AND title LIKE CONCAT('%', #{query.titleKeyword}, '%')
+            </if>
+
+            <!-- 上架时间范围筛选 -->
+            <if test="query.startTime != null">
+                AND create_time &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                AND create_time &lt;= #{query.endTime}
+            </if>
+
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+
+            <!-- 销量筛选 -->
+            <if test="query.minSales != null">
+                AND sales &gt;= #{query.minSales}
+            </if>
+            <if test="query.maxSales != null">
+                AND sales &lt;= #{query.maxSales}
+            </if>
+        </where>
+
+        <!-- 排序：支持卖家常用的排序方式 -->
+        <if test="query.sortField != null and query.sortDir != null">
+            ORDER BY ${query.sortField} ${query.sortDir}
+        </if>
+        <if test="query.sortField == null">
+            <!-- 默认按更新时间倒序 -->
+            ORDER BY update_time DESC
+        </if>
+
+        <!-- 分页参数 -->
+        <if test="query.pageNum != null and query.pageSize != null">
+            LIMIT #{query.offset}, #{query.pageSize}
+        </if>
+    </select>
 
     <!-- ==================== 库存与卖家查询 ==================== -->
     <update id="updateStock">
         UPDATE product
         SET stock = #{stock},
+            update_time = NOW()
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="updateViewCount">
+        UPDATE product
+        SET view_count = view_count + 1,
             update_time = NOW()
         WHERE product_id = #{productId}
     </update>
@@ -146,11 +336,5 @@
         LIMIT #{offset}, #{limit}
     </select>
 
-    <update id="updateViewCount">
-        UPDATE product
-        SET view_count = view_count + 1,
-            update_time = NOW()
-        WHERE product_id = #{productId}
-    </update>
 
 </mapper>

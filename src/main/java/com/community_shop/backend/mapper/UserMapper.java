@@ -172,13 +172,13 @@ public interface UserMapper extends BaseMapper<User> {
      * @param userQueryDTO 分页查询参数（含兴趣标签、筛选字段、筛选值等条件）
      * @return 符合条件的用户总数
      */
-    int countByAllParam(UserQueryDTO userQueryDTO);
+    int countByQuery(UserQueryDTO userQueryDTO);
 
     /**
      * 多条件组合查询用户列表（适配UserQueryDTO，支持兴趣标签、筛选、排序、分页）
      * @param userQueryDTO 分页查询参数（含兴趣标签、筛选字段、筛选值、排序字段、分页信息）
      * @return 符合条件的用户分页列表
      */
-    List<User> selectByAllParam(UserQueryDTO userQueryDTO);
+    List<User> selectByQuery(UserQueryDTO userQueryDTO);
 
 }

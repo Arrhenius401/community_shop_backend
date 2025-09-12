@@ -120,7 +120,7 @@
     </select>
 
     <!-- 1. 多条件统计用户总数 -->
-    <select id="countByAllParam" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultType="java.lang.Integer">
+    <select id="countByQuery" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM user
         <where>
             <!-- 条件1：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
@@ -139,7 +139,7 @@
     </select>
 
     <!-- 2. 多条件查询用户列表（支持标签、筛选、排序、分页） -->
-    <select id="selectByAllParam" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultMap="BaseResultMap">
+    <select id="selectByQuery" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user
         <where>
             <!-- 条件1：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->

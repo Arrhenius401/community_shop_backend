@@ -1,6 +1,8 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.community_shop.backend.dto.product.ProductQueryDTO;
+import com.community_shop.backend.dto.product.SellerProductQueryDTO;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
@@ -108,6 +110,34 @@ public interface ProductMapper extends BaseMapper<Product> {
             @Param("condition") ProductConditionEnum condition
     );
 
+    /**
+     * 按复杂查询条件统计商品数量
+     * @param productQueryDTO 封装查询条件的DTO
+     * @return 符合条件的商品总数
+     */
+    int countByQuery(@Param("query") ProductQueryDTO productQueryDTO);
+
+    /**
+     * 按复杂查询条件分页查询商品
+     * @param productQueryDTO 封装查询条件的DTO（含分页参数）
+     * @return 符合条件的商品列表
+     */
+    List<Product> selectByQuery(@Param("query") ProductQueryDTO productQueryDTO);
+
+    /**
+     * 按卖家视角的查询条件统计商品数量
+     * @param productQueryDTO 卖家商品查询DTO
+     * @return 符合条件的商品总数
+     */
+    int countBySellerQuery(@Param("query") SellerProductQueryDTO productQueryDTO);
+
+    /**
+     * 按卖家视角的查询条件分页查询商品
+     * @param productQueryDTO 卖家商品查询DTO（含分页参数）
+     * @return 符合条件的商品列表
+     */
+    List<Product> selectBySellerQuery(@Param("query") SellerProductQueryDTO productQueryDTO);
+
 
     // ==================== 库存与卖家查询 ====================
     /**
@@ -117,6 +147,13 @@ public interface ProductMapper extends BaseMapper<Product> {
      * @return 影响行数
      */
     int updateStock(@Param("productId") Long productId, @Param("stock") int stock);
+
+    /**
+     * 更新商品浏览量（自增1）
+     * @param productId 商品ID
+     * @return 影响行数
+     */
+    int updateViewCount(@Param("productId") Long productId);
 
     /**
      * 分页查询卖家发布的商品
@@ -146,10 +183,15 @@ public interface ProductMapper extends BaseMapper<Product> {
             @Param("limit") int limit
     );
 
+    // ==================== 管理操作 ===================
+
     /**
-     * 更新商品浏览量（自增1）
-     * @param productId 商品ID
-     * @return 影响行数
+     * 更新商品状态
+     * @param productId
+     * @param status
+     * @return
      */
-    int updateViewCount(@Param("productId") Long productId);
+    @Update("UPDATE product SET status = #{status} WHERE product_id = #{productId}")
+    int updateStatus(@Param("productId") Long productId, @Param("status") ProductStatusEnum status);
+
 }

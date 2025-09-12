@@ -22,7 +22,4 @@ public class ProductStockUpdateDTO {
     @NotBlank(message = "调整原因不能为空")
     private String reason;
 
-    /** 操作人ID（卖家或管理员，校验权限） */
-    @NotNull(message = "操作人ID不能为空")
-    private Long operatorId;
 }

@@ -1,6 +1,7 @@
 package com.community_shop.backend.dto.product;
 
 import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import com.community_shop.backend.enums.SortEnum.ProductSortFieldEnum;
 import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
@@ -26,6 +27,9 @@ public class ProductQueryDTO extends PageParam {
 
     /** 商品成色（精确筛选，如“全新”“9成新”） */
     private ProductConditionEnum condition;
+
+    /** 商品状态（精确筛选，如“在售”） */
+    private ProductStatusEnum status;
 
     /** 排序字段（枚举：viewCount-浏览量；createTime-发布时间；price-价格） */
     private ProductSortFieldEnum sortField = ProductSortFieldEnum.CREATE_TIME;

@@ -50,20 +50,6 @@ public interface ProductConvert {
     Product productPublishDtoToProduct(ProductPublishDTO dto);
 
     /**
-     * ProductCreateVO（商品创建 VO）-> Product 实体
-     * 映射说明：适配旧版创建接口，逻辑与发布接口类似
-     */
-    @Mappings({
-            @Mapping(target = "productId", ignore = true),
-            @Mapping(target = "sellerId", ignore = true), // 由上下文传入，不依赖 VO
-            @Mapping(target = "viewCount", constant = "0"),
-            @Mapping(target = "createTime", ignore = true),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.ProductStatusEnum.ON_SALE)"),
-            @Mapping(target = "imageUrls", expression = "java(listToJson(vo.getImageUrls()))") // 将 List 转为 JSON 字符串存储
-    })
-    Product productCreateVoToProduct(ProductCreateVO vo);
-
-    /**
      * ProductUpdateDTO（商品更新请求）-> Product 实体
      * 映射说明：仅更新请求中携带的非空字段，忽略不可修改的字段
      */

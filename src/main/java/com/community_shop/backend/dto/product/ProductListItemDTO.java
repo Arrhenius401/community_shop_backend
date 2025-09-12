@@ -1,16 +1,17 @@
 package com.community_shop.backend.dto.product;
 
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 /**
- * 商品创建VO
+ * 商品列表项DTO
  */
 @Data
-public class ProductCreateVO {
+public class ProductListItemDTO {
 
     /** 商品标题（非空，长度1-50） */
     @NotBlank(message = "商品标题不能为空")
@@ -38,12 +39,7 @@ public class ProductCreateVO {
     @NotNull(message = "商品成色不能为空")
     private ProductConditionEnum condition;
 
-//    // 图片列表（非空，至少1张主图，最多5张，阿里云OSS存储）
-//    private List<String> imageUrls;
-//
-//    // 视频URL（可选，最多1个视频，用于展示商品细节）
-//    private String videoUrl;
-//
-//    // 商品标签（可选，最多5个，用于搜索和分类）
-//    private List<String> tags;
+    /** 商品状态 */
+    @NotNull(message = "商品状态不能为空")
+    private ProductStatusEnum status;
 }

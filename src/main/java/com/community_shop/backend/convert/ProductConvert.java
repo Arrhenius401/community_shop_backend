@@ -1,9 +1,6 @@
 package com.community_shop.backend.convert;
 
-import com.community_shop.backend.dto.product.ProductCreateVO;
-import com.community_shop.backend.dto.product.ProductDetailDTO;
-import com.community_shop.backend.dto.product.ProductPublishDTO;
-import com.community_shop.backend.dto.product.ProductUpdateDTO;
+import com.community_shop.backend.dto.product.*;
 import com.community_shop.backend.entity.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,11 +22,17 @@ public interface ProductConvert {
     /**
      * Product 实体 -> ProductDetailDTO（商品详情响应）
      * 映射说明：
-     * 1. 将实体中 JSON 格式的 imageUrls 字符串转为 DTO 中的 String 数组
-     * 2. 枚举类型因类型一致可自动映射
+     * 1. 枚举类型因类型一致可自动映射
      */
-    @Mapping(target = "imageUrls", expression = "java(jsonToList(product.getImageUrls()))")
+//    @Mapping(target = "imageUrls", expression = "java(jsonToList(product.getImageUrls()))")
     ProductDetailDTO productToProductDetailDTO(Product product);
+
+    /**
+     * Product 实体 -> ProductListItemDTO（商品列表项响应）
+     * 映射说明：
+     * 1. 枚举类型因类型一致可自动映射
+     */
+    ProductListItemDTO productToProductListItemDTO(Product product);
 
     /**
      * ProductPublishDTO（商品发布请求）-> Product 实体

@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 商品发布请求DTO（匹配ProductService.publishProduct方法的ProductCreateVO）
  */
@@ -42,7 +44,7 @@ public class ProductPublishDTO {
     private String description;
 
     /** 图片URL列表（JSON格式，最多9张，匹配系统设计“多图上传”要求） */
-    private String imageUrls;
+    private List<String> imageUrls;
 
     /** 商品成色（枚举：全新/9成新/8成新/7成新/其他，需合法校验） */
     @NotNull(message = "商品成色不能为空")

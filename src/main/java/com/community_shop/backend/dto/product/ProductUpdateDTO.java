@@ -6,6 +6,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 
 /**
  * 商品更新DTO类，用于封装商家更新商品信息的请求参数
@@ -64,14 +66,14 @@ public class ProductUpdateDTO {
     @NotNull(message = "成色不能为空")
     private ProductConditionEnum condition;
 
-//    /**
-//     * 商品主图URL（可选更新，更换主图时使用）
-//     */
-//    @Length(max = 255, message = "主图URL过长")
-//    private String mainImageUrl;
-//
-//    /**
-//     * 商品详情图URL数组（可选更新，新增或替换详情图时使用）
-//     */
-//    private String[] detailImageUrls;
+    /**
+     * 商品主图URL（可选更新，更换主图时使用）
+     */
+    @Length(max = 255, message = "主图URL过长")
+    private String mainImageUrl;
+
+    /**
+     * 商品详情图URL数组（可选更新，新增或替换详情图时使用）
+     */
+    private List<String> detailImageUrls;
 }

@@ -1,5 +1,8 @@
 package com.community_shop.backend.enums.ErrorCode;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
     // SUCCESS、PARAM_ERROR等是ErrorCode枚举类的实例，其类型即为ErrorCode本身
     // 必须枚举在开头
@@ -39,8 +42,8 @@ public enum ErrorCode {
     USER_ID_NULL("USER_015", "用户ID为空"),
     PASSWORD_NULL("USER_016", "密码为空"),
 
-    ROLE_ERROR("USER_021","用户角色参数错误"),
-    STATUS_ERROR("USER_022","用户状态参数错误"),
+    ROLE_INVALID("USER_021","用户角色参数错误"),
+    STATUS_INVALID("USER_022","用户状态参数错误"),
     USERNAME_FORMAT_INVALID("USER_023", "用户名格式错误"),
     PHONE_FORMAT_INVALID("USER_024", "手机号格式错误"),
     EMAIL_FORMAT_INVALID("USER_025", "邮箱格式错误"),
@@ -82,8 +85,19 @@ public enum ErrorCode {
     PRODUCT_TITLE_NULL("PRODUCT_002", "商品标题为空"),
     PRODUCT_PRICE_NULL("PRODUCT_003", "商品价格为空"),
     PRODUCT_ID_NULL("PRODUCT_004", "商品ID为空"),
-    PRODUCT_STATUS_ERROR("PRODUCT_005", "商品状态参数错误"),
-    PRODUCT_CONDITION_ERROR("PRODUCT_006", "商品成色参数错误"),
+    PRODUCT_CATEGORY_NULL("PRODUCT_005", "商品分类为空"),
+
+    PRODUCT_TITLE_INVALID("PRODUCT_011", "商品标题不符合规范"),
+    PRODUCT_STATUS_INVALID("PRODUCT_012", "商品状态参数错误"),
+    PRODUCT_CONDITION_INVALID("PRODUCT_013", "商品成色参数错误"),
+    PRODUCT_PRICE_INVALID("PRODUCT_014", "商品价格参数错误"),
+    PRODUCT_STOCK_INVALID("PRODUCT_015", "商品库存参数错误"),
+    PRODUCT_IMAGE_URL_INVALID("PRODUCT_016", "商品图片URL参数错误"),
+
+    PRODUCT_DESCRIPTION_TOO_LONG("PRODUCT_021", "商品描述过长"),
+    PRODUCT_IMAGE_TOO_MANY("PRODUCT_022", "商品图片数量过多"),
+
+    PRODUCT_ALREADY_OFF_SALE("PRODUCT_091", "商品已下架"),
 
     // 订单模块
     ORDER_NOT_EXISTS("ORDER_001", "订单不存在"),
@@ -139,14 +153,6 @@ public enum ErrorCode {
     ErrorCode(String code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }
 

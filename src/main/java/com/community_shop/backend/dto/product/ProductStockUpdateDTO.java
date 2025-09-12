@@ -2,11 +2,13 @@ package com.community_shop.backend.dto.product;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * 库存调整请求DTO（匹配ProductService.updateStock方法）
  */
+@AllArgsConstructor
 @Data
 public class ProductStockUpdateDTO {
 

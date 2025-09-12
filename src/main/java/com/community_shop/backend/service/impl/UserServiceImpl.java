@@ -446,8 +446,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         int offset = (pageNum - 1) * pageSize;
 
         // 2. 查询总数和列表（匹配UserMapper.countByAllParam和selectByAllParam）
-        long total = userMapper.countByAllParam(userQueryDTO);
-        List<User> userList = userMapper.selectByAllParam(userQueryDTO);
+        long total = userMapper.countByQuery(userQueryDTO);
+        List<User> userList = userMapper.selectByQuery(userQueryDTO);
 
         // 3. 转换为UserDetailDTO列表
         List<UserDetailDTO> dtoList = userList.stream()

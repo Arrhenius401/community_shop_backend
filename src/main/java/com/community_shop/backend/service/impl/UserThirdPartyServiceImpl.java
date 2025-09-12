@@ -1,5 +1,7 @@
 package com.community_shop.backend.service.impl;
 
+import com.community_shop.backend.dto.user.ThirdPartyBindDTO;
+import com.community_shop.backend.dto.user.ThirdPartyBindingListDTO;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,49 +28,17 @@ public class UserThirdPartyServiceImpl implements UserThirdPartyService {
     @Autowired
     private UserMapper userMapper;
 
-    /**
-     * 实现第三方登录逻辑：事务控制确保"注册+绑定"原子性
-     * 匹配《代码文档2》OrderService.createOrder的事务管理规范
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public User login(ThirdPartyTypeEnum thirdType, String openid, String accessToken) {
-        // 1. 查询第三方账号是否已绑定平台用户（参考《代码文档1》UserPostLikeMapper.selectIsLiked逻辑）
-        UserThirdParty boundRecord = userThirdPartyMapper.selectByThirdTypeAndOpenid(thirdType, openid);
-
-        if (boundRecord != null) {
-            // 2. 已绑定：返回用户信息，同步更新access_token
-            User user = userMapper.selectById(boundRecord.getUserId());
-            if (user == null) {
-                throw new RuntimeException("绑定的平台用户已注销");
-            }
-            // 若凭证变更，更新access_token（适配《文档2》第三方API调用需求）
-            if (!accessToken.equals(boundRecord.getAccessToken())) {
-                userThirdPartyMapper.updateAccessToken(thirdType, openid, accessToken);
-            }
-            return user;
-        } else {
-            // 3. 未绑定：自动创建平台用户+绑定（符合《文档1》第三方注册需求）
-            // 自动生成用户名（参考《文档4_数据库工作（新）.docx》user表字段规范）
-            String username = "用户_" + thirdType + "_" + openid.substring(0, 6);
-            User newUser = new User();
-            userMapper.insert(newUser);
-
-            // 绑定第三方账号（参考《代码文档1》UserThirdPartyMapper.insert逻辑）
-            // 返回自增的userId（MyBatis-Plus会自动回填自增ID）
-            UserThirdParty newBinding = new UserThirdParty(newUser.getUserId(), thirdType, openid, accessToken);
-            userThirdPartyMapper.insert(newBinding);
-
-            return newUser;
-        }
-    }
 
     /**
      * 实现绑定逻辑：校验重复绑定，符合《文档1》账号安全需求
      */
     @Override
-    public Boolean bind(Long userId, ThirdPartyTypeEnum thirdType, String openid, String accessToken) {
+    public Boolean bind(Long userId, ThirdPartyBindDTO thirdPartyBindDTO) {
         // 1. 校验平台用户是否存在（参考《代码文档2》UserService.selectUserById逻辑）
+        ThirdPartyTypeEnum thirdType = thirdPartyBindDTO.getThirdType();
+        String openid = thirdPartyBindDTO.getOpenid();
+        String accessToken = thirdPartyBindDTO.getAccessToken();
+
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new RuntimeException("平台用户不存在");
@@ -110,9 +81,25 @@ public class UserThirdPartyServiceImpl implements UserThirdPartyService {
      * 实现绑定列表查询：仅返回有效绑定记录
      */
     @Override
-    public List<UserThirdParty> listBindings(Long userId) {
-        // 查询用户所有有效绑定记录（参考《代码文档1》分页查询逻辑，此处简化）
-        return userThirdPartyMapper.selectValidByUserId(userId);
+    public ThirdPartyBindingListDTO listBindings(Long userId) {
+        // 1.查询用户所有有效绑定记录（参考《代码文档1》分页查询逻辑，此处简化）
+        List<UserThirdParty> bindings = userThirdPartyMapper.selectValidByUserId(userId);
+
+        // 2.转换为DTO
+        ThirdPartyBindingListDTO resultDTO = new ThirdPartyBindingListDTO();
+        resultDTO.setUserId(userId);
+        List<ThirdPartyBindingListDTO.BindingItemDTO> bindingItems = new ArrayList<>();
+        for (UserThirdParty binding : bindings) {
+            ThirdPartyBindingListDTO.BindingItemDTO itemDTO = new ThirdPartyBindingListDTO.BindingItemDTO();
+            itemDTO.setBindingId(binding.getId());
+            itemDTO.setThirdType(binding.getThirdType());
+            // OpenID脱敏（匹配文档“微信用户 ****1234”格式）
+            itemDTO.setOpenidDesensitized(binding.getThirdType().name() + "用户 ****" + binding.getOpenid().substring(binding.getOpenid().length() - 4));
+            itemDTO.setBindTime(binding.getBindTime());
+            bindingItems.add(itemDTO);
+        }
+
+        return resultDTO;
     }
 
     /**

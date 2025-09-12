@@ -1,5 +1,7 @@
 package com.community_shop.backend.service.base;
 
+import com.community_shop.backend.dto.user.ThirdPartyBindDTO;
+import com.community_shop.backend.dto.user.ThirdPartyBindingListDTO;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
@@ -13,26 +15,15 @@ import java.util.List;
  */
 @Service
 public interface UserThirdPartyService {
-    /**
-     * 业务方法：第三方登录（含自动注册）
-     * 对应《文档1_需求分析.docx》第三方登录需求
-     * @param thirdType 第三方平台类型（WECHAT/QQ/ALIPAY）
-     * @param openid 第三方平台用户唯一标识
-     * @param accessToken 第三方登录临时凭证
-     * @return 登录结果（含用户信息）
-     */
-    User login(ThirdPartyTypeEnum thirdType, String openid, String accessToken);
 
     /**
      * 业务方法：已注册用户绑定第三方账号
      * 对应《文档1_需求分析.docx》账号安全-第三方绑定需求
      * @param userId 平台用户ID（当前登录用户）
-     * @param thirdType 第三方平台类型
-     * @param openid 第三方平台用户唯一标识
-     * @param accessToken 第三方登录临时凭证
+     * @param thirdPartyBindDTO 第三方绑定信息
      * @return 绑定结果
      */
-    Boolean bind(Long userId, ThirdPartyTypeEnum thirdType, String openid, String accessToken);
+    Boolean bind(Long userId, ThirdPartyBindDTO thirdPartyBindDTO);
 
     /**
      * 基础方法：解绑第三方账号
@@ -49,7 +40,7 @@ public interface UserThirdPartyService {
      * @param userId 平台用户ID
      * @return 绑定列表结果
      */
-    List<UserThirdParty> listBindings(Long userId);
+    ThirdPartyBindingListDTO listBindings(Long userId);
 
     /**
      * 基础方法：更新第三方账号access_token

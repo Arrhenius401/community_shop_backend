@@ -69,6 +69,12 @@ public class Order {
     /** 收货时间 */
     private LocalDateTime receiveTime;
 
+    /** 订单取消时间 */
+    private LocalDateTime cancelTime;
+
+    /** 订单预计超时时间 */
+    private LocalDateTime payExpireTime;
+
 
     public Order(){}
 

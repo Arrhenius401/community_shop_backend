@@ -21,13 +21,15 @@
         <result column="pay_time" property="payTime"/>
         <result column="ship_time" property="shipTime"/>
         <result column="receive_time" property="receiveTime"/>
+        <result column="cancel_time" property="cancelTime"/>
+        <result column="pay_expire_time" property="payExpireTime"/>
     </resultMap>
 
     <!-- 基础字段SQL片段（严格对应数据库表字段） -->
     <sql id="Base_Column_List">
         order_id, product_id, buyer_id, seller_id, total_amount, quantity,
         receiver_name, address, phone_number, buyer_remark, status, pay_type,
-        create_time, pay_time, ship_time, receive_time
+        create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time
     </sql>
 
 
@@ -36,12 +38,13 @@
         INSERT INTO `order` (
             product_id, buyer_id, seller_id, ordrer_no, total_amount, quantity,
             receiver_name, address, phone_number, buyer_remark, status, pay_type,
-            create_time, pay_time, ship_time, receive_time
+            create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time
         ) VALUES (
                      #{productId}, #{buyerId}, #{sellerId}, #{orderNo} #{totalAmount}, #{quantity},
                      #{receiverName}, #{address}, #{phoneNumber}, #{buyerRemark},
                      #{status.code,jdbcType=VARCHAR}, #{payType.code,jdbcType=VARCHAR},
-                     #{createTime}, #{payTime}, #{shipTime}, #{receiveTime}
+                     #{createTime}, #{payTime}, #{shipTime}, #{receiveTime},
+                     #{cancelTime}, #{payExpireTime}
                  )
     </insert>
 

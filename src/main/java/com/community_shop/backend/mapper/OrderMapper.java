@@ -156,6 +156,22 @@ public interface OrderMapper extends BaseMapper<Order> {
     int countBySellerId(@Param("sellerId") Long sellerId, @Param("status") OrderStatusEnum status);
 
     /**
+     * 按订单号查询订单（用于查询订单详情）
+     * @param orderNo 订单号
+     * @return 订单完整实体
+     */
+    @Select("SELECT * FROM `order` WHERE order_no = #{orderNo}")
+    Order selectByOrderNo(@Param("orderNo") String orderNo);
+
+    /**
+     * 查询已过期且未支付的订单（支付超时订单）
+     * @param payExpireTime 支付过期时间（用于筛选创建时间早于该时间的订单）
+     * @return 超时未支付订单列表
+     */
+    @Select("SELECT * FROM `order` WHERE status = 'PENDING_PAYMENT' AND pay_expire_time <= #{payExpireTime} ORDER BY pay_expire_time ASC")
+    List<Order> selectTimeoutPendingOrders(@Param("payExpireTime") LocalDateTime payExpireTime);
+
+    /**
      * 按时间范围查询订单（区分买家/卖家角色）
      * @param userId 用户ID（买家或卖家）
      * @param role 角色（"BUYER"或"SELLER"）

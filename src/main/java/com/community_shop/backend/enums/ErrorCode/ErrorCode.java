@@ -107,9 +107,11 @@ public enum ErrorCode {
     ORDER_NOT_EXISTS("ORDER_001", "订单不存在"),
     ORDER_ID_NULL("ORDER_002", "订单ID为空"),
     ORDER_AMOUNT_NULL("ORDER_003", "订单金额为空"),
-    ORDER_STATUS_ERROR("ORDER_004", "订单状态参数错误"),
+    ORDER_STATUS_NULL("ORDER_004", "订单状态为空"),
     ORDER_BUYER_NULL("ORDER_005", "订单买家为空"),
     ORDER_SELLER_NULL("ORDER_006", "订单卖家为空"),
+
+    ORDER_STATUS_INVALID("ORDER_004", "订单状态参数错误"),
 
     STOCK_INSUFFICIENT("ORDER_021", "商品库存不足"),
 

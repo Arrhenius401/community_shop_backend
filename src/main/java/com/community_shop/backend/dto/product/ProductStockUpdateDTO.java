@@ -21,7 +21,6 @@ public class ProductStockUpdateDTO {
     private Integer stockChange;
 
     /** 调整原因（如“补货”“订单扣减”“库存盘点修正”，必填） */
-    @NotBlank(message = "调整原因不能为空")
     private String reason;
 
 }

@@ -9,6 +9,7 @@ import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -32,8 +33,11 @@ public class Order {
     /** 卖家ID */
     private Long sellerId;
 
+    /** 订单编号 */
+    private String orderNo;
+
     /** 交易金额 */
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     /** 订单数量 */
     private Integer quantity;
@@ -68,23 +72,9 @@ public class Order {
 
     public Order(){}
 
-    public Order(Long orderId, Long productId, Long buyerId, Long sellerId, Integer quantity,
-                 Double totalAmount, String address, LocalDateTime createTime, LocalDateTime payTime, OrderStatusEnum status) {
-        this.orderId = orderId;
-        this.productId = productId;
-        this.buyerId = buyerId;
-        this.sellerId = sellerId;
-        this.quantity = quantity;
-        this.totalAmount = totalAmount;
-        this.address = address;
-        this.createTime = createTime;
-        this.payTime = payTime;
-        this.status = status;
-    }
 
     public Order(OrderCreateDTO orderCreateDTO){
         this.productId = orderCreateDTO.getProductId();
-        this.buyerId = orderCreateDTO.getBuyerId();
         this.quantity = orderCreateDTO.getQuantity();
         this.totalAmount = orderCreateDTO.getTotalAmount();
         this.address = orderCreateDTO.getAddress();

@@ -8,6 +8,7 @@ import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -32,7 +33,7 @@ public class Product {
     private String description;
 
     /** 商品价格 */
-    private Double price;
+    private BigDecimal price;
 
     /** 商品库存 */
     private Integer stock;
@@ -51,15 +52,4 @@ public class Product {
 
     public Product(){}
 
-    public Product(Long productId, Long sellerId, String title, String category, Double price, Integer stock, Integer viewCount, ProductStatusEnum status, ProductConditionEnum condition) {
-        this.productId = productId;
-        this.sellerId = sellerId;
-        this.title = title;
-        this.category = category;
-        this.price = price;
-        this.stock = stock;
-        this.viewCount = viewCount;
-        this.status = status;
-        this.condition = condition;
-    }
 }

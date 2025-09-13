@@ -1,10 +1,17 @@
 package com.community_shop.backend.service.impl;
 
+import com.community_shop.backend.convert.OrderConvert;
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.dto.order.OrderCreateDTO;
+import com.community_shop.backend.dto.message.MessageSendDTO;
+import com.community_shop.backend.dto.order.*;
+import com.community_shop.backend.dto.product.ProductStockUpdateDTO;
+import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
+import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
+import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.entity.Product;
@@ -14,6 +21,7 @@ import com.community_shop.backend.service.base.MessageService;
 import com.community_shop.backend.service.base.OrderService;
 import com.community_shop.backend.service.base.ProductService;
 import com.community_shop.backend.service.base.UserService;
+import com.community_shop.backend.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,9 +30,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 订单服务实现类，实现订单创建、支付、查询等核心业务逻辑
@@ -32,11 +44,20 @@ import java.util.Objects;
  */
 @Slf4j
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implements OrderService {
+
+    // 订单相关常量
+    private static final Integer MIN_BUYER_CREDIT_SCORE = 60; // 买家创建订单最低信用分
+    private static final String ORDER_NO_PREFIX = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")); // 订单编号前缀（yyyyMMdd）
+    private static final int ORDER_NO_RANDOM_LEN = 8; // 订单编号随机数长度
+    private static final int PAY_EXPIRE_MINUTES = 30; // 支付有效期（分钟）
+
     // 缓存相关常量
     private static final String CACHE_KEY_ORDER = "order:info:"; // 订单信息缓存Key前缀
+    private static final String CACHE_KEY_ORDER_LIST = "order:list:"; // 订单列表缓存Key前缀
     private static final String CACHE_KEY_USER_ORDERS = "order:user:"; // 用户订单列表缓存Key前缀
     private static final long CACHE_TTL_ORDER = 30; // 订单缓存有效期（分钟）
+    private static final long CACHE_TTL_ORDER_LIST = 15; // 订单列表缓存有效期（分钟）
 
     // 信用分最低要求（下单）
     private static final Integer MIN_CREDIT_FOR_ORDER = 60;
@@ -54,139 +75,662 @@ public class OrderServiceImpl implements OrderService {
     private MessageService messageService;
 
     @Autowired
+    private OrderConvert orderConvert;
+
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private OrderService orderService;
+
 
     /**
-     * 新增订单（基础CRUD）
-     * 核心逻辑：初始化订单状态为"待支付"，记录创建时间，插入数据库
+     * 创建订单（支持单商品）
+     * 核心逻辑：参数校验→买家信用校验→商品库存校验→创建订单→扣减库存→生成支付信息→发送通知
      */
     @Override
-    public Long insertOrder(Order order) {
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public OrderDetailDTO createOrder(Long userId, OrderCreateDTO orderCreateDTO) {
         try {
-            // 1. 参数校验：必填字段非空校验
-            if (order.getProductId() == null || order.getBuyerId() == null ||
-                    order.getSellerId() == null || order.getTotalAmount() == null) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
+            // 1. 基础参数校验
+            validateOrderCreateParam(orderCreateDTO);
 
-            // 2. 初始化订单基础信息
-            order.setStatus(OrderStatusEnum.PENDING_PAYMENT); // 初始状态：待支付
-            order.setCreateTime(LocalDateTime.now()); // 记录下单时间
-            order.setPayTime(null); // 未支付时支付时间为空
-
-            // 3. 插入数据库
-            int insertRows = orderMapper.insert(order);
-            if (insertRows <= 0) {
-                log.error("新增订单失败，订单信息：{}", order);
-                throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
-            }
-
-            // 4. 缓存订单信息
-            redisTemplate.opsForValue().set(CACHE_KEY_ORDER + order.getOrderId(), order, CACHE_TTL_ORDER * 60);
-            log.info("新增订单成功，订单ID：{}", order.getOrderId());
-            return order.getOrderId();
-
-        } catch (BusinessException e) {
-            throw e; // 抛出业务异常，由全局处理器处理
-        } catch (Exception e) {
-            log.error("新增订单系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-        }
-    }
-
-    /**
-     * 按订单ID查询（基础CRUD）
-     * 核心逻辑：校验操作用户权限，关联商品信息后返回
-     */
-    @Override
-    public Order selectOrderById(Long orderId, Long userId) {
-        // 1. 参数校验
-        if (orderId == null || userId == null) {
-            throw new BusinessException(ErrorCode.PARAM_NULL);
-        }
-
-        // 2. 先查缓存
-        Order order = (Order) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
-        if (Objects.nonNull(order)) {
-            // 3. 权限校验：仅买家或卖家可查看
-            if (!order.getBuyerId().equals(userId) && !order.getSellerId().equals(userId)) {
-                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
-            }
-            // 4. 关联商品信息
-            Product product = productService.selectProductById(order.getProductId());
-            order.setProductId(product.getProductId());
-            return order;
-        }
-
-        // 5. 缓存未命中，查数据库
-        order = orderMapper.selectById(orderId);
-        if (order == null) {
-            log.warn("订单不存在，订单ID：{}", orderId);
-            throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
-        }
-
-        // 6. 权限校验（数据库查询结果二次校验）
-        if (!order.getBuyerId().equals(userId) && !order.getSellerId().equals(userId)) {
-            throw new BusinessException(ErrorCode.PERMISSION_DENIED);
-        }
-
-        // 7. 关联商品信息并缓存
-        Product product = productService.selectProductById(order.getProductId());
-        order.setProductId(product.getProductId());
-        redisTemplate.opsForValue().set(CACHE_KEY_ORDER + orderId, order, CACHE_TTL_ORDER * 60);
-        log.info("查询订单成功，订单ID：{}，操作用户ID：{}", orderId, userId);
-        return order;
-    }
-
-    /**
-     * 按买家查询订单列表（基础CRUD，分页）
-     */
-    @Override
-    public PageResult<Order> selectOrderByBuyer(Long buyerId, OrderStatusEnum status, PageParam pageParam) {
-        try {
-            // 1. 参数校验
-            if (buyerId == null || pageParam == null || pageParam.getPageNum() < 1 || pageParam.getPageSize() < 1) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
-
-            // 2. 校验用户存在
-            User buyer = userService.selectUserById(buyerId);
+            // 2. 买家信息与信用校验
+            User buyer = userService.getById(userId);
             if (buyer == null) {
                 throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
             }
-
-            // 3. 计算分页参数（offset = (页码-1)*页大小）
-            int offset = (pageParam.getPageNum() - 1) * pageParam.getPageSize();
-            int limit = pageParam.getPageSize();
-
-            // 4. 查询订单列表
-            List<Order> orderList = orderMapper.selectByBuyerId(buyerId, status, offset, limit);
-
-            // 5. 查询总条数（用于分页计算）
-            int total = orderMapper.countByBuyerId(buyerId, status);
-
-            // 7. 关联商品信息
-            for (Order order : orderList) {
-                Product product = productService.selectProductById(order.getProductId());
-                order.setProductId(product.getProductId());
+            if (buyer.getCreditScore() < MIN_BUYER_CREDIT_SCORE) {
+                throw new BusinessException(ErrorCode.CREDIT_TOO_LOW,
+                        "买家信用分不足" + MIN_BUYER_CREDIT_SCORE + "分，无法创建订单");
             }
 
-            // 8. 构建分页结果
-            PageResult<Order> pageResult = new PageResult<>();
-            pageResult.setList(orderList);
-            pageResult.setTotal(total);
-            pageResult.setPageNum(pageParam.getPageNum());
-            pageResult.setPageSize(pageParam.getPageSize());
-            pageResult.setTotalPages((total + limit - 1) / limit); // 计算总页数
+            // 3. 商品信息与库存校验
+            Product product = productService.getById(orderCreateDTO.getProductId());
+            if (product == null) {
+                throw new BusinessException(ErrorCode.PRODUCT_NOT_EXISTS);
+            }
+            if (!ProductStatusEnum.ON_SALE.equals(product.getStatus())) {
+                throw new BusinessException(ErrorCode.PRODUCT_ALREADY_OFF_SALE, "商品已下架或不可售");
+            }
+            if (product.getStock() < orderCreateDTO.getQuantity()) {
+                throw new BusinessException(ErrorCode.PRODUCT_STOCK_INSUFFICIENT,
+                        "商品库存不足，当前库存：" + product.getStock());
+            }
+            // 金额一致性校验（防止前端篡改）
+            BigDecimal actualAmount = product.getPrice().multiply(BigDecimal.valueOf(orderCreateDTO.getQuantity()));
+            if ((actualAmount.subtract(orderCreateDTO.getTotalAmount()).abs().compareTo(BigDecimal.valueOf(0.01))) < 0) {
+                throw new BusinessException(ErrorCode.ORDER_AMOUNT_ABNORMAL, "订单金额异常，请重新下单");
+            }
 
-            log.info("查询买家订单列表成功，买家ID：{}，状态：{}，页码：{}", buyerId, status, pageParam.getPageNum());
-            return pageResult;
+            // 4. 构建订单实体
+            Order order = orderConvert.orderCreateDtoToOrder(orderCreateDTO);
+            order.setBuyerId(userId);
+            order.setSellerId(product.getSellerId());
+            order.setStatus(OrderStatusEnum.PENDING_PAYMENT); // 初始状态：待支付
+            order.setCreateTime(LocalDateTime.now());
+            order.setOrderNo(generateOrderNo()); // 生成唯一订单编号
 
+            // 5. 执行数据库操作（创建订单 + 扣减库存）
+            int orderInsertCount = orderMapper.insert(order);
+            if (orderInsertCount != 1) {
+                log.error("订单创建失败，订单信息：{}", order);
+                throw new BusinessException(ErrorCode.DATA_INSERT_FAILED, "订单创建失败，请重试");
+            }
+
+            ProductStockUpdateDTO stockUpdateDTO = new ProductStockUpdateDTO(product.getProductId(),
+                    -orderCreateDTO.getQuantity(), "订单创建");
+            int stockUpdateCount = productService.updateStock(product.getSellerId(), stockUpdateDTO);
+            if (stockUpdateCount != 1) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED, "库存更新失败，订单创建回滚");
+            }
+
+            // 6. 生成支付信息（模拟支付链接，实际项目对接第三方支付接口）
+            OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
+//            orderDetail.setPayUrl(generatePayUrl(order.getOrderNo(), orderCreateDTO.getPayType()));
+//            orderDetail.setPayExpireTime(LocalDateTime.now().plusMinutes(PAY_EXPIRE_MINUTES));
+
+            // 7. 缓存订单详情
+            redisTemplate.opsForValue().set(
+                    CACHE_KEY_ORDER + order.getOrderId(),
+                    orderDetail,
+                    CACHE_TTL_ORDER,
+                    TimeUnit.MINUTES
+            );
+
+            // 8. 发送订单创建通知给卖家
+            sendSellerOrderNotice(order.getSellerId(), order.getOrderId(), "新订单通知",
+                    "您有一笔新订单，订单编号：" + order.getOrderNo() + "，商品：" + product.getTitle());
+
+            log.info("订单创建成功，订单ID：{}，买家ID：{}", order.getOrderId(), userId);
+            return orderDetail;
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            log.error("查询买家订单列表系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            log.error("创建订单异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "订单创建异常，请联系客服");
+        }
+    }
+
+    /**
+     * 取消订单
+     * 核心逻辑：参数校验→订单存在性校验→权限校验→状态校验→恢复库存→更新订单状态→发送通知
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public Boolean cancelOrder(Long userId, Long orderId) {
+        try {
+            // 1. 基础参数校验
+            if (userId == null || orderId == null) {
+                throw new BusinessException(ErrorCode.PARAM_NULL, "用户ID和订单ID不能为空");
+            }
+
+            // 2. 订单存在性校验（优先查缓存）
+            OrderDetailDTO cacheOrder = (OrderDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
+            Order order = cacheOrder != null ? orderMapper.selectById(cacheOrder.getOrderId()) : orderMapper.selectById(orderId);
+            if (order == null) {
+                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
+            }
+
+            // 3. 权限校验（买家或管理员可取消）
+            User operator = userService.getById(userId);
+            boolean isBuyer = Objects.equals(order.getBuyerId(), userId);
+            boolean isAdmin = operator != null && UserRoleEnum.ADMIN.equals(operator.getRole());
+            if (!isBuyer && !isAdmin) {
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED, "无权限取消此订单");
+            }
+
+            // 4. 订单状态校验（仅待支付状态可取消）
+            if (!OrderStatusEnum.PENDING_PAYMENT.equals(order.getStatus())) {
+                throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID,
+                        "订单状态为【" + order.getStatus().getDesc() + "】，不允许取消");
+            }
+
+            // 5. 恢复商品库存
+            Product product = productService.getById(order.getProductId());
+            if (product == null) {
+                throw new BusinessException(ErrorCode.PRODUCT_NOT_EXISTS, "商品不存在，无法恢复库存");
+            }
+            ProductStockUpdateDTO stockUpdateDTO = new ProductStockUpdateDTO(product.getProductId(),
+                    order.getQuantity(), "订单创建");
+            int stockUpdateCount = productService.updateStock(product.getSellerId(), stockUpdateDTO);
+            if (stockUpdateCount != 1) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED, "库存恢复失败，取消订单回滚");
+            }
+
+            // 6. 更新订单状态为已取消
+            order.setStatus(OrderStatusEnum.CANCELLED);
+            order.setCancelTime(LocalDateTime.now());
+//            order.setCancelReason(isBuyer ? "买家主动取消" : "管理员操作取消");
+            int orderUpdateCount = orderMapper.updateById(order);
+            if (orderUpdateCount != 1) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED, "订单状态更新失败");
+            }
+
+            // 7. 清除缓存
+            redisTemplate.delete(CACHE_KEY_ORDER + orderId);
+            // 清除订单列表缓存（买家和卖家）
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "buyer:" + order.getBuyerId());
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
+
+            // 8. 发送取消通知给卖家
+            sendSellerOrderNotice(order.getSellerId(), orderId, "订单取消通知",
+                    "订单编号：" + order.getOrderNo() + " 已取消，库存已恢复");
+
+            log.info("订单取消成功，订单ID：{}，操作人ID：{}", orderId, userId);
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("取消订单异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "取消订单异常，请联系客服");
+        }
+    }
+
+    /**
+     * 支付订单回调处理
+     * 核心逻辑：参数校验→签名校验→订单校验→状态校验→更新订单支付信息→发送通知
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public String handlePayCallback(PayCallbackDTO payCallbackDTO) {
+        try {
+            // 1. 基础参数校验
+            if (payCallbackDTO == null || !StringUtils.hasText(payCallbackDTO.getOrderNo())
+                    || payCallbackDTO.getPayAmount() == null || !StringUtils.hasText(payCallbackDTO.getSign())) {
+                log.error("支付回调参数不完整，参数：{}", payCallbackDTO);
+                return "fail:参数不完整";
+            }
+
+            // 2. 签名校验（防止回调伪造，使用系统统一签名密钥）
+            boolean signValid = SignUtil.verifySign(payCallbackDTO, "ORDER_PAY_CALLBACK_SECRET");
+            if (!signValid) {
+                log.error("支付回调签名验证失败，订单号：{}", payCallbackDTO.getOrderNo());
+                return "fail:签名验证失败";
+            }
+
+            // 3. 订单查询与校验
+            Order order = orderMapper.selectByOrderNo(payCallbackDTO.getOrderNo());
+            if (order == null) {
+                log.error("支付回调订单不存在，订单号：{}", payCallbackDTO.getOrderNo());
+                return "fail:订单不存在";
+            }
+
+            // 4. 订单状态校验（仅待支付状态可处理支付）
+            if (!OrderStatusEnum.PENDING_PAYMENT.equals(order.getStatus())) {
+                log.error("支付回调订单状态异常，订单号：{}，当前状态：{}",
+                        payCallbackDTO.getOrderNo(), order.getStatus().name());
+                return "fail:订单状态异常，当前状态：" + order.getStatus().getDesc();
+            }
+
+            // 5. 支付金额校验
+            if (order.getTotalAmount().subtract(payCallbackDTO.getPayAmount()).abs().compareTo(new BigDecimal("0.01")) > 0) {
+                log.error("支付回调金额不匹配，订单号：{}，订单金额：{}，支付金额：{}",
+                        payCallbackDTO.getOrderNo(), order.getTotalAmount(), payCallbackDTO.getPayAmount());
+                return "fail:支付金额与订单金额不一致";
+            }
+
+            // 6. 更新订单支付信息
+            order.setStatus(OrderStatusEnum.PAID);
+            order.setPayTime(LocalDateTime.now());
+            order.setPayType(PayTypeEnum.valueOf(payCallbackDTO.getPayType()));
+//            order.setPayNo(payCallbackDTO.getPayNo()); // 第三方支付流水号
+            int updateCount = orderMapper.updateById(order);
+            if (updateCount != 1) {
+                log.error("支付回调订单状态更新失败，订单号：{}", payCallbackDTO.getOrderNo());
+                return "fail:订单支付状态更新失败";
+            }
+
+            // 7. 清除缓存
+            redisTemplate.delete(CACHE_KEY_ORDER + order.getOrderId());
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "buyer:" + order.getBuyerId());
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
+
+            // 8. 发送支付成功通知（买家 + 卖家）
+            sendBuyerOrderNotice(order.getBuyerId(), order.getOrderId(), "支付成功通知",
+                    "您的订单（编号：" + order.getOrderNo() + "）已支付成功，等待卖家发货");
+            sendSellerOrderNotice(order.getSellerId(), order.getOrderId(), "订单支付通知",
+                    "订单编号：" + order.getOrderNo() + " 已支付，请及时发货");
+
+            log.info("支付回调处理成功，订单号：{}，支付流水号：{}",
+                    payCallbackDTO.getOrderNo(), payCallbackDTO.getPayNo());
+            return "success";
+        } catch (IllegalArgumentException e) {
+            log.error("支付回调支付方式枚举转换失败，参数：{}", payCallbackDTO.getPayType());
+            return "fail:支付方式非法";
+        } catch (Exception e) {
+            log.error("支付回调处理异常，参数：{}", payCallbackDTO, e);
+            return "fail:系统异常，请重试";
+        }
+    }
+
+    /**
+     * 卖家发货
+     * 核心逻辑：参数校验→订单校验→权限校验→状态校验→更新订单发货信息→发送通知
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public OrderDetailDTO shipOrder(Long sellerId, Long orderId, OrderShipDTO shipDTO) {
+        try {
+            // 1. 基础参数校验
+            if (sellerId == null || orderId == null || shipDTO == null
+                    || !StringUtils.hasText(shipDTO.getExpressCompany())
+                    || !StringUtils.hasText(shipDTO.getExpressNo())) {
+                throw new BusinessException(ErrorCode.PARAM_NULL, "参数不完整，发货失败");
+            }
+
+            // 2. 订单校验（优先查缓存）
+            OrderDetailDTO cacheOrder = (OrderDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
+            Order order = cacheOrder != null ? orderMapper.selectById(cacheOrder.getOrderId()) : orderMapper.selectById(orderId);
+            if (order == null) {
+                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
+            }
+
+            // 3. 权限校验（仅订单所属卖家可发货）
+            if (!Objects.equals(order.getSellerId(), sellerId)) {
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED, "无权限发货，此订单不属于当前卖家");
+            }
+
+            // 4. 订单状态校验（仅已支付状态可发货）
+            if (!OrderStatusEnum.PAID.equals(order.getStatus())) {
+                throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID,
+                        "订单状态为【" + order.getStatus().getDesc() + "】，不允许发货");
+            }
+
+            // 5. 更新订单发货信息
+            order.setStatus(OrderStatusEnum.SHIPPED);
+            order.setShipTime(LocalDateTime.now());
+//            order.setExpressCompany(shipDTO.getExpressCompany());
+//            order.setExpressNo(shipDTO.getExpressNo());
+//            order.setShipRemark(shipDTO.getShipRemark());
+            int updateCount = orderMapper.updateById(order);
+            if (updateCount != 1) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED, "订单发货状态更新失败");
+            }
+
+            // 6. 转换为DTO并补充商品信息
+            OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
+//            Product product = productMapper.selectById(order.getProductId());
+//            if (product != null) {
+//                orderDetail.setProductName(product.getTitle());
+//                orderDetail.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
+//            }
+
+            // 7. 缓存更新后的订单详情
+            redisTemplate.opsForValue().set(
+                    CACHE_KEY_ORDER + orderId,
+                    orderDetail,
+                    CACHE_TTL_ORDER,
+                    TimeUnit.MINUTES
+            );
+            // 清除订单列表缓存
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "buyer:" + order.getBuyerId());
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + sellerId);
+
+            // 8. 发送发货通知给买家
+            sendBuyerOrderNotice(order.getBuyerId(), orderId, "卖家发货通知",
+                    "您的订单（编号：" + order.getOrderNo() + "）已发货，快递公司："
+                            + shipDTO.getExpressCompany() + "，快递单号：" + shipDTO.getExpressNo());
+
+            log.info("订单发货成功，订单ID：{}，卖家ID：{}", orderId, sellerId);
+            return orderDetail;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("订单发货异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "发货操作异常，请联系客服");
+        }
+    }
+
+    /**
+     * 买家确认收货
+     * 核心逻辑：参数校验→订单校验→权限校验→状态校验→更新订单状态→发送通知
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public OrderDetailDTO confirmReceive(Long buyerId, Long orderId) {
+        try {
+            // 1. 基础参数校验
+            if (buyerId == null || orderId == null) {
+                throw new BusinessException(ErrorCode.PARAM_NULL, "用户ID和订单ID不能为空");
+            }
+
+            // 2. 订单校验（优先查缓存）
+            OrderDetailDTO cacheOrder = (OrderDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
+            Order order = cacheOrder != null ? orderService.getById(cacheOrder.getOrderId()) : orderMapper.selectById(orderId);
+            if (order == null) {
+                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
+            }
+
+            // 3. 权限校验（仅订单所属买家可确认收货）
+            if (!Objects.equals(order.getBuyerId(), buyerId)) {
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED, "无权限确认收货，此订单不属于当前买家");
+            }
+
+            // 4. 订单状态校验（仅已发货状态可确认收货）
+            if (!OrderStatusEnum.SHIPPED.equals(order.getStatus())) {
+                throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID,
+                        "订单状态为【" + order.getStatus().getDesc() + "】，不允许确认收货");
+            }
+
+            // 5. 更新订单状态为已完成
+            order.setStatus(OrderStatusEnum.COMPLETED);
+            order.setReceiveTime(LocalDateTime.now());
+            int updateCount = orderMapper.updateById(order);
+            if (updateCount != 1) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED, "订单确认收货状态更新失败");
+            }
+
+            // 6. 转换为DTO并补充商品信息
+            OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
+//            Product product = productService.getById(order.getProductId());
+//            if (product != null) {
+//                orderDetail.setProductName(product.getTitle());
+//                orderDetail.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
+//            }
+
+            // 7. 缓存更新后的订单详情
+            redisTemplate.opsForValue().set(
+                    CACHE_KEY_ORDER + orderId,
+                    orderDetail,
+                    CACHE_TTL_ORDER,
+                    TimeUnit.MINUTES
+            );
+            // 清除订单列表缓存
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "buyer:" + buyerId);
+            redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
+
+            // 8. 发送确认收货通知给卖家
+            sendSellerOrderNotice(order.getSellerId(), orderId, "买家确认收货通知",
+                    "订单编号：" + order.getOrderNo() + " 买家已确认收货，交易完成");
+
+            log.info("订单确认收货成功，订单ID：{}，买家ID：{}", orderId, buyerId);
+            return orderDetail;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("订单确认收货异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "确认收货操作异常，请联系客服");
+        }
+    }
+
+    /**
+     * 查询订单详情
+     * 核心逻辑：参数校验→订单查询→权限校验→数据封装
+     */
+    @Override
+    public OrderDetailDTO getOrderDetail(Long userId, Long orderId) {
+        try {
+            // 1. 基础参数校验
+            if (userId == null || orderId == null) {
+                throw new BusinessException(ErrorCode.PARAM_NULL, "用户ID和订单ID不能为空");
+            }
+
+            // 2. 优先查询缓存
+            OrderDetailDTO orderDetail = (OrderDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
+            if (orderDetail != null) {
+                // 缓存中存在，先校验权限
+                validateOrderPermission(userId, orderDetail.getBuyerId(), orderDetail.getSellerId());
+                return orderDetail;
+            }
+
+            // 3. 数据库查询订单
+            Order order = orderMapper.selectById(orderId);
+            if (order == null) {
+                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
+            }
+
+            // 4. 权限校验（买家/卖家/管理员可查看）
+            validateOrderPermission(userId, order.getBuyerId(), order.getSellerId());
+
+            // 5. 转换为DTO并补充商品信息
+            orderDetail = orderConvert.orderToOrderDetailDTO(order);
+//            Product product = productMapper.selectById(order.getProductId());
+//            if (product != null) {
+//                orderDetail.setProductName(product.getTitle());
+//                orderDetail.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
+//            }
+
+            // 6. 缓存订单详情
+            redisTemplate.opsForValue().set(
+                    CACHE_KEY_ORDER + orderId,
+                    orderDetail,
+                    CACHE_TTL_ORDER,
+                    TimeUnit.MINUTES
+            );
+
+            log.info("查询订单详情成功，订单ID：{}，操作人ID：{}", orderId, userId);
+            return orderDetail;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("查询订单详情异常", e);
+            throw new BusinessException(ErrorCode.DATA_QUERY_FAILED, "查询订单详情失败，请重试");
+        }
+    }
+
+    /**
+     * 买家查询订单列表
+     * 核心逻辑：参数处理→缓存查询→数据库查询→数据转换→缓存更新
+     */
+    @Override
+    public PageResult<OrderListItemDTO> getBuyerOrders(Long buyerId, OrderQueryDTO queryDTO) {
+        try {
+            // 1. 基础参数校验
+            if (buyerId == null) {
+                throw new BusinessException(ErrorCode.PARAM_NULL, "买家ID不能为空");
+            }
+            if (queryDTO == null) {
+                queryDTO = new OrderQueryDTO();
+            }
+
+            // 2. 处理分页参数（默认页码1，每页10条）
+            int pageNum = queryDTO.getPageNum() == null ? 1 : queryDTO.getPageNum();
+            int pageSize = queryDTO.getPageSize() == null ? 10 : queryDTO.getPageSize();
+            int offset = (pageNum - 1) * pageSize;
+
+            // 3. 构建缓存Key（包含买家ID、状态、分页参数）
+            String cacheKey = CACHE_KEY_ORDER_LIST + "buyer:" + buyerId
+                    + ":status:" + (queryDTO.getStatus() == null ? "ALL" : queryDTO.getStatus().name())
+                    + ":page:" + pageNum + ":size:" + pageSize;
+
+            // 4. 优先查询缓存
+            PageResult<OrderListItemDTO> cacheResult = (PageResult<OrderListItemDTO>) redisTemplate.opsForValue().get(cacheKey);
+            if (cacheResult != null) {
+                log.info("从缓存获取买家订单列表，买家ID：{}，页码：{}", buyerId, pageNum);
+                return cacheResult;
+            }
+
+            // 5. 数据库查询（订单列表 + 总条数）
+            List<Order> orderList = orderMapper.selectByBuyerId(buyerId, queryDTO.getStatus(), offset, pageSize);
+            long total = orderMapper.countByBuyerId(buyerId, queryDTO.getStatus());
+
+            // 6. 转换为订单列表DTO（补充商品缩略信息）
+            List<OrderListItemDTO> listDTOs = orderList.stream().map(order -> {
+                OrderListItemDTO listDTO = orderConvert.orderToOrderListItemDTO(order);
+                Product product = productService.getById(order.getProductId());
+//                if (product != null) {
+//                    listDTO.setProductSummary(product.getTitle());
+//                    listDTO.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
+//                }
+                return listDTO;
+            }).collect(Collectors.toList());
+
+            // 7. 封装分页结果
+            long totalPages = (total + pageSize - 1) / pageSize;
+            PageResult<OrderListItemDTO> result = new PageResult<>(
+                    total, totalPages, listDTOs, pageNum, pageSize
+            );
+
+            // 8. 缓存订单列表
+            redisTemplate.opsForValue().set(cacheKey, result, CACHE_TTL_ORDER_LIST, TimeUnit.MINUTES);
+
+            log.info("查询买家订单列表成功，买家ID：{}，总条数：{}，页码：{}", buyerId, total, pageNum);
+            return result;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("查询买家订单列表异常", e);
+            throw new BusinessException(ErrorCode.DATA_QUERY_FAILED, "查询订单列表失败，请重试");
+        }
+    }
+
+    /**
+     * 卖家查询订单列表
+     * 核心逻辑：参数处理→缓存查询→数据库查询→数据转换→缓存更新
+     */
+    @Override
+    public PageResult<OrderListItemDTO> getSellerOrders(Long sellerId, OrderQueryDTO queryDTO) {
+        try {
+            // 1. 基础参数校验
+            if (sellerId == null) {
+                throw new BusinessException(ErrorCode.PARAM_NULL, "卖家ID不能为空");
+            }
+            if (queryDTO == null) {
+                queryDTO = new OrderQueryDTO();
+            }
+
+            // 2. 处理分页参数（默认页码1，每页10条）
+            int pageNum = queryDTO.getPageNum() == null ? 1 : queryDTO.getPageNum();
+            int pageSize = queryDTO.getPageSize() == null ? 10 : queryDTO.getPageSize();
+            int offset = (pageNum - 1) * pageSize;
+
+            // 3. 构建缓存Key（包含卖家ID、状态、分页参数）
+            String cacheKey = CACHE_KEY_ORDER_LIST + "seller:" + sellerId
+                    + ":status:" + (queryDTO.getStatus() == null ? "ALL" : queryDTO.getStatus().name())
+                    + ":page:" + pageNum + ":size:" + pageSize;
+
+            // 4. 优先查询缓存
+            PageResult<OrderListItemDTO> cacheResult = (PageResult<OrderListItemDTO>) redisTemplate.opsForValue().get(cacheKey);
+            if (cacheResult != null) {
+                log.info("从缓存获取卖家订单列表，卖家ID：{}，页码：{}", sellerId, pageNum);
+                return cacheResult;
+            }
+
+            // 5. 数据库查询（订单列表 + 总条数）
+            List<Order> orderList = orderMapper.selectBySellerId(sellerId, queryDTO.getStatus(), offset, pageSize);
+            long total = orderMapper.countBySellerId(sellerId, queryDTO.getStatus());
+
+            // 6. 转换为订单列表DTO（补充商品缩略信息）
+            List<OrderListItemDTO> listDTOs = orderList.stream().map(order -> {
+                OrderListItemDTO listDTO = orderConvert.orderToOrderListItemDTO(order);
+                Product product = productService.getById(order.getProductId());
+//                if (product != null) {
+//                    listDTO.setProductSummary(product.getTitle());
+//                    listDTO.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
+//                }
+                return listDTO;
+            }).collect(Collectors.toList());
+
+            // 7. 封装分页结果
+            long totalPages = (total + pageSize - 1) / pageSize;
+            PageResult<OrderListItemDTO> result = new PageResult<>(
+                    total, totalPages, listDTOs, pageNum, pageSize
+            );
+
+            // 8. 缓存订单列表
+            redisTemplate.opsForValue().set(cacheKey, result, CACHE_TTL_ORDER_LIST, TimeUnit.MINUTES);
+
+            log.info("查询卖家订单列表成功，卖家ID：{}，总条数：{}，页码：{}", sellerId, total, pageNum);
+            return result;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("查询卖家订单列表异常", e);
+            throw new BusinessException(ErrorCode.DATA_QUERY_FAILED, "查询订单列表失败，请重试");
+        }
+    }
+
+    /**
+     * 自动关闭超时未支付订单（定时任务调用）
+     * 核心逻辑：查询超时订单→批量更新状态→恢复库存→发送通知
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public int autoCloseTimeoutOrders(int timeoutMinutes) {
+        try {
+            if (timeoutMinutes <= 0) {
+                throw new BusinessException(ErrorCode.PARAM_ERROR, "超时时间必须大于0");
+            }
+
+            // 1. 计算超时时间点（当前时间 - 超时分钟数）
+            LocalDateTime timeoutTime = LocalDateTime.now().minusMinutes(timeoutMinutes);
+
+            // 2. 查询超时未支付订单
+            List<Order> timeoutOrders = orderMapper.selectTimeoutPendingOrders(timeoutTime);
+            if (timeoutOrders.isEmpty()) {
+                log.info("无超时未支付订单，超时时间：{}分钟", timeoutMinutes);
+                return 0;
+            }
+
+            // 3. 批量处理超时订单（更新状态 + 恢复库存）
+            int closedCount = 0;
+            for (Order order : timeoutOrders) {
+                try {
+                    // 3.1 更新订单状态为已取消
+                    order.setStatus(OrderStatusEnum.CANCELLED);
+                    order.setCancelTime(LocalDateTime.now());
+//                    order.setCancelReason("超时未支付，系统自动关闭");
+                    int updateCount = orderMapper.updateById(order);
+                    if (updateCount != 1) {
+                        log.error("自动关闭订单状态更新失败，订单ID：{}", order.getOrderId());
+                        continue;
+                    }
+
+                    // 3.2 恢复商品库存
+                    Product product = productService.getById(order.getProductId());
+                    ProductStockUpdateDTO stockUpdateDTO = new ProductStockUpdateDTO(order.getProductId(),
+                            order.getQuantity(), "订单超时关闭");
+                    if (product != null) {
+                        productService.updateStock(product.getProductId(), stockUpdateDTO);
+                    } else {
+                        log.warn("自动关闭订单商品不存在，无法恢复库存，订单ID：{}", order.getOrderId());
+                    }
+
+                    // 3.3 清除缓存
+                    redisTemplate.delete(CACHE_KEY_ORDER + order.getOrderId());
+                    redisTemplate.delete(CACHE_KEY_ORDER_LIST + "buyer:" + order.getBuyerId());
+                    redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
+
+                    // 3.4 发送系统关闭通知给买家
+                    sendBuyerOrderNotice(order.getBuyerId(), order.getOrderId(), "订单超时关闭通知",
+                            "您的订单（编号：" + order.getOrderNo() + "）因超时未支付，已被系统自动关闭，库存已恢复");
+
+                    closedCount++;
+                    log.info("自动关闭超时订单成功，订单ID：{}，订单编号：{}", order.getOrderId(), order.getOrderNo());
+                } catch (Exception e) {
+                    log.error("自动关闭订单异常，订单ID：{}", order.getOrderId(), e);
+                    // 单个订单处理失败不影响其他订单
+                    continue;
+                }
+            }
+
+            log.info("自动关闭超时未支付订单完成，共处理{}个订单，成功关闭{}个", timeoutOrders.size(), closedCount);
+            return closedCount;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("自动关闭超时订单批量处理异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "自动关闭订单异常，请联系运维");
         }
     }
 
@@ -238,158 +782,90 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    // ---------------------- 私有辅助方法 ----------------------
+
     /**
-     * 按订单ID删除（基础CRUD，逻辑删除）
-     * 核心逻辑：仅允许买家删除"已取消"或"已完成"订单
+     * 校验订单创建参数
      */
-    @Override
-    public Boolean deleteOrderById(Long orderId, Long buyerId) {
-        try {
-            // 1. 参数校验
-            if (orderId == null || buyerId == null) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
-
-            // 2. 查询订单信息
-            Order order = orderMapper.selectById(orderId);
-            if (order == null) {
-                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
-            }
-
-            // 3. 校验买家身份（仅订单所属买家可删除）
-            if (!order.getBuyerId().equals(buyerId)) {
-                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
-            }
-
-            // 4. 校验订单状态（仅已取消/已完成订单可删除）
-            if (!OrderStatusEnum.CANCELLED.equals(order.getStatus()) &&
-                    !OrderStatusEnum.COMPLETED.equals(order.getStatus())) {
-                throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
-            }
-
-            // 5. 逻辑删除订单（假设deleteById为逻辑删除，更新is_deleted字段）
-            int deleteRows = orderMapper.deleteById(orderId);
-            if (deleteRows <= 0) {
-                log.error("删除订单失败，订单ID：{}，买家ID：{}", orderId, buyerId);
-                throw new BusinessException(ErrorCode.DATA_DELETE_FAILED);
-            }
-
-            // 6. 清理缓存
-            redisTemplate.delete(CACHE_KEY_ORDER + orderId);
-            redisTemplate.delete(CACHE_KEY_USER_ORDERS + buyerId);
-
-            log.info("删除订单成功，订单ID：{}，买家ID：{}", orderId, buyerId);
-            return true;
-
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("删除订单系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+    private void validateOrderCreateParam(OrderCreateDTO orderCreateDTO) {
+        if (orderCreateDTO == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL, "订单创建参数不能为空");
+        }
+        if (orderCreateDTO.getProductId() == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL, "商品ID不能为空");
+        }
+        if (orderCreateDTO.getQuantity() == null || orderCreateDTO.getQuantity() <= 0) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "购买数量必须大于0");
+        }
+        if (orderCreateDTO.getTotalAmount() == null || orderCreateDTO.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "订单金额必须大于0");
+        }
+        if (!StringUtils.hasText(orderCreateDTO.getAddress())) {
+            throw new BusinessException(ErrorCode.PARAM_NULL, "收货地址不能为空");
+        }
+        if (orderCreateDTO.getPayType() == null) {
+            throw new BusinessException(ErrorCode.PARAM_NULL, "支付方式不能为空");
         }
     }
 
     /**
-     * 创建订单（业务方法，事务控制）
-     * 核心逻辑：校验用户信用与商品库存，创建订单并扣减库存，保证数据一致性
+     * 生成唯一订单编号（格式：yyyyMMdd + 8位随机数）
      */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public Order createOrder(OrderCreateDTO orderCreateDTO, Long buyerId) {
-        try {
-            // 1. 参数校验
-            if (orderCreateDTO == null || orderCreateDTO.getProductId() == null ||
-                    !StringUtils.hasText(orderCreateDTO.getAddress()) || buyerId == null) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
+    private String generateOrderNo() {
+        StringBuilder randomSb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < ORDER_NO_RANDOM_LEN; i++) {
+            randomSb.append(random.nextInt(10));
+        }
+        return ORDER_NO_PREFIX + randomSb.toString();
+    }
 
-            // 2. 校验买家信用分（需≥60分才能下单）
-            User buyer = userService.selectUserById(buyerId);
-            if (buyer.getCreditScore() < MIN_CREDIT_FOR_ORDER) {
-                throw new BusinessException(ErrorCode.CREDIT_TOO_LOW);
-            }
+    /**
+     * 生成支付链接（模拟，实际对接第三方支付接口）
+     */
+    private String generatePayUrl(String orderNo, PayTypeEnum payType) {
+        String baseUrl = "https://pay.community-shop.com/pay?";
+        return baseUrl + "orderNo=" + orderNo + "&payType=" + payType.name()
+                + "&timestamp=" + System.currentTimeMillis();
+    }
 
-            // 3. 校验商品信息与库存
-            Product product = productService.selectProductById(orderCreateDTO.getProductId());
-            if (product == null) {
-                throw new BusinessException(ErrorCode.PRODUCT_NOT_EXISTS);
-            }
-            if (product.getStock() < 1) {
-                throw new BusinessException(ErrorCode.STOCK_INSUFFICIENT);
-            }
-
-            // 4. 构建订单实体
-            Order order = new Order(orderCreateDTO);
-            order.setSellerId(product.getSellerId());
-
-            // 5. 调用基础方法插入订单
-            insertOrder(order);
-            Long orderId = order.getOrderId();
-
-            // 6. 扣减商品库存（事务内操作，失败则回滚订单创建）
-            productService.updateStock(product.getProductId(), -1, "下单扣减库存");
-
-            log.info("创建订单成功，订单ID：{}，商品ID：{}，买家ID：{}",
-                    orderId, product.getProductId(), buyerId);
-            return order;
-
-        } catch (BusinessException e) {
-            throw e; // 事务会自动回滚
-        } catch (Exception e) {
-            log.error("创建订单系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR); // 事务回滚
+    /**
+     * 校验订单查看权限（买家/卖家/管理员可查看）
+     */
+    private void validateOrderPermission(Long operatorId, Long buyerId, Long sellerId) {
+        User operator = userService.getById(operatorId);
+        boolean isBuyer = Objects.equals(operatorId, buyerId);
+        boolean isSeller = Objects.equals(operatorId, sellerId);
+        boolean isAdmin = operator != null && UserRoleEnum.ADMIN.equals(operator.getRole());
+        if (!isBuyer && !isSeller && !isAdmin) {
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED, "无权限查看此订单详情");
         }
     }
 
     /**
-     * 订单支付（业务方法）
-     * 核心逻辑：校验订单状态，更新支付信息，发送通知给卖家
+     * 发送订单通知给买家（调用MessageService）
      */
-    @Override
-    public String payOrder(Long orderId, String payNo, LocalDateTime payTime, Long buyerId) {
-        try {
-            // 1. 参数校验
-            if (orderId == null || !StringUtils.hasText(payNo) || payTime == null || buyerId == null) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
+    private void sendBuyerOrderNotice(Long buyerId, Long orderId, String title, String content) {
+        MessageSendDTO sendDTO = new MessageSendDTO();
+        sendDTO.setReceiverId(buyerId);
+        sendDTO.setTitle(title);
+        sendDTO.setContent(content);
+        sendDTO.setBusinessId(orderId);
+        sendDTO.setType(MessageTypeEnum.ORDER);
+//        messageService.sendMessage(sendDTO, 0L); // 0表示系统发送
+    }
 
-            // 2. 查询订单并校验状态（仅"待支付"订单可支付）
-            Order order = orderMapper.selectById(orderId);
-            if (order == null) {
-                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
-            }
-            if (!OrderStatusEnum.PENDING_PAYMENT.equals(order.getStatus())) {
-                throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
-            }
-
-            // 3. 校验买家身份（仅订单所属买家可支付）
-            if (!order.getBuyerId().equals(buyerId)) {
-                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
-            }
-
-            // 4. 更新订单支付状态与支付信息
-            int updateRows = orderMapper.updatePayTime(orderId, payTime);
-            if (updateRows <= 0) {
-                log.error("更新订单支付时间失败，订单ID：{}", orderId);
-                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
-            }
-            // 更新订单状态为"已支付"
-            updateOrderStatus(orderId, OrderStatusEnum.PAID, buyerId);
-
-            // 5. 发送站内信通知卖家（订单已支付，提醒发货）
-            String noticeContent = String.format("订单%s已支付，请尽快发货", orderId);
-            messageService.sendSellerNotice(order.getSellerId(), noticeContent, orderId);
-
-            log.info("订单支付成功，订单ID：{}，支付单号：{}，买家ID：{}",
-                    orderId, payNo, buyerId);
-            return "支付成功";
-
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("订单支付系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-        }
+    /**
+     * 发送订单通知给卖家（调用MessageService）
+     */
+    private void sendSellerOrderNotice(Long sellerId, Long orderId, String title, String content) {
+        MessageSendDTO sendDTO = new MessageSendDTO();
+        sendDTO.setReceiverId(sellerId);
+        sendDTO.setTitle(title);
+        sendDTO.setContent(content);
+//        sendDTO.setOrderId(orderId);
+        sendDTO.setType(MessageTypeEnum.ORDER);
+//        messageService.sendMessage(sendDTO, 0L); // 0表示系统发送
     }
 
     /**
@@ -404,28 +880,28 @@ public class OrderServiceImpl implements OrderService {
             case PENDING_PAYMENT:
                 // 待支付状态仅允许转为已支付或已取消
                 if (!OrderStatusEnum.PAID.equals(targetStatus) && !OrderStatusEnum.CANCELLED.equals(targetStatus)) {
-                    throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
+                    throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
                 }
                 break;
             case PAID:
                 // 已支付状态仅允许转为已发货或已取消（需特殊业务审批，此处简化处理）
                 if (!OrderStatusEnum.SHIPPED.equals(targetStatus) && !OrderStatusEnum.CANCELLED.equals(targetStatus)) {
-                    throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
+                    throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
                 }
                 break;
             case SHIPPED:
                 // 已发货状态仅允许转为已完成或已退货
                 if (!OrderStatusEnum.COMPLETED.equals(targetStatus) && !OrderStatusEnum.RETURNED.equals(targetStatus)) {
-                    throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
+                    throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
                 }
                 break;
             case COMPLETED:
             case CANCELLED:
             case RETURNED:
                 // 终态状态不允许任何转换
-                throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
+                throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
             default:
-                throw new BusinessException(ErrorCode.ORDER_STATUS_ERROR);
+                throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
         }
     }
 

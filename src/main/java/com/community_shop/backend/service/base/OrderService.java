@@ -2,11 +2,13 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.dto.order.OrderCreateDTO;
+import com.community_shop.backend.dto.order.*;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
+import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -17,39 +19,84 @@ import java.time.LocalDateTime;
  * 3. 《代码文档1 Mapper层设计.docx》：OrderMapper的CRUD及状态更新方法
  */
 @Service
-public interface OrderService {
+public interface OrderService extends BaseService<Order> {
 
     /**
-     * 新增订单（基础CRUD）
-     * 核心逻辑：初始化订单状态为"待支付"，记录创建时间，调用OrderMapper.insert插入
-     * @param order 订单实体（含productId、buyerId、sellerId、totalAmount，不含order_id）
-     * @return 新增订单ID
-     * @see com.community_shop.backend.mapper.OrderMapper#insert(Order)
+     * 创建订单（支持单商品/多商品合并）
+     * @param userId 买家ID
+     * @param orderCreateDTO 订单创建参数
+     * @return 未支付订单详情（含支付链接/二维码）
+     * @throws BusinessException 商品库存不足、买家信用分过低等场景抛出
      */
-    Long insertOrder(Order order);
+    OrderDetailDTO createOrder(Long userId, OrderCreateDTO orderCreateDTO);
 
     /**
-     * 按订单ID查询（基础CRUD）
-     * 核心逻辑：调用OrderMapper.selectById查询，校验仅买卖双方可查，关联商品信息
-     * @param orderId 订单ID（主键）
-     * @param userId 操作用户ID（买家或卖家）
-     * @return 含商品信息的订单详情
-     * @see com.community_shop.backend.mapper.OrderMapper#selectById(Long)
-     * @see ProductService#selectProductById(Long)
+     * 取消订单
+     * @param userId 操作人ID（买家/管理员）
+     * @param orderId 订单ID
+     * @return 是否取消成功
+     * @throws BusinessException 订单状态不允许取消（已支付/已发货）、无权限等场景抛出
      */
-    Order selectOrderById(Long orderId, Long userId);
+    Boolean cancelOrder(Long userId, Long orderId);
 
     /**
-     * 按买家查询订单列表（基础CRUD，分页）
-     * 核心逻辑：调用OrderMapper.selectByBuyerId查询，按状态筛选（如"待支付"/"已发货"）
+     * 支付订单回调处理
+     * @param payCallbackDTO 支付平台回调参数
+     * @return 回调处理结果（用于支付平台确认）
+     * @throws BusinessException 订单不存在、签名验证失败等场景抛出
+     */
+    String handlePayCallback(PayCallbackDTO payCallbackDTO);
+
+    /**
+     * 卖家发货
+     * @param sellerId 卖家ID
+     * @param orderId 订单ID
+     * @param shipDTO 发货参数（物流单号、快递公司）
+     * @return 发货后的订单详情
+     * @throws BusinessException 无权限、订单未支付等场景抛出
+     */
+    OrderDetailDTO shipOrder(Long sellerId, Long orderId, OrderShipDTO shipDTO);
+
+    /**
+     * 买家确认收货
      * @param buyerId 买家ID
-     * @param status 订单状态（枚举值："PENDING_PAY"/"PAID"/"SHIPPED"/"COMPLETED"/"CANCELLED"）
-     * @param pageParam 分页参数（页码、每页条数）
-     * @return 分页订单列表
-     * @see com.community_shop.backend.mapper.OrderMapper#selectByBuyerId(Long, OrderStatusEnum, int, int)
-     * @see OrderStatusEnum （订单状态枚举）
+     * @param orderId 订单ID
+     * @return 确认后的订单详情
+     * @throws BusinessException 无权限、订单未发货等场景抛出
      */
-    PageResult<Order> selectOrderByBuyer(Long buyerId, OrderStatusEnum status, PageParam pageParam);
+    OrderDetailDTO confirmReceive(Long buyerId, Long orderId);
+
+    /**
+     * 查询订单详情
+     * @param userId 操作人ID（买家/卖家/管理员）
+     * @param orderId 订单ID
+     * @return 订单详情
+     * @throws BusinessException 无权限、订单不存在等场景抛出
+     */
+    OrderDetailDTO getOrderDetail(Long userId, Long orderId);
+
+    /**
+     * 买家查询订单列表
+     * @param buyerId 买家ID
+     * @param queryDTO 订单查询参数（含状态筛选、分页）
+     * @return 分页订单列表
+     */
+    PageResult<OrderListItemDTO> getBuyerOrders(Long buyerId, OrderQueryDTO queryDTO);
+
+    /**
+     * 卖家查询订单列表
+     * @param sellerId 卖家ID
+     * @param queryDTO 订单查询参数（含状态筛选、分页）
+     * @return 分页订单列表
+     */
+    PageResult<OrderListItemDTO> getSellerOrders(Long sellerId, OrderQueryDTO queryDTO);
+
+    /**
+     * 自动关闭超时未支付订单（定时任务调用）
+     * @param timeoutMinutes 超时时间（分钟）
+     * @return 关闭成功的订单数量
+     */
+    int autoCloseTimeoutOrders(int timeoutMinutes);
 
     /**
      * 更新订单状态（基础CRUD）
@@ -63,39 +110,4 @@ public interface OrderService {
      */
     Boolean updateOrderStatus(Long orderId, OrderStatusEnum status, Long operatorId);
 
-    /**
-     * 按订单ID删除（基础CRUD，逻辑删除）
-     * 核心逻辑：校验仅买家可操作，且订单状态为"已取消"/"已完成"，调用OrderMapper.deleteById标记删除
-     * @param orderId 待删除订单ID
-     * @param buyerId 买家ID（需与订单buyer_id一致）
-     * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.OrderMapper#deleteById(Long)
-     */
-    Boolean deleteOrderById(Long orderId, Long buyerId);
-
-    /**
-     * 创建订单（业务方法，事务控制）
-     * 核心逻辑：事务隔离级别READ_COMMITTED，校验买家信用分≥60分、商品库存充足，创建订单并扣减库存
-     * @param orderCreateDTO 订单创建参数（商品ID、收货地址、支付方式）
-     * @param buyerId 买家ID
-     * @return 订单信息+支付链接
-     * @see #insertOrder(Order)
-     * @see ProductService#updateStock(Long, Integer, String)
-     * @see UserService#selectUserById(Long)
-     * @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-     */
-    Order createOrder(OrderCreateDTO orderCreateDTO, Long buyerId);
-
-    /**
-     * 订单支付（业务方法）
-     * 核心逻辑：校验订单状态为"待支付"，更新状态为"已支付"并记录支付时间，发送站内信通知卖家
-     * @param orderId 订单ID
-     * @param payNo 支付单号（第三方支付平台返回）
-     * @param payTime 支付时间
-     * @param buyerId 买家ID（需与订单buyer_id一致）
-     * @return "支付成功" 或抛出异常
-     * @see com.community_shop.backend.mapper.OrderMapper#updatePayTime(Long, java.time.LocalDateTime)
-     * @see com.community_shop.backend.service.base.MessageService#sendSellerNotice(Long, String, Long) （站内信服务）
-     */
-    String payOrder(Long orderId, String payNo, LocalDateTime payTime, Long buyerId);
 }

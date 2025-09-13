@@ -136,13 +136,19 @@
             <artifactId>mapstruct</artifactId>
             <version>1.5.5.Final</version> <!-- 稳定版本 -->
         </dependency>
-
         <!-- 编译时生成转换代码的处理器 -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
             <version>1.5.5.Final</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- FastJSON -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.83</version>
         </dependency>
 
     </dependencies>

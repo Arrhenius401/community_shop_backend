@@ -345,6 +345,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             int offset = (pageNum - 1) * pageSize;
 
             // 2. 构建缓存Key
+            queryDTO.setOffset(offset);
             String cacheKey = buildProductListCacheKey(queryDTO, pageNum, pageSize);
 
             // 3. 尝试从缓存获取
@@ -401,6 +402,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             int offset = (pageNum - 1) * pageSize;
 
             // 2. 查询总数
+            queryDTO.setOffset(offset);
             long total = productMapper.countBySellerQuery(queryDTO);
 
             // 3. 查询商品列表

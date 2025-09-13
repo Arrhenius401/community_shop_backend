@@ -12,6 +12,7 @@ public enum ErrorCode {
     PARAM_ERROR("SYSTEM_002", "参数错误"),
     PARAM_NULL("SYSTEM_003", "参数为空"),
     NOT_FOUND("SYSTEM_004", "资源不存在"),
+    RELATED_DATA_MISSING("SYSTEM_005", "缺少关联数据"),
 
     DATA_UPDATE_FAILED("SYSTEM_011", "数据更新失败"),
     DATA_DELETE_FAILED("SYSTEM_012", "数据删除失败"),
@@ -115,13 +116,31 @@ public enum ErrorCode {
 
     STOCK_INSUFFICIENT("ORDER_021", "商品库存不足"),
 
+    ORDER_STATUS_NOT_COMPLETED("ORDER_005", "订单未完成"),
+
+
     // 评价模块
     EVALUATION_NOT_EXISTS("EVAL_001", "评价不存在"),
     EVALUATION_ID_NULL("EVAL_002", "评价ID为空"),
     EVALUATION_CONTENT_NULL("EVAL_003", "评价内容为空"),
     EVALUATION_SCORE_NULL("EVAL_004", "评价分数为空"),
     EVALUATION_ORDER_ID_NULL("EVAL_005", "评价订单ID为空"),
-    EVALUATION_STATUS_ERROR("EVAL_006", "评价状态参数错误"),
+
+    EVALUATION_REPORT_REASON_NULL("EVAL_006", "评价举报理由为空"),
+
+
+    EVALUATION_SCORE_INVALID("EVAL_021", "评价分数参数错误"),
+    EVALUATION_CONTENT_INVALID("EVAL_022", "评价内容参数错误"),
+    EVALUATION_IMAGE_URL_INVALID("EVAL_023", "评价图片URL参数错误"),
+    EVALUATION_TAGS_INVALID("EVAL_024", "评价标签参数错误"),
+    EVALUATION_STATUS_INVALID("EVAL_025", "评价状态参数错误"),
+
+    EVALUATION_REPORT_REASON_TOO_LONG("EVAL_041", "评价举报理由过长"),
+
+
+    ORDER_ALREADY_EVALUATED("EVAL_091", "订单已评价"),
+    SELLER_NOT_EXISTS("MSG_002", "卖家不存在"),
+
 
     // 消息模块
     MESSAGE_NOT_EXISTS("MSG_001", "消息不存在"),

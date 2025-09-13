@@ -81,6 +81,70 @@
         LIMIT #{offset}, #{limit}
     </select>
 
+    <!-- 新增：根据查询条件分页查询评价列表 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM evaluation
+        WHERE seller_id = #{sellerId}
+        AND status = 'NORMAL'
+        <if test="score != null">
+            AND score = #{score}
+        </if>
+        <if test="productId != null">
+            AND order_id IN (
+            SELECT order_id FROM order_item WHERE product_id = #{productId}
+            )
+        </if>
+        <if test="hasImage != null and hasImage">
+            AND eval_id IN (
+            SELECT eval_id FROM evaluation_image WHERE eval_id IS NOT NULL
+            )
+        </if>
+        <!-- 排序处理 -->
+        ORDER BY
+        <choose>
+            <when test="sortField == @com.community_shop.backend.enums.SortEnum$EvaluationSortFieldEnum@CREATE_TIME">
+                create_time
+            </when>
+            <when test="sortField == @com.community_shop.backend.enums.SortEnum$EvaluationSortFieldEnum@SCORE">
+                score
+            </when>
+            <when test="sortField == @com.community_shop.backend.enums.SortEnum$EvaluationSortFieldEnum@HELPFUL_COUNT">
+                helpful_count
+            </when>
+            <otherwise>
+                create_time
+            </otherwise>
+        </choose>
+        <if test="sortDir == @com.community_shop.backend.enums.SortEnum$SortDirectionEnum@ASC">
+            ASC
+        </if>
+        <if test="sortDir == @com.community_shop.backend.enums.SortEnum$SortDirectionEnum@DESC">
+            DESC
+        </if>
+        <!-- 分页处理 -->
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 新增：根据查询条件统计评价数量 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(*) FROM evaluation
+        WHERE seller_id = #{sellerId}
+        AND status = 'NORMAL'
+        <if test="score != null">
+            AND score = #{score}
+        </if>
+        <if test="productId != null">
+            AND order_id IN (
+            SELECT order_id FROM order_item WHERE product_id = #{productId}
+            )
+        </if>
+        <if test="hasImage != null and hasImage">
+            AND eval_id IN (
+            SELECT eval_id FROM evaluation_image WHERE eval_id IS NOT NULL
+            )
+        </if>
+    </select>
+
 
     <!-- ==================== 统计分析 ==================== -->
     <select id="selectSellerAverageScore" resultType="java.lang.Double">

@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.evaluation;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -52,6 +53,7 @@ public class EvaluationDetailDTO {
 
     /** 商品简易信息内部类 */
     @Data
+    @AllArgsConstructor
     public static class ProductSimpleDTO {
         private Long productId;
         private String productName;
@@ -60,6 +62,7 @@ public class EvaluationDetailDTO {
 
     /** 评价人信息内部类（脱敏） */
     @Data
+    @AllArgsConstructor
     public static class EvaluatorDTO {
         private Long userId;
         private String username; // 用户名脱敏（如"张***"）

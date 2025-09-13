@@ -1,6 +1,7 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.community_shop.backend.dto.evaluation.EvaluationQueryDTO;
 import com.community_shop.backend.entity.Evaluation;
 import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import org.apache.ibatis.annotations.*;
@@ -88,7 +89,19 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
             @Param("limit") int limit
     );
 
+    /**
+     * 分页查询评价列表（高级搜索）
+     * @param queryDTO 查询参数
+     * @return 评价分页列表
+     */
+    List<Evaluation> selectByQuery(@Param("query") EvaluationQueryDTO queryDTO);
 
+    /**
+     * 统计评价列表（高级搜索）
+     * @param queryDTO 搜索参数
+     * @return 评价数量
+     */
+    Integer countByQuery(@Param("query") EvaluationQueryDTO queryDTO);
 
     // ==================== 统计分析 ====================
     /**

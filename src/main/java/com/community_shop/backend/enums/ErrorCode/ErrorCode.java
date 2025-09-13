@@ -98,6 +98,10 @@ public enum ErrorCode {
     PRODUCT_IMAGE_TOO_MANY("PRODUCT_022", "商品图片数量过多"),
 
     PRODUCT_ALREADY_OFF_SALE("PRODUCT_091", "商品已下架"),
+    PRODUCT_STOCK_INSUFFICIENT("PRODUCT_092", "商品库存不足"),
+    ORDER_AMOUNT_ABNORMAL("ORDER_021", "订单金额异常"),
+
+
 
     // 订单模块
     ORDER_NOT_EXISTS("ORDER_001", "订单不存在"),

@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
+
 /**
  * 订单创建请求VO（视图对象）
  * 用于接收前端传递的下单参数，适配创建订单的业务场景
@@ -48,7 +50,7 @@ public class OrderCreateDTO {
      */
     @NotNull(message = "数量不能为空")
     @Positive(message = "数量必须大于0")
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     /**
      * 买家留言

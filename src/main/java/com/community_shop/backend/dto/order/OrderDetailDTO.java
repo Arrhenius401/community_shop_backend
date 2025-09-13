@@ -27,6 +27,9 @@ public class OrderDetailDTO {
     /** 订单所属卖家ID */
     private Long sellerId;
 
+    /** 订单编号 */
+    private String orderNo;
+
     /** 订单商品数量 */
     private Integer quantity;
 

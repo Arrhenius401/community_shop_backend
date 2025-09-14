@@ -1,9 +1,6 @@
 package com.community_shop.backend.convert;
 
-import com.community_shop.backend.dto.message.MessageDetailDTO;
-import com.community_shop.backend.dto.message.MessageListItemDTO;
-import com.community_shop.backend.dto.message.MessageSendDTO;
-import com.community_shop.backend.dto.message.MessageStatusUpdateDTO;
+import com.community_shop.backend.dto.message.*;
 import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.enums.CodeEnum.MessageStatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +11,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Message 模块对象转换器

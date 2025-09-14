@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.message;
 
+import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class MessagePreviewDTO {
     private String contentSummary;
 
     /** 消息类型 */
-    private String type;
+    private MessageTypeEnum type;
 
     /** 发送时间 */
     private LocalDateTime createTime;

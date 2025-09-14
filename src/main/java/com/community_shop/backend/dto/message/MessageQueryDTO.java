@@ -14,10 +14,6 @@ import lombok.Data;
 @Data
 public class MessageQueryDTO extends PageParam {
 
-    /** 当前用户ID（非空，用于筛选“发给我的”或“我发的”消息） */
-    @NotNull(message = "当前用户ID不能为空")
-    private Long userId;
-
     /** 消息类型（可选，如只看“评论回复”） */
     private MessageTypeEnum type;
 

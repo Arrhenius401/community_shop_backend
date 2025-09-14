@@ -11,6 +11,10 @@ import lombok.Data;
 @Data
 public class PrivateMessageQueryDTO extends PageParam {
 
+    /** 当前用户ID */
+    @NotNull(message = "当前用户ID不能为空")
+    private Long userId;
+
     /** 谈话对象ID */
     @NotNull(message = "当前用户ID不能为空")
     private Long partnerId;

@@ -1,13 +1,10 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.message.*;
 import com.community_shop.backend.entity.Message;
-import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,26 +19,36 @@ public interface MessageService extends BaseService<Message>{
 
     /**
      * 发送业务触发消息（如订单支付通知、评价提醒）
+     * @param userId 当前用户ID
      * @param messageSendDTO 消息参数（接收人、内容、类型、关联业务ID）
      * @return 消息ID
      * @throws BusinessException 接收人不存在、内容超限时抛出
      */
-    Long sendBusinessMessage(MessageSendDTO messageSendDTO);
+    Long sendMessage(Long userId, MessageSendDTO messageSendDTO);
 
     /**
      * 标记消息状态（已读/删除）
+     * @param userId 当前用户ID
      * @param statusUpdateDTO 状态更新参数（消息ID、目标状态、操作人）
      * @return 标记成功数量
      * @throws BusinessException 无权限（非接收人）时抛出
      */
-    int updateMessageStatus(MessageStatusUpdateDTO statusUpdateDTO);
+    int updateMessageStatus(Long userId, MessageStatusUpdateDTO statusUpdateDTO);
 
     /**
      * 分页查询用户消息列表
      * @param messageQueryDTO 查询参数（用户ID、类型、状态、分页）
      * @return 分页消息列表
      */
-    PageResult<MessageListItemDTO> queryUserMessages(MessageQueryDTO messageQueryDTO);
+    PageResult<MessageListItemDTO> searchMessagesByQuery(Long userId, MessageQueryDTO messageQueryDTO);
+
+    /**
+     * 获取用户消息列表（不分页）
+     * @param userId 用户ID
+     * @param queryDTO 获取参数（用户ID、类型、状态）
+     * @return 消息列表
+     */
+    PageResult<PrivateMessageDetailDTO> searchPrivateMessagesByQuery(Long userId, PrivateMessageQueryDTO queryDTO);
 
     /**
      * 获取用户最近3条未读消息预览
@@ -73,32 +80,13 @@ public interface MessageService extends BaseService<Message>{
     Boolean sendBuyerNotice(Long buyerId, String content, Long orderId);
 
     /**
-     * 发送系统公告（管理员向所有用户）
-     * 核心逻辑：创建系统公告消息，所有用户可见，标记为"系统消息"类型
-     * @param content 公告内容（如"平台将于2023年10月1日进行系统维护"）
-     * @param operatorId 操作管理员ID（需校验管理员权限）
-     * @return 成功返回true，失败抛出异常或返回false
-     */
-    Boolean sendSystemAnnouncement(String content, Long operatorId);
-
-    /**
-     * 查询用户的消息列表（分页）
-     * 核心逻辑：按接收者ID查询，支持按消息类型筛选（系统通知/订单通知），按创建时间倒序
-     * @param userId 接收消息的用户ID
-     * @param msgType 消息类型（"SYSTEM"=系统消息，"ORDER"=订单消息，null=全部）
-     * @param pageParam 分页参数（页码、每页条数）
-     * @return 分页消息列表
-     */
-    PageResult<Message> selectUserMessages(Long userId, MessageTypeEnum msgType, PageParam pageParam);
-
-    /**
      * 标记消息为已读
      * 核心逻辑：校验消息接收者为当前用户，更新消息状态为"已读"
-     * @param msgId 消息ID
      * @param userId 操作用户ID（需与消息receiver_id一致）
+     * @param msgId 消息ID
      * @return 成功返回true，失败抛出异常或返回false
      */
-    Boolean markAsRead(Long msgId, Long userId);
+    Boolean markAsRead(Long userId, Long msgId);
 
     /**
      * 统计用户未读消息数量
@@ -108,12 +96,4 @@ public interface MessageService extends BaseService<Message>{
      */
     Integer countUnreadMessages(Long userId);
 
-    /**
-     * 删除消息（逻辑删除）
-     * 核心逻辑：校验消息接收者为当前用户，标记消息为"已删除"
-     * @param msgId 消息ID
-     * @param userId 操作用户ID（需与消息receiver_id一致）
-     * @return 成功返回true，失败抛出异常或返回false
-     */
-    Boolean deleteMessage(Long msgId, Long userId);
 }

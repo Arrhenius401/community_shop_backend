@@ -147,8 +147,19 @@ public enum ErrorCode {
     MESSAGE_ID_NULL("MSG_002", "消息ID为空"),
     MESSAGE_CONTENT_NULL("MSG_003", "消息内容为空"),
     MESSAGE_RECEIVER_NULL("MSG_004", "消息接收者为空"),
-    MESSAGE_TYPE_ERROR("MSG_005", "消息类型参数错误"),
-    MESSAGE_STATUS_ERROR("MSG_006", "消息状态参数错误"),
+    MESSAGE_SENDER_NULL("MSG_005", "消息发送者为空"),
+    MESSAGE_TYPE_NULL("MSG_006", "消息类型为空"),
+
+
+    MESSAGE_TYPE_INVALID("MSG_005", "消息类型参数错误"),
+    MESSAGE_STATUS_INVALID("MSG_006", "消息状态参数错误"),
+    MESSAGE_CONTENT_INVALID("MSG_007", "消息内容参数错误"),
+
+    RECEIVER_NOT_EXISTS("MSG_011", "接收者不存在"),
+    SENDER_NOT_EXISTS("MSG_012", "发送者不存在"),
+
+
+    MESSAGE_STATUS_TRANSITION_INVALID("MSG_004", "消息状态转换错误"),
 
     // QA模块
     QA_ID_NULL("QA_001", "QA记录ID为空"),

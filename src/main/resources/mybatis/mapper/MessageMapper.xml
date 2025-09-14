@@ -115,4 +115,93 @@
           AND is_deleted = 0
     </select>
 
+    <!-- 复杂查询条件统计 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(*) FROM message
+        WHERE is_deleted = 0
+        <!-- 筛选"发给我的"或"我发的"消息 -->
+        AND (receiver_id = #{query.userId} OR sender_id = #{query.userId})
+        <!-- 消息类型筛选 -->
+        <if test="query.type != null">
+            AND type = #{query.type.code,jdbcType=VARCHAR}
+        </if>
+        <!-- 消息状态筛选 -->
+        <if test="query.status != null">
+            AND is_read = #{query.status.code}
+        </if>
+        <!-- 关键词搜索（模糊匹配标题或内容） -->
+        <if test="query.keyword != null and query.keyword != ''">
+            AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+            OR content LIKE CONCAT('%', #{query.keyword}, '%'))
+        </if>
+    </select>
+
+    <!-- 复杂查询条件分页查询 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM message
+        WHERE is_deleted = 0
+        <!-- 筛选"发给我的"或"我发的"消息 -->
+        AND (receiver_id = #{query.userId} OR sender_id = #{query.userId})
+        <!-- 消息类型筛选 -->
+        <if test="query.type != null">
+            AND type = #{query.type.code,jdbcType=VARCHAR}
+        </if>
+        <!-- 消息状态筛选 -->
+        <if test="query.status != null">
+            AND is_read = #{query.status.code}
+        </if>
+        <!-- 关键词搜索（模糊匹配标题或内容） -->
+        <if test="query.keyword != null and query.keyword != ''">
+            AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+            OR content LIKE CONCAT('%', #{query.keyword}, '%'))
+        </if>
+        <!-- 排序处理 -->
+        ORDER BY
+        <choose>
+            <when test="query.sortField == 'CREATE_TIME'">
+                create_time
+            </when>
+            <when test="query.sortField == 'UPDATE_TIME'">
+                update_time
+            </when>
+            <otherwise>
+                create_time
+            </otherwise>
+        </choose>
+        <if test="query.sortDir == 'ASC'">ASC</if>
+        <if test="query.sortDir == 'DESC'">DESC</if>
+        <!-- 分页处理 -->
+        LIMIT #{query.offset}, #{query.limit}
+    </select>
+
+    <!-- 私聊查询条件统计 -->
+    <select id="countByPrivateQuery" resultType="int">
+        SELECT COUNT(*) FROM message
+        WHERE is_deleted = 0
+        <!-- 私聊双方的消息（当前用户是发送者且对方是接收者，或反之） -->
+        AND ((sender_id = #{query.userId} AND receiver_id = #{query.partnerId})
+        OR (sender_id = #{query.partnerId} AND receiver_id = #{query.userId}))
+        <!-- 消息类型筛选 -->
+        <if test="query.type != null">
+            AND type = #{query.type.code,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!-- 私聊查询条件分页查询 -->
+    <select id="selectByPrivateQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM message
+        WHERE is_deleted = 0
+        <!-- 私聊双方的消息（当前用户是发送者且对方是接收者，或反之） -->
+        AND ((sender_id = #{query.userId} AND receiver_id = #{query.partnerId})
+        OR (sender_id = #{query.partnerId} AND receiver_id = #{query.userId}))
+        <!-- 消息类型筛选 -->
+        <if test="query.type != null">
+            AND type = #{query.type.code,jdbcType=VARCHAR}
+        </if>
+        <!-- 私聊默认按时间升序（最早的消息在前） -->
+        ORDER BY create_time ASC
+        <!-- 分页处理 -->
+        LIMIT #{query.offset}, #{query.limit}
+    </select>
+
 </mapper>

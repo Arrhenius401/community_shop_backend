@@ -1,10 +1,13 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.community_shop.backend.dto.message.MessageQueryDTO;
+import com.community_shop.backend.dto.message.PrivateMessageQueryDTO;
 import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -103,4 +106,41 @@ public interface MessageMapper extends BaseMapper<Message> {
      * @return 按类型统计的未读消息数
      */
     int countUnreadByType(@Param("receiverId") Long receiverId, @Param("msgType") MessageTypeEnum msgType);
+
+    /**
+     * 按复杂查询条件统计消息总数
+     * @param queryDTO 包含用户ID、类型、状态、关键词等查询条件
+     * @return 符合条件的消息总数
+     */
+    int countByQuery(@Param("query") MessageQueryDTO queryDTO);
+
+    /**
+     * 按复杂查询条件分页查询消息
+     * @param queryDTO 包含用户ID、类型、状态、关键词、排序等查询条件
+     * @return 符合条件的消息列表
+     */
+    List<Message> selectByQuery(@Param("query") MessageQueryDTO queryDTO);
+
+    /**
+     * 按私聊查询条件统计消息总数
+     * @param queryDTO 包含谈话对象ID、消息类型等查询条件
+     * @return 符合条件的消息总数
+     */
+    int countByPrivateQuery(@Param("query") PrivateMessageQueryDTO queryDTO);
+
+    /**
+     * 按私聊查询条件分页查询消息
+     * @param queryDTO 包含谈话对象ID、消息类型、分页等查询条件
+     * @return 符合条件的消息列表
+     */
+    List<Message> selectByPrivateQuery(@Param("query") PrivateMessageQueryDTO queryDTO);
+
+    /**
+     * 按用户ID获取最近maxCount条未读消息
+     * @param userId 用户ID
+     * @param maxCount 最大条数
+     * @return 最近maxCount条未读消息
+     */
+    @Select("SELECT * FROM message WHERE receiver_id = #{userId} AND is_read = 0 ORDER BY create_time DESC LIMIT #{maxCount}")
+    List<Message> selectRecentUnreadByUser(@Param("userId") Long userId, @Param("maxCount") int maxCount);
 }

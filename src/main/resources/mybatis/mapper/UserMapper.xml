@@ -14,8 +14,6 @@
         <result column="gender" property="gender"/> <!-- 自动匹配GenderEnumTypeHandler -->
         <result column="role" property="role"/> <!-- 自动匹配UserRoleEnumTypeHandler -->
         <result column="credit_score" property="creditScore"/>
-        <result column="post_count" property="postCount"/>
-        <result column="follower_count" property="followerCount"/>
         <result column="interest_tags" property="interestTags"/> <!-- 自动匹配ListStringTypeHandler -->
         <result column="activity_time" property="activityTime"/>
         <result column="create_time" property="createTime"/>
@@ -24,7 +22,7 @@
     <!-- 基础字段SQL片段，减少冗余 -->
     <sql id="Base_Column_List">
         user_id, username, email, phone_number, password, avatar_url, bio, gender, role,
-        credit_score, post_count, follower_count, interest_tags, activity_time, create_time
+        credit_score, interest_tags, activity_time, create_time
     </sql>
 
 
@@ -32,13 +30,12 @@
     <insert id="insert" parameterType="com.community_shop.backend.entity.User">
         INSERT INTO user (
         username, email, phone_number, password, avatar_url, bio, gender, role,
-        credit_score, post_count, follower_count, interest_tags, activity_time, create_time
+        credit_score,= interest_tags, activity_time, create_time
         ) VALUES (
         #{username}, #{email}, #{phoneNumber}, #{password}, #{avatarUrl}, #{bio},
         #{gender.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
         #{role.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-        #{creditScore}, #{postCount}, #{followerCount},
-        #{interestTags,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+        #{creditScore}, #{interestTags,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
         #{activityTime}, #{createTime}
         )
     </insert>
@@ -89,14 +86,6 @@
     <!-- ==================== 信用分与统计 ==================== -->
     <update id="updateCreditScore">
         UPDATE user SET credit_score = #{score} WHERE user_id = #{userId}
-    </update>
-
-    <update id="updatePostCount">
-        UPDATE user SET post_count = post_count + 1 WHERE user_id = #{userId}
-    </update>
-
-    <update id="updateFollowerCount">
-        UPDATE user SET follower_count = #{count} WHERE user_id = #{userId}
     </update>
 
 

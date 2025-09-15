@@ -103,18 +103,6 @@ public class User{
      */
     private int creditScore = 100; // 初始化100分，文档3明确要求
 
-    /**
-     * 粉丝数
-     * 对应文档4 user表：follower_count（int UN）；社区互动统计
-     */
-    private int followerCount = 0;
-
-    /**
-     * 发帖数
-     * 对应文档4 user表：post_count（int UN）；社区内容统计
-     */
-    private int postCount = 0;
-
     // ===================== 4. 状态与时间信息（文档2系统设计要求） =====================
     /**
      * 注册时间
@@ -163,27 +151,6 @@ public class User{
         this.gender = GenderEnum.UNKNOWN;
     }
 
-    /**
-     * 完整构造（用于数据库查询）
-     */
-    public User(Long userId, String password, String username, String email, String phoneNumber, String avatarUrl, String bio, GenderEnum gender, int creditScore, int followerCount, int postCount, LocalDateTime initTime, LocalDateTime activityTime, UserStatusEnum status, UserRoleEnum role, List<String> interestTags) {
-        this.userId = userId;
-        this.password = password;
-        this.username = username;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.avatarUrl = avatarUrl;
-        this.bio = bio;
-        this.gender = gender;
-        this.creditScore = creditScore;
-        this.followerCount = followerCount;
-        this.postCount = postCount;
-        this.createTime = initTime;
-        this.activityTime = activityTime;
-        this.status = status;
-        this.role = role;
-        this.interestTags = interestTags;
-    }
 
     /**
      * 手机号注册专用构造（最常用场景）

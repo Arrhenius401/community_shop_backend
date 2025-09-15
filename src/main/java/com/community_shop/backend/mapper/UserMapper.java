@@ -91,12 +91,6 @@ public interface UserMapper extends BaseMapper<User> {
      */
     int updateCreditScore(@Param("userId") Long userId, @Param("score") Integer score);
 
-    /**
-     * 更新用户发帖数（自增1）
-     * @param userId 用户ID
-     * @return 影响行数
-     */
-    int updatePostCount(@Param("userId") Long userId);
 
     /**
      * 更新用户粉丝数

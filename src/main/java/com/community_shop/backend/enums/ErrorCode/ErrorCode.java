@@ -86,6 +86,10 @@ public enum ErrorCode {
 
     TOP_POST_COUNT_EXCEED("POST_071", "帖子置顶数量超出限制"),
     DAILY_LIKE_TIMES_EXCEED("POST_072", "用户每天点赞次数超出限制"),
+    POST_STATUS_ABNORMAL("POST_073", "帖子状态异常"),
+
+    USER_NOT_LIKED_POST("POST_081", "用户未点赞该帖子"),
+    POST_LIKE_COUNT_UPDATE_FAILED("POST_074", "帖子点赞数量更新失败"),
 
     // 帖子跟帖模块
     POST_FOLLOW_NOT_EXISTS("POST_FOLLOW_001", "跟帖不存在"),

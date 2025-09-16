@@ -64,6 +64,13 @@ public interface UserPostLikeMapper extends BaseMapper<UserPostLike> {
     int countByPostId(@Param("postId") Long postId);
 
     /**
+     * 统计用户点赞的帖子数
+     * @param userId 用户ID
+     * @return 帖子数
+     */
+    int countByUserId(@Param("userId") Long userId);
+
+    /**
      * 查询用户点赞的所有帖子ID
      * @param userId 用户ID
      * @return 帖子ID列表（按点赞时间倒序）

@@ -25,12 +25,11 @@ import java.util.concurrent.TimeUnit;
 public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper, UserPostLike> implements UserPostLikeService {
 
     // 缓存相关常量
-    private static final String CACHE_KEY_USER_LIKE_COUNT = "user:like:count:"; // 用户点赞总数缓存Key前缀
     private static final long CACHE_TTL_USER_LIKE_COUNT = 2; // 用户点赞总数缓存有效期（小时）
-    private static final String CACHE_KEY_POST_LIKE_STATUS = "post:like:status:"; // 帖子点赞状态缓存Key前缀（userId:postId）
-
-    private static final String CACHE_KEY_POST_LIKE = "post:like:"; // 帖子点赞数缓存Key前缀
+    private static final String CACHE_KEY_POST_LIKE_COUNT = "post:like:count:"; // 帖子点赞数缓存Key前缀
+    private static final String CACHE_KEY_USER_LIKE_COUNT = "user:like:count:"; // 用户点赞总数缓存Key前缀
     private static final String CACHE_KEY_USER_LIKE_STATUS = "user:like:status:"; // 用户点赞状态缓存Key前缀
+    private static final String CACHE_KEY_POST_LIKE_STATUS = "post:like:status:"; // 帖子点赞状态缓存Key前缀（userId:postId）
     private static final long CACHE_TTL_LIKE = 120; // 点赞相关缓存有效期（分钟）
 
     @Autowired
@@ -89,8 +88,8 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
 
             // 4. 更新缓存（点赞状态+帖子点赞数）
             redisTemplate.opsForValue().set(statusCacheKey, true, CACHE_TTL_LIKE, TimeUnit.MINUTES);
-            String likeCountCacheKey = CACHE_KEY_POST_LIKE + postId;
-            redisTemplate.opsForValue().increment(likeCountCacheKey);
+            String likeCountCacheKey = CACHE_KEY_POST_LIKE_COUNT + postId;
+            redisTemplate.opsForValue().increment(likeCountCacheKey);   //实现对指定键（key）的数值值进行自增操作
 
             log.info("用户点赞成功，用户ID：{}，帖子ID：{}", userId, postId);
             return true;
@@ -271,7 +270,7 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             }
 
             // 3. 优先查询缓存
-            String likeCountCacheKey = CACHE_KEY_POST_LIKE + postId;
+            String likeCountCacheKey = CACHE_KEY_POST_LIKE_COUNT + postId;
             Integer count = (Integer) redisTemplate.opsForValue().get(likeCountCacheKey);
             if (Objects.nonNull(count)) {
                 return count;

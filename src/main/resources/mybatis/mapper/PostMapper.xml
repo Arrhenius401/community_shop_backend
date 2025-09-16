@@ -151,9 +151,9 @@
         </where>
     </select>
 
-    <!-- 按帖子查询条件分页查询商品 -->
+    <!-- 按帖子查询条件分页查询帖子 -->
     <select id="selectByQuery" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM product
+        SELECT <include refid="Base_Column_List"/> FROM post
         <where>
             <!-- 帖子标题关键词搜索 -->
             <if test="query.keyword != null and query.keyword != ''">

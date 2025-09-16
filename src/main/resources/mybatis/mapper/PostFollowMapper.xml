@@ -70,6 +70,52 @@
         ORDER BY create_time ASC
     </select>
 
+    <!-- 按跟帖 查询条件统计跟帖数量 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(*) FROM post_follow
+        <where>
+            <!-- 帖子ID搜索 -->
+            <if test="postId != null">
+                AND post_id = #{post_id} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+
+            <if test="status != null and status != ''">
+                AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+
+        </where>
+    </select>
+
+    <!-- 按跟帖查询条件分页查询跟帖 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM post_follow
+        <where>
+            <!-- 帖子ID搜索 -->
+            <if test="postId != null">
+                AND post_id = #{post_id} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+
+            <if test="status != null and status != ''">
+                AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 分页 -->
+            LIMIT #{query.offset}, #{query.limit}
+        </where>
+
+        <!-- 排序：支持用户常用的排序方式 -->
+        <if test="query.sortField != null and query.sortDir != null">
+            ORDER BY ${query.sortField} ${query.sortDir}
+        </if>
+        <if test="query.sortField == null">
+            <!-- 默认按更新时间倒序 -->
+            ORDER BY create_time DESC
+        </if>
+
+        <!-- 分页参数 -->
+        <if test="query.pageNum != null and query.pageSize != null">
+            LIMIT #{query.offset}, #{query.pageSize}
+        </if>
+    </select>
 
     <!-- ==================== 统计功能 ==================== -->
     <select id="countByPostId" resultType="int">

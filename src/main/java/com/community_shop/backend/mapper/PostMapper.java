@@ -125,14 +125,14 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param queryDTO 查询条件DTO
      * @return 符合条件的帖子总数
      */
-    int countByQuery(PostQueryDTO queryDTO);
+    int countByQuery(@Param("query") PostQueryDTO queryDTO);
 
     /**
      * 根据查询条件分页查询帖子列表
      * @param queryDTO 查询条件DTO（含分页参数、关键词、排序条件等）
      * @return 帖子列表
      */
-    List<Post> selectByQuery(PostQueryDTO queryDTO);
+    List<Post> selectByQuery(@Param("query") PostQueryDTO queryDTO);
 
 
     // ==================== 互动数据更新 ====================

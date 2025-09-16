@@ -1,6 +1,9 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.community_shop.backend.dto.post.PostFollowQueryDTO;
+import com.community_shop.backend.dto.post.PostQueryDTO;
+import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import org.apache.ibatis.annotations.*;
@@ -71,6 +74,20 @@ public interface PostFollowMapper extends BaseMapper<PostFollow> {
      * @return 回复列表
      */
     List<PostFollow> selectByParentId(@Param("parentId") Long parentId);
+
+    /**
+     * 根据查询条件统计帖子数量
+     * @param queryDTO 查询条件DTO
+     * @return 符合条件的帖子总数
+     */
+    int countByQuery(@Param("query") PostFollowQueryDTO queryDTO);
+
+    /**
+     * 根据查询条件分页查询帖子列表
+     * @param queryDTO 查询条件DTO（含分页参数、关键词、排序条件等）
+     * @return 帖子列表
+     */
+    List<PostFollow> selectByQuery(@Param("query") PostFollowQueryDTO queryDTO);
 
 
     // ==================== 统计功能 ====================

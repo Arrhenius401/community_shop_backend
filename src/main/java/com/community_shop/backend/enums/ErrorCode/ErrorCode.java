@@ -75,6 +75,18 @@ public enum ErrorCode {
     POST_ID_NULL("POST_004", "帖子ID为空"),
     POST_STATUS_ERROR("POST_005", "帖子状态参数错误"),
 
+    POST_STATUS_INVALID("POST_021", "帖子状态参数错误"),
+    POST_TITLE_INVALID("POST_022", "帖子标题不符合规范"),
+    POST_CONTENT_INVALID("POST_023", "帖子内容不符合规范"),
+    POST_IMAGE_FORMAT_INVALID("POST_024", "帖子图片格式错误"),
+
+    POST_IMAGE_TOO_MANY("POST_031", "帖子图片数量过多"),
+
+    POST_ALREADY_DELETED("POST_051", "帖子已删除"),
+
+    TOP_POST_COUNT_EXCEED("POST_071", "帖子置顶数量超出限制"),
+    DAILY_LIKE_TIMES_EXCEED("POST_072", "用户每天点赞次数超出限制"),
+
     // 帖子跟帖模块
     POST_FOLLOW_NOT_EXISTS("POST_FOLLOW_001", "跟帖不存在"),
     POST_FOLLOW_CONTENT_NULL("POST_FOLLOW_002", "跟帖内容为空"),

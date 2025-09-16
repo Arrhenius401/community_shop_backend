@@ -1,7 +1,9 @@
 package com.community_shop.backend.dto.post;
 
 import com.community_shop.backend.entity.Post;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -48,6 +50,8 @@ public class PostDetailDTO extends Post {
      * 发布者简易信息内部类
      */
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class PublisherDTO {
         private Long userId;         // 发布者ID
         private String username;     // 用户名

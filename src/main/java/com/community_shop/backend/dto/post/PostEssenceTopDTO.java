@@ -14,10 +14,6 @@ public class PostEssenceTopDTO {
     @NotNull(message = "帖子ID不能为空")
     private Long postId;
 
-    /** 操作管理员ID（校验权限） */
-    @NotNull(message = "管理员ID不能为空")
-    private Long adminId;
-
     /** 是否精华（true-是；false-否） */
     @NotNull(message = "精华状态不能为空")
     private Boolean isEssence;

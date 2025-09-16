@@ -17,8 +17,4 @@ public class PostFollowStatusUpdateDTO {
     /** 目标状态（枚举：NORMAL-正常；HIDDEN-隐藏） */
     @NotNull(message = "目标状态不能为空")
     private PostFollowStatusEnum targetStatus;
-
-    /** 操作管理员ID（校验权限） */
-    @NotNull(message = "管理员ID不能为空")
-    private Long adminId;
 }

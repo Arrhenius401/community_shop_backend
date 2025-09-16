@@ -97,6 +97,9 @@ public enum ErrorCode {
     POST_FOLLOW_ID_NULL("POST_FOLLOW_003", "跟帖ID为空"),
     POST_FOLLOW_STATUS_ERROR("POST_FOLLOW_004", "跟帖状态参数错误"),
 
+    POST_FOLLOW_CONTENT_ILLEGAL("POST_FOLLOW_011", "跟帖内容不符合规范"),
+    FOLLOW_STATUS_ILLEGAL("POST_FOLLOW_012", "跟帖状态参数错误"),
+
     // 商品模块
     PRODUCT_NOT_EXISTS("PRODUCT_001", "商品不存在"),
     PRODUCT_TITLE_NULL("PRODUCT_002", "商品标题为空"),

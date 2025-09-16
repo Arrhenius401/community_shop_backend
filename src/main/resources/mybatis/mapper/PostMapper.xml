@@ -144,6 +144,10 @@
             <if test="status != null and status != ''">
                 AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
             </if>
+
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
         </where>
     </select>
 
@@ -158,6 +162,10 @@
 
             <if test="status != null and status != ''">
                 AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+
+            <if test="userId != null">
+                AND user_id = #{userId}
             </if>
             <!-- 分页 -->
             LIMIT #{query.offset}, #{query.limit}

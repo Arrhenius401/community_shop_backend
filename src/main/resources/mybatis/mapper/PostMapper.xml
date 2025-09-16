@@ -132,6 +132,52 @@
     </select>
 
 
+    <!-- 按帖子查询条件统计帖子数量 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(*) FROM post
+        <where>
+            <!-- 帖子标题关键词搜索 -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+
+            <if test="status != null and status != ''">
+                AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+        </where>
+    </select>
+
+    <!-- 按帖子查询条件分页查询商品 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        <where>
+            <!-- 帖子标题关键词搜索 -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+
+            <if test="status != null and status != ''">
+                AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 分页 -->
+            LIMIT #{query.offset}, #{query.limit}
+        </where>
+
+        <!-- 排序：支持用户常用的排序方式 -->
+        <if test="query.sortField != null and query.sortDir != null">
+            ORDER BY ${query.sortField} ${query.sortDir}
+        </if>
+        <if test="query.sortField == null">
+            <!-- 默认按更新时间倒序 -->
+            ORDER BY update_time DESC
+        </if>
+
+        <!-- 分页参数 -->
+        <if test="query.pageNum != null and query.pageSize != null">
+            LIMIT #{query.offset}, #{query.pageSize}
+        </if>
+    </select>
+
     <!-- ==================== 互动数据更新 ==================== -->
     <update id="updateLikeCount">
         UPDATE post SET like_count = #{count} WHERE post_id = #{postId}

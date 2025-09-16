@@ -193,7 +193,7 @@
         </where>
         <!-- 排序：默认按创建时间倒序 -->
         <if test="query.orderBy != null and query.orderBy != ''">
-            ORDER BY ${query.orderBy}
+            ORDER BY ${query.orderBy} ${query.sortDir}
         </if>
         <if test="query.orderBy == null or query.orderBy == ''">
             ORDER BY create_time DESC

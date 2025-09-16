@@ -1,6 +1,7 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.community_shop.backend.dto.post.PostQueryDTO;
 import com.community_shop.backend.entity.Post;
 import org.apache.ibatis.annotations.*;
 
@@ -119,6 +120,20 @@ public interface PostMapper extends BaseMapper<Post> {
             @Param("direction") String direction
     );
 
+    /**
+     * 根据查询条件统计帖子数量
+     * @param queryDTO 查询条件DTO
+     * @return 符合条件的帖子总数
+     */
+    int countByQuery(PostQueryDTO queryDTO);
+
+    /**
+     * 根据查询条件分页查询帖子列表
+     * @param queryDTO 查询条件DTO（含分页参数、关键词、排序条件等）
+     * @return 帖子列表
+     */
+    List<Post> selectByQuery(PostQueryDTO queryDTO);
+
 
     // ==================== 互动数据更新 ====================
     /**
@@ -204,14 +219,6 @@ public interface PostMapper extends BaseMapper<Post> {
 
 
     // ==================== 统计功能 ====================
-    /**
-     * 获得帖子点赞数
-     * @param postId
-     * @return
-     */
-    @Select("SELECT like_count FROM post WHERE post_id = #{postId}")
-    int selectLikeCountById(@Param("postId") Long postId);
-
 
     /**
      * 查询指定用户发布帖子的数量

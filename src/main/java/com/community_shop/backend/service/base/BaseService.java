@@ -58,6 +58,13 @@ public interface BaseService<T> {
     T getById(Serializable id);
 
     /**
+     * 根据ID列表查询实体列表
+     * @param ids 主键ID列表
+     * @return 实体列表
+     */
+    List<T> getByIds(List<? extends Serializable> ids);
+
+    /**
      * 查询所有实体
      * @return 实体列表
      */

@@ -54,6 +54,11 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T>
     }
 
     @Override
+    public List<T> getByIds(List<? extends Serializable> ids) {
+        return super.listByIds(ids);
+    }
+
+    @Override
     public List<T> list() {
         return super.list();
     }

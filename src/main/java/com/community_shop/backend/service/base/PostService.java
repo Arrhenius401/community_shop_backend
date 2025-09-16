@@ -2,9 +2,9 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
-import com.community_shop.backend.dto.post.PostDetailDTO;
-import com.community_shop.backend.dto.post.PostUpdateDTO;
+import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.entity.Post;
+import com.community_shop.backend.exception.BusinessException;
 
 import java.util.List;
 
@@ -15,85 +15,95 @@ import java.util.List;
  * 2. 《文档4_数据库工作（新）.docx》：product表结构（product_id、price、stock、seller_id等）
  * 3. 《代码文档1 Mapper层设计.docx》：ProductMapper的CRUD及库存更新方法
  */
-public interface PostService {
-
+public interface PostService extends BaseService<Post> {
 
     /**
-     * 新增帖子（基础CRUD）
-     * 核心逻辑：自动生成创建时间，初始化点赞数/评论数为0，调用PostMapper.insert插入
-     * @param post 帖子实体（含title、content、userId、barName，不含post_id）
-     * @return 新增帖子ID
-     * @see com.community_shop.backend.mapper.PostMapper#insert(Post)
+     * 发布帖子
+     * @param userId 发布者ID
+     * @param postPublishDTO 帖子发布参数（标题、内容、图片等）
+     * @return 发布成功的帖子详情
+     * @throws BusinessException 信用分不足（<60分）、内容违规时抛出
      */
-    Long insertPost(Post post);
+    PostDetailDTO publishPost(Long userId, PostPublishDTO postPublishDTO);
+
+    /**
+     * 编辑帖子
+     * @param postId 帖子ID
+     * @param userId 操作用户ID
+     * @param postUpdateDTO 帖子更新参数（标题、内容）
+     * @return 编辑后的帖子详情
+     * @throws BusinessException 无权限（非作者）、帖子已删除时抛出
+     */
+    PostDetailDTO updatePost(Long postId, Long userId, PostUpdateDTO postUpdateDTO);
+
+    /**
+     * 帖子点赞/取消点赞
+     * @param postLikeDTO 点赞参数（帖子ID、用户ID、操作类型）
+     * @return 操作后的点赞数
+     * @throws BusinessException 帖子不存在、每日点赞次数超限时抛出
+     */
+    Integer updateLikeStatus(PostLikeDTO postLikeDTO);
+
+    /**
+     * 管理员设置帖子精华/置顶
+     *
+     * @param userId 操作用户ID
+     * @param postEssenceTopDTO 状态设置参数（帖子ID、管理员ID、状态）
+     * @return 设置是否成功
+     * @throws BusinessException 无管理员权限、置顶数超5篇时抛出
+     */
+    Boolean setEssenceOrTop(Long userId, PostEssenceTopDTO postEssenceTopDTO);
+
+    /**
+     * 多条件查询帖子列表
+     * @param postQueryDTO 查询参数（关键词、排序、分页）
+     * @return 分页帖子列表（轻量展示）
+     */
+    PageResult<PostListItemDTO> queryPosts(PostQueryDTO postQueryDTO);
+
+    /**
+     * 批量删除违规帖子（管理员操作）
+     * @param postIds 帖子ID列表
+     * @param adminId 管理员ID
+     * @return 删除成功数量
+     * @throws BusinessException 无管理员权限时抛出
+     */
+    int batchDeletePosts(Long adminId, List<Long> postIds);
+
+    //========================== v1 ===================================
+
 
     /**
      * 按帖子ID查询（基础CRUD）
      * 核心逻辑：调用PostMapper.selectById查询，关联UserService获取发布者信息
+     * @param userId 操作用户ID
      * @param postId 帖子ID（主键）
      * @return 含发布者信息的帖子详情
      * @see com.community_shop.backend.mapper.PostMapper#selectById(Long)
      * @see UserService#selectUserById(Long)
      */
-    Post selectPostById(Long postId);
+    PostDetailDTO selectPostById(Long userId, Long postId);
 
     /**
      * 更新帖子内容（基础CRUD）
      * 核心逻辑：校验仅帖子作者可操作，调用PostMapper.updateById更新内容
-     * @param postVO 帖子更新参数（标题、内容、图片列表）
      * @param userId 操作用户ID（需与帖子作者ID一致）
+     * @param postUpdateDTO 帖子更新参数（标题、内容）
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.PostMapper#updateById(Post)
      */
-    Boolean updatePostContent(PostUpdateDTO postVO, Long userId);
+    Boolean updatePostContent(Long userId, PostUpdateDTO postUpdateDTO);
 
     /**
      * 按帖子ID删除（基础CRUD，逻辑删除）
      * 核心逻辑：校验作者或管理员权限，删除帖子同时同步删除关联点赞记录
-     * @param postId 待删除帖子ID
      * @param operatorId 操作用户ID（作者或管理员）
+     * @param postId 待删除帖子ID
      * @return 成功返回true，失败抛出异常或返回false
      * @see com.community_shop.backend.mapper.PostMapper#deleteById(Long)
      * @see com.community_shop.backend.mapper.UserPostLikeMapper#batchDeleteByPostId(Long)
      */
-    Boolean deletePostById(Long postId, Long operatorId);
-
-    /**
-     * 发布帖子（业务方法）
-     * 核心逻辑：校验用户信用分≥60分，新用户帖子标记"待审核"，上传图片至阿里云OSS，调用insertPost
-     * @param postVO 帖子发布参数（标题、内容、图片列表、主题吧名称）
-     * @param userId 发布者ID
-     * @return "发布成功" 或抛出异常
-     * @see #insertPost(Post)
-     * @see UserService#selectUserById(Long)
-     * @see com.community_shop.backend.utils.OssUtil （阿里云OSS上传工具）
-     */
-    String publishPost(PostDetailDTO postVO, Long userId);
-
-    /**
-     * 更新帖子点赞数（业务方法）
-     * 核心逻辑：判断用户是否已点赞，点赞则新增关联记录+点赞数+1，取消则删除记录+点赞数-1
-     * @param postId 帖子ID
-     * @param userId 操作用户ID
-     * @param isLike 是否点赞（true=点赞，false=取消点赞）
-     * @return 更新后的点赞数
-     * @see com.community_shop.backend.mapper.UserPostLikeMapper#selectIsLiked(Long, Long)
-     * @see com.community_shop.backend.mapper.PostMapper#updateLikeCount(Long, int)
-     */
-    Integer updatePostLikeCount(Long postId, Long userId, Boolean isLike);
-
-    /**
-     * 帖子加精/置顶（业务方法）
-     * 核心逻辑：校验管理员权限，置顶数≤5篇，调用PostMapper.updatePostStatus更新状态
-     * @param postId 帖子ID
-     * @param isEssence 是否加精（true=加精，false=取消加精）
-     * @param isTop 是否置顶（true=置顶，false=取消置顶）
-     * @param adminId 管理员ID（需通过UserService校验角色）
-     * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.PostMapper#updatePostStatus(Long, boolean, boolean)
-     * @see UserService#selectUserById(Long)
-     */
-    Boolean setPostEssenceOrTop(Long postId, Boolean isEssence, Boolean isTop, Long adminId);
+    Boolean deletePostById(Long operatorId, Long postId);
 
     /**
      * 获取帖子列表（业务方法）
@@ -120,8 +130,4 @@ public interface PostService {
      */
     List<PostDetailDTO> selectTopPosts();
 
-    /**
-     * 辅助方法：将Post实体+关联User信息转换为PostDetailVO
-     */
-    PostDetailDTO convertToDetailVO(Post post);
 }

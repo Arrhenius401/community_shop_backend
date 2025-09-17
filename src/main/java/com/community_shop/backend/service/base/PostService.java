@@ -70,9 +70,6 @@ public interface PostService extends BaseService<Post> {
      */
     int batchDeletePosts(Long adminId, List<Long> postIds);
 
-    //========================== v1 ===================================
-
-
     /**
      * 按帖子ID查询（基础CRUD）
      * 核心逻辑：调用PostMapper.selectById查询，关联UserService获取发布者信息

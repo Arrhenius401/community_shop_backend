@@ -57,8 +57,6 @@ public interface MessageService extends BaseService<Message>{
      */
     List<MessagePreviewDTO> getRecentUnreadPreviews(Long userId);
 
-    //===================================================================================================================
-
     /**
      * 发送卖家通知（订单相关）
      * 核心逻辑：创建系统通知消息，标记为"未读"，关联订单ID

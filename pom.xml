@@ -151,6 +151,13 @@
             <version>1.2.83</version>
         </dependency>
 
+        <!-- Swagger/SpringDoc（接口文档生成） -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.15</version> <!-- 适配Spring Boot 2.7.x -->
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -11,6 +11,7 @@ import com.community_shop.backend.utils.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -37,6 +38,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         // 2. 登录校验：如果方法标注@LoginRequired，校验token
         if (handlerMethod.hasMethodAnnotation(LoginRequired.class)) {
+            // 从请求头获取Authorization令牌
             String token = request.getHeader("Authorization");
 
             // 调用Service层校验token有效性（Service层已实现）
@@ -63,5 +65,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         // 校验通过，放行请求
         return true;
+    }
+
+    // 后置处理与完成处理方法默认空实现（无需业务逻辑）
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
 }

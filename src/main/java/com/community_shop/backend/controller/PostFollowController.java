@@ -5,6 +5,7 @@ import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.service.base.PostFollowService;
+import com.community_shop.backend.utils.RequestParseUtil;
 import com.community_shop.backend.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +26,9 @@ public class PostFollowController {
 
     @Autowired
     private PostFollowService postFollowService;
+
+    @Autowired
+    private RequestParseUtil requestParseUtil;
 
     /**
      * 发布跟帖接口
@@ -137,7 +141,7 @@ public class PostFollowController {
      * @return 当前登录用户ID（未登录时返回null）
      */
     private Long parseUserIdFromToken() {
-        // 此处为简化实现，实际应通过HttpServletRequest获取Authorization头并解析
-        return 1001L;
+        // 通过HttpServletRequest获取Authorization头，解析JWT令牌得到用户ID
+        return requestParseUtil.parseUserIdFromRequest();
     }
 }

@@ -4,6 +4,7 @@ import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;
+import com.community_shop.backend.utils.RequestParseUtil;
 import com.community_shop.backend.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +27,9 @@ public class UserController {
 
     @Autowired
     private UserThirdPartyService userThirdPartyService;
+
+    @Autowired
+    private RequestParseUtil requestParseUtil;
 
     /**
      * 用户注册接口
@@ -144,7 +148,7 @@ public class UserController {
      * @return 当前登录用户ID
      */
     private Long parseUserIdFromToken() {
-        // 此处为简化实现，实际应通过HttpServletRequest获取Authorization头，解析JWT令牌得到用户ID
-        return 1001L;
+        // 通过HttpServletRequest获取Authorization头，解析JWT令牌得到用户ID
+        return requestParseUtil.parseUserIdFromRequest();
     }
 }

@@ -188,7 +188,7 @@ public class ProductController {
      * @return 当前登录用户ID
      */
     private Long parseUserIdFromToken() {
-        // 此处为简化实现，实际应通过HttpServletRequest获取Authorization头并解析
-        return 1001L;
+        // 通过HttpServletRequest获取Authorization头，解析JWT令牌得到用户ID
+        return requestParseUtil.parseUserIdFromRequest();
     }
 }

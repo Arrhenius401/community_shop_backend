@@ -27,13 +27,22 @@ public interface MessageService extends BaseService<Message>{
     Long sendMessage(Long userId, MessageSendDTO messageSendDTO);
 
     /**
+     * 获取消息详情
+     * @param userId 当前用户ID
+     * @param msgId 消息ID
+     * @return 消息详情
+     * @throws BusinessException 消息不存在时抛出
+     */
+    MessageDetailDTO getMessageDetail(Long userId, Long msgId);
+
+    /**
      * 标记消息状态（已读/删除）
      * @param userId 当前用户ID
      * @param statusUpdateDTO 状态更新参数（消息ID、目标状态、操作人）
      * @return 标记成功数量
      * @throws BusinessException 无权限（非接收人）时抛出
      */
-    int updateMessageStatus(Long userId, MessageStatusUpdateDTO statusUpdateDTO);
+    Boolean updateMessageStatus(Long userId, MessageStatusUpdateDTO statusUpdateDTO);
 
     /**
      * 分页查询用户消息列表

@@ -107,16 +107,65 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
     }
 
     /**
+     * 获取消息详情
+     *
+     * @param userId 用户ID
+     * @param msgId 消息ID
+     * @return 消息详情
+     * @throws BusinessException 无权限（非接收人）时抛出
+     */
+    @Override
+    public MessageDetailDTO getMessageDetail(Long userId, Long msgId) {
+        try {
+            // 1. 参数检验
+            User receiver = userService.getById(userId);
+            if (Objects.isNull(receiver)) {
+                log.error("获取消息详情失败，用户不存在，用户ID：{}", userId);
+                throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+            }
+
+            Message message= messageMapper.selectById(msgId);
+            if (Objects.isNull(message)) {
+                log.error("获取消息详情失败，消息不存在，消息ID：{}", msgId);
+                throw new BusinessException(ErrorCode.MESSAGE_NOT_EXISTS);
+            }
+
+            // 2. 封装为DTO形式
+            MessageDetailDTO messageDetailDTO = messageConvert.messageToMessageDetailDTO(message);
+            messageDetailDTO.setReceiver(new MessageDetailDTO.ReceiverDTO(
+                    message.getReceiverId(), receiver.getUsername())
+            );
+            User sender = userService.getById(message.getSenderId());
+            if(sender == null){
+                messageDetailDTO.setSender(new MessageDetailDTO.SenderDTO(
+                        message.getSenderId(), "未知", null)
+                );
+            }
+            messageDetailDTO.setSender(new MessageDetailDTO.SenderDTO(
+                    message.getSenderId(), sender.getUsername(), sender.getAvatarUrl())
+            );
+
+            return messageDetailDTO;
+
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("获取消息详情异常，用户ID：{}，消息ID：{}", userId, msgId, e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+    }
+
+    /**
      * 标记消息状态（已读/删除）
      *
      * @param userId 用户ID
      * @param statusUpdateDTO 状态更新参数（消息ID、目标状态、操作人）
-     * @return 标记成功数量
+     * @return 是否更新成功
      * @throws BusinessException 无权限（非接收人）时抛出
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateMessageStatus(Long userId, MessageStatusUpdateDTO statusUpdateDTO) {
+    public Boolean updateMessageStatus(Long userId, MessageStatusUpdateDTO statusUpdateDTO) {
         try {
             // 1. 参数校验
             if (Objects.isNull(statusUpdateDTO) || Objects.isNull(statusUpdateDTO.getMessageId())
@@ -150,7 +199,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             log.info("更新消息状态成功，消息ID：{}，操作人ID：{}，原状态：{}，目标状态：{}，成功条数：{}",
                     statusUpdateDTO.getMessageId(), userId,
                     message.getStatus(), statusUpdateDTO.getTargetStatus(), updateRows);
-            return updateRows;
+            return updateRows > 0;
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {

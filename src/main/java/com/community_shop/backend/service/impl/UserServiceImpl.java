@@ -580,7 +580,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
      * 密码登录校验
      */
     private void validatePassword(User user, String rawPassword) {
-        if (user == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+        }
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new BusinessException(ErrorCode.PASSWORD_ERROR);
         }
     }

@@ -2,6 +2,7 @@ package com.community_shop.backend.controller;
 
 import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.dto.user.*;
+import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;
 import com.community_shop.backend.utils.RequestParseUtil;
@@ -141,6 +142,22 @@ public class UserController {
         Long currentUserId = parseUserIdFromToken();
         ThirdPartyBindingListDTO bindingList = userThirdPartyService.listBindings(currentUserId);
         return ResultVO.success(bindingList);
+    }
+
+    /**
+     * 检验用户是否是管理员
+     * @return 检验结果
+     */
+    @GetMapping("/is-admin")
+    @LoginRequired
+    @Operation(
+            summary = "检验用户是否是管理员接口",
+            description = "检验当前登录用户是否是管理员，需登录后访问"
+    )
+    public ResultVO<Boolean> checkIsAdmin() {
+        Long currentUserId = parseUserIdFromToken();
+        Boolean isAdmin = userService.verifyRole(currentUserId, UserRoleEnum.ADMIN);
+        return ResultVO.success(isAdmin);
     }
 
     /**

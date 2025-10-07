@@ -22,6 +22,9 @@ public class PostListItemDTO {
     /** 首图URL（无图则为默认图） */
     private String coverImage;
 
+    /** 摘要 */
+    private String summary;
+
     /** 点赞数 */
     private Integer likeCount;
 

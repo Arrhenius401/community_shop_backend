@@ -43,7 +43,12 @@ public interface PostConvert {
             @Mapping(target = "commentCount", source = "postFollowCount"),
             @Mapping(target = "coverImage", expression = "java(getFirstImage(post.getImageUrls()))"),
             @Mapping(target = "publisher.userId", source = "userId"),
-            @Mapping(target = "publisher.username", ignore = true) // 需关联 User 实体查询后赋值
+            @Mapping(target = "publisher.username", ignore = true), // 需关联 User 实体查询后赋值
+            @Mapping(source = "content", target = "summary",
+                    expression = "java(post.getContent() != null ? " +
+                            "(post.getContent().length() <= 20 ? " +
+                            "post.getContent() : post.getContent().substring(0, 20)) : null)"
+            )
     })
     PostListItemDTO postToPostListItemDTO(Post post);
 

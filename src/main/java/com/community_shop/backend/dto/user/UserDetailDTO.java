@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.user;
 
+import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -21,6 +22,9 @@ public class UserDetailDTO {
     /** 头像URL（匹配数据库profile_picture字段） */
     private String avatarUrl;
 
+    /** 个性签名（用户自我描述） */
+    private String bio;
+
     /** 信用分（初始100分，匹配credit_score字段） */
     private Integer creditScore;
 
@@ -32,4 +36,10 @@ public class UserDetailDTO {
 
     /** 注册时间（数据库创建时间） */
     private LocalDateTime createTime;
+
+    /** 最后活跃时间（数据库更新时间） */
+    private LocalDateTime activityTime;
+
+    /** 性别（枚举类型，匹配数据库gender字段） */
+    private GenderEnum gender;
 }

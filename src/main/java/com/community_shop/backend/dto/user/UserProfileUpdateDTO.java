@@ -21,16 +21,14 @@ public class UserProfileUpdateDTO {
     @Pattern(regexp = "^https?://.+$", message = "头像URL格式错误")
     private String avatarUrl;
 
-    // 个人简介（用户自我描述）
+    /** 个性签名（1-50字） */
     private String bio;
 
     /** 个人简介（不超过200字） */
     @Size(max = 200, message = "个人简介不超过200字")
     private List<String> interestTags;
 
-    // 性别（男/女/保密）
+    /** 性别（枚举类型） */
     private GenderEnum gender;
 
-    // 所在城市
-    private String city;
 }

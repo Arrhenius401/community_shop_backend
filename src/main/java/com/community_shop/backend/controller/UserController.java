@@ -94,11 +94,27 @@ public class UserController {
     }
 
     /**
+     * 更新用户自己的资料接口
+     * @return 包含用户详情的统一响应
+     */
+    @GetMapping("/profile/private")
+    @LoginRequired
+    @Operation(
+            summary = "用户查看自己个人资料接口",
+            description = "更新当前登录用户的资料（昵称、头像、简介等），需登录后访问"
+    )
+    public ResultVO<UserDetailDTO> getUserProfile() {
+        Long currentUserId = parseUserIdFromToken();
+        UserDetailDTO userDetail = userService.selectUserById(currentUserId);
+        return ResultVO.success(userDetail);
+    }
+
+    /**
      * 更新用户资料接口
      * @param profileUpdateDTO 资料更新参数（昵称、头像、简介等）
      * @return 包含更新后用户详情的统一响应
      */
-    @PutMapping("/profile")
+    @PutMapping("/profile/update")
     @LoginRequired
     @Operation(
             summary = "更新用户资料接口",

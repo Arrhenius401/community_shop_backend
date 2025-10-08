@@ -211,5 +211,7 @@ npm run dev
 ## 联系方式
 - 项目维护者：Arrhenius401
 - 邮箱：17268287727@163.com
-- 仓库地址：https://github.com/Arrhenius401/community_shop_backend
+- 仓库地址：
+  - [前端仓库](https://github.com/Arrhenius401/community_shop_backend "后端仓库")
+  - [后端仓库](https://github.com/Arrhenius401/community_shop_frontend "前端仓库")
 - 如有问题或建议，欢迎提交 Issue 或 Pull Request！

@@ -31,6 +31,12 @@ public class PostListItemDTO {
     /** 评论数 */
     private Integer commentCount;
 
+    /** 是否为热门帖 */
+    private Boolean isHot;
+
+    /** 是否为精华帖 */
+    private Boolean isEssence;
+
     /** 发布时间 */
     private LocalDateTime createTime;
 
@@ -41,5 +47,6 @@ public class PostListItemDTO {
     public static class PublisherSimpleDTO {
         private Long userId;
         private String username;
+        private String avatarUrl;
     }
 }

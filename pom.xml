@@ -105,7 +105,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
+            <version>1.18.30</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.5.5.Final</version> <!-- 稳定版本 -->
+            <version>1.6.0.Beta2</version> <!-- 稳定版本 -->
         </dependency>
         <!-- 编译时生成转换代码的处理器 -->
         <dependency>
@@ -172,11 +172,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version> <!-- 稳定版本，适配 JDK 8+ -->
+                <version>3.13.0</version> <!-- 稳定版本，适配 JDK 8+ -->
                 <configuration>
                     <!-- 指定 JDK 版本（需与项目实际使用版本一致） -->
-                    <source>21</source>
-                    <target>21</target>
+                    <source>${java.version}</source> <!-- 引用上面定义的 21 -->
+                    <target>${java.version}</target>
+                    <release>${java.version}</release> <!-- 关键：启用 JDK 9+ 的模块化编译 -->
                     <!-- 编码格式 -->
                     <encoding>UTF-8</encoding>
                     <!-- 注解处理器路径：必须严格按此顺序配置 -->
@@ -185,13 +186,13 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.24</version> <!-- 与依赖版本一致 -->
+                            <version>1.18.30</version> <!-- 与依赖版本一致 -->
                         </path>
                         <!-- 2. 再执行 MapStruct 处理器（生成转换代码） -->
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>1.5.5.Final</version> <!-- 与依赖版本一致 -->
+                            <version>1.6.0.Beta2</version> <!-- 与依赖版本一致 -->
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

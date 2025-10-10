@@ -50,11 +50,8 @@ public class Evaluation {
 
     public Evaluation(EvaluationCreateDTO evaluationCreateDTO) {
         this.orderId = evaluationCreateDTO.getOrderId();
-        this.userId = evaluationCreateDTO.getUserId();
         this.content = evaluationCreateDTO.getContent();
         this.score = evaluationCreateDTO.getScore();
-
         this.createTime = LocalDateTime.now();
-
     }
 }

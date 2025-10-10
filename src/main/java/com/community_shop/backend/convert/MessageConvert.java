@@ -33,12 +33,9 @@ public interface MessageConvert {
      */
     @Mappings({
             @Mapping(target = "messageId", source = "msgId"),
-            @Mapping(target = "businessId", source = "orderId"),
             @Mapping(target = "status", expression = "java(getMessageStatus(message.getIsRead(), message.getIsDeleted()))"),
-            @Mapping(target = "attachments", expression = "java(jsonToList(message.getAttachments()))"),
-            @Mapping(target = "sender.senderId", source = "senderId"),
-            @Mapping(target = "sender.senderName", ignore = true), // 需关联 User 实体脱敏后赋值
-            @Mapping(target = "sender.senderAvatar", ignore = true) // 需关联 User 实体查询赋值
+            @Mapping(target = "sender.userId", source = "senderId"),
+            @Mapping(target = "sender.username", ignore = true), // 需关联 User 实体脱敏后赋值
     })
     MessageDetailDTO messageToMessageDetailDTO(Message message);
 
@@ -50,10 +47,7 @@ public interface MessageConvert {
      */
     @Mappings({
             @Mapping(target = "messageId", source = "msgId"),
-            @Mapping(target = "senderName", ignore = true), // 需关联 User 实体脱敏后赋值
-            @Mapping(target = "senderAvatar", ignore = true), // 需关联 User 实体查询赋值
             @Mapping(target = "contentSummary", expression = "java(getContentSummary(message.getContent()))"),
-            @Mapping(target = "hasAttachment", expression = "java(hasAttachment(message.getAttachments()))"),
             @Mapping(target = "status", expression = "java(getMessageStatus(message.getIsRead(), message.getIsDeleted()))")
     })
     MessageListItemDTO messageToMessageListItemDTO(Message message);
@@ -71,12 +65,10 @@ public interface MessageConvert {
             @Mapping(target = "orderId", source = "businessId"),
             @Mapping(target = "isRead", constant = "false"), // 初始未读
             @Mapping(target = "isDeleted", constant = "false"), // 初始未删除
-            @Mapping(target = "attachments", expression = "java(listToJson(dto.getAttachments()))"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
             // 系统消息特殊处理：senderId=0，receiverId=-1
-            @Mapping(target = "senderId", expression = "java(dto.getType() == com.community_shop.backend.enums.MessageTypeEnum.SYSTEM ? 0 : dto.getSenderId())"),
-            @Mapping(target = "receiverId", expression = "java(dto.getType() == com.community_shop.backend.enums.MessageTypeEnum.SYSTEM ? -1 : dto.getReceiverId())")
+            @Mapping(target = "receiverId", expression = "java(dto.getType() == com.community_shop.backend.enums.CodeEnum.MessageTypeEnum.SYSTEM ? (long)-1 : dto.getReceiverId())")
     })
     Message messageSendDtoToMessage(MessageSendDTO dto);
 
@@ -86,10 +78,9 @@ public interface MessageConvert {
      */
     @Mappings({
             @Mapping(target = "msgId", source = "messageId"),
-            @Mapping(target = "isRead", expression = "java(dto.getTargetStatus() == com.community_shop.backend.enums.MessageStatusEnum.READ)"),
-            @Mapping(target = "isDeleted", expression = "java(dto.getTargetStatus() == com.community_shop.backend.enums.MessageStatusEnum.DELETED)"),
+            @Mapping(target = "isRead", expression = "java(dto.getTargetStatus() == com.community_shop.backend.enums.CodeEnum.MessageStatusEnum.READ)"),
+            @Mapping(target = "isDeleted", expression = "java(dto.getTargetStatus() == com.community_shop.backend.enums.CodeEnum.MessageStatusEnum.DELETED)"),
             @Mapping(target = "updateTime", ignore = true), // 由业务逻辑更新时间
-            @Mapping(target = ".", ignore = true) // 忽略其他未指定字段
     })
     Message messageStatusUpdateDtoToMessage(MessageStatusUpdateDTO dto);
 

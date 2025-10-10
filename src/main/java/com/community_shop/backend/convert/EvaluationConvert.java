@@ -36,12 +36,9 @@ public interface EvaluationConvert {
             @Mapping(target = "evaluator.userId", source = "userId"),
             @Mapping(target = "evaluator.username", ignore = true), // 需脱敏后赋值
             @Mapping(target = "evaluator.avatarUrl", ignore = true), // 需关联 User 实体查询
-            @Mapping(target = "product.productId", source = "productId"), // 需提前通过 orderId 查询商品 ID 存入实体
+            @Mapping(target = "product.productId", ignore = true), // 需提前通过 orderId 查询商品 ID 存入实体
             @Mapping(target = "product.productName", ignore = true), // 需关联 Product 实体查询
             @Mapping(target = "product.productImage", ignore = true), // 需关联 Product 实体查询
-            @Mapping(target = "images", expression = "java(jsonToList(evaluation.getImages()))"),
-            @Mapping(target = "helpfulCount", constant = "0"), // 初始有用数为 0
-            @Mapping(target = "isHelpful", constant = "false") // 初始未标记有用
     })
     EvaluationDetailDTO evaluationToEvaluationDetailDTO(Evaluation evaluation);
 
@@ -53,10 +50,7 @@ public interface EvaluationConvert {
      */
     @Mappings({
             @Mapping(target = "evaluationId", source = "evalId"),
-            @Mapping(target = "evaluatorName", ignore = true), // 需脱敏后赋值
-            @Mapping(target = "evaluatorAvatar", ignore = true), // 需关联 User 实体查询
             @Mapping(target = "contentSummary", expression = "java(getContentSummary(evaluation.getContent()))"),
-            @Mapping(target = "imageThumbs", expression = "java(getFirstThreeImages(evaluation.getImages()))")
     })
     EvaluationListItemDTO evaluationToEvaluationListItemDTO(Evaluation evaluation);
 
@@ -70,9 +64,7 @@ public interface EvaluationConvert {
     @Mappings({
             @Mapping(target = "evalId", ignore = true),
             @Mapping(target = "sellerId", ignore = true), // 需通过 orderId 查询订单获取卖家 ID
-            @Mapping(target = "helpfulCount", constant = "0"),
-            @Mapping(target = "images", expression = "java(listToJson(dto.getImages()))"),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.EvaluationStatusEnum.NORMAL)"),
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum.NORMAL)"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true)
     })

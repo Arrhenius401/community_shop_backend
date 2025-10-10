@@ -3,6 +3,7 @@ package com.community_shop.backend.convert;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
+import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -34,12 +35,10 @@ public interface UserConvert {
     @Mappings({
             @Mapping(target = "userId", ignore = true), // 主键自增，忽略
             @Mapping(target = "creditScore", constant = "100"), // 初始信用分 100
-            @Mapping(target = "followerCount", constant = "0"), // 初始粉丝数 0
-            @Mapping(target = "postCount", constant = "0"), // 初始发帖数 0
             @Mapping(target = "createTime", ignore = true), // 注册时间由系统生成
             @Mapping(target = "activityTime", ignore = true), // 活跃时间由系统更新
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.UserStatusEnum.NORMAL)"), // 默认激活
-            @Mapping(target = "role", expression = "java(com.community_shop.backend.enums.UserRoleEnum.USER)") // 默认普通用户
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.UserStatusEnum.NORMAL)"), // 默认激活
+            @Mapping(target = "role", expression = "java(com.community_shop.backend.enums.CodeEnum.UserRoleEnum.USER)") // 默认普通用户
     })
     User registerDtoToUser(RegisterDTO registerDTO);
 
@@ -53,8 +52,6 @@ public interface UserConvert {
             @Mapping(target = "phoneNumber", ignore = true), // 手机号修改需单独接口
             @Mapping(target = "email", ignore = true), // 邮箱修改需单独接口
             @Mapping(target = "creditScore", ignore = true), // 信用分由系统维护
-            @Mapping(target = "followerCount", ignore = true),
-            @Mapping(target = "postCount", ignore = true),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "activityTime", ignore = true),
             @Mapping(target = "status", ignore = true),
@@ -70,7 +67,6 @@ public interface UserConvert {
             @Mapping(target = "id", ignore = true), // 主键自增
             @Mapping(target = "bindTime", ignore = true), // 绑定时间由系统生成
             @Mapping(target = "isValid", constant = "1"), // 默认有效
-            @Mapping(target = "remark", defaultValue = "用户主动绑定") // 默认备注
     })
     UserThirdParty thirdPartyBindDtoToUserThirdParty(ThirdPartyBindDTO dto);
 
@@ -95,14 +91,14 @@ public interface UserConvert {
      * @param openid 原始 OpenID
      * @return 脱敏后的 OpenID 描述
      */
-    default String desensitizeOpenid(String thirdType, String openid) {
+    default String desensitizeOpenid(ThirdPartyTypeEnum thirdType, String openid) {
         if (openid == null || openid.length() < 4) {
             return thirdType + "用户 ****";
         }
         String prefix = switch (thirdType) {
-            case "WECHAT" -> "微信";
-            case "QQ" -> "QQ";
-            case "ALIPAY" -> "支付宝";
+            case ThirdPartyTypeEnum.WECHAT -> "微信";
+            case ThirdPartyTypeEnum.QQ -> "QQ";
+            case ThirdPartyTypeEnum.GITHUB -> "GitHub";
             default -> "第三方";
         };
         String suffix = openid.substring(openid.length() - 4);

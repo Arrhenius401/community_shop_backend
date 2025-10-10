@@ -44,8 +44,7 @@ public interface ProductConvert {
             @Mapping(target = "productId", ignore = true), // 主键自增
             @Mapping(target = "viewCount", constant = "0"), // 初始浏览量 0
             @Mapping(target = "createTime", ignore = true), // 发布时间由系统生成
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.ProductStatusEnum.ON_SALE)"), // 默认在售
-            @Mapping(target = "imageUrls", source = "imageUrls") // 直接接收 JSON 字符串，存储到实体
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.ProductStatusEnum.ON_SALE)"), // 默认在售
     })
     Product productPublishDtoToProduct(ProductPublishDTO dto);
 
@@ -58,7 +57,6 @@ public interface ProductConvert {
             @Mapping(target = "sellerId", ignore = true), // 卖家 ID 不可修改
             @Mapping(target = "viewCount", ignore = true), // 浏览量由系统维护
             @Mapping(target = "createTime", ignore = true), // 创建时间不可修改
-            @Mapping(target = "imageUrls", ignore = true) // 图片更新需单独处理（如需替换需重新上传）
     })
     void updateProductFromUpdateDto(ProductUpdateDTO dto, @MappingTarget Product product);
 

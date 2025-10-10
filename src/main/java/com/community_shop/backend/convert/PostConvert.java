@@ -30,7 +30,6 @@ public interface PostConvert {
      */
     @Mappings({
             @Mapping(target = "commentCount", source = "postFollowCount"),
-            @Mapping(target = "imageUrls", expression = "java(jsonToArray(post.getImageUrls()))"),
             @Mapping(target = "isLiked", ignore = true) // 需业务逻辑判断，单独赋值
     })
     PostDetailDTO postToPostDetailDTO(Post post);
@@ -41,11 +40,9 @@ public interface PostConvert {
      */
     @Mappings({
             @Mapping(target = "commentCount", source = "postFollowCount"),
-            @Mapping(target = "coverImage", expression = "java(getFirstImage(post.getImageUrls()))"),
             @Mapping(target = "publisher.userId", source = "userId"),
             @Mapping(target = "publisher.username", ignore = true), // 需关联 User 实体查询后赋值
-            @Mapping(source = "content", target = "summary",
-                    expression = "java(post.getContent() != null ? " +
+            @Mapping(target = "summary", expression = "java(post.getContent() != null ? " +
                             "(post.getContent().length() <= 20 ? " +
                             "post.getContent() : post.getContent().substring(0, 20)) : null)"
             )
@@ -67,8 +64,7 @@ public interface PostConvert {
             @Mapping(target = "isTop", constant = "false"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.PostStatusEnum.NORMAL)"),
-            @Mapping(target = "imageUrls", source = "imageUrls") // 直接接收 JSON 字符串
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.PostStatusEnum.NORMAL)"),
     })
     Post postPublishDtoToPost(PostPublishDTO dto);
 
@@ -78,11 +74,10 @@ public interface PostConvert {
      */
     @Mappings({
             @Mapping(target = "postFollowId", ignore = true),
-            @Mapping(target = "parentId", defaultValue = "null"),
             @Mapping(target = "likeCount", constant = "0"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.PostFollowStatusEnum.NORMAL)")
+            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum.NORMAL)")
     })
     PostFollow postFollowPublishDtoToPostFollow(PostFollowPublishDTO dto);
 

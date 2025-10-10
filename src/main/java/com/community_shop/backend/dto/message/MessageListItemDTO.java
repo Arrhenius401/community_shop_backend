@@ -19,7 +19,7 @@ public class MessageListItemDTO {
     private String contentSummary;
 
     /** 发送者信息（脱敏） */
-    private SenderDTO sender;
+    private Sender sender;
 
     /** 消息类型（用于展示不同图标） */
     private MessageTypeEnum type;
@@ -37,7 +37,7 @@ public class MessageListItemDTO {
      * 发送者信息内部类（脱敏）
      */
     @Data
-    public static class SenderDTO {
+    public static class Sender {
         private Long userId;       // 发送者ID（系统消息为固定值）
         private String username;   // 发送者昵称（系统消息显示“系统通知”）
         private String avatarUrl;  // 发送者头像（系统消息用系统图标）

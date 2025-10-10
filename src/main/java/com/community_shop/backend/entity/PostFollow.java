@@ -58,14 +58,4 @@ public class PostFollow {
         this.status = status;
     }
 
-    public PostFollow(PostFollowPublishDTO postFollowPublishDTO) {
-        this.postId = postFollowPublishDTO.getPostId();
-        this.userId = postFollowPublishDTO.getUserId();
-        this.content = postFollowPublishDTO.getContent();
-
-        this.likeCount = 0;
-        this.status = PostFollowStatusEnum.NORMAL;
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
-    }
 }

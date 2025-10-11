@@ -22,6 +22,8 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
      * @param evaluation 评价实体（含订单ID、评价者ID、评分等核心字段）
      * @return 影响行数
      */
+    @Insert("INSERT INTO evaluation (order_id, buyer_id, seller_id, score, content, status, create_time, update_time)" +
+            "VALUES (#{orderId}, #{buyerId}, #{sellerId}, #{score}, #{content}, #{status}, #{createTime}, #{updateTime})")
     int insert(Evaluation evaluation);
 
     /**
@@ -29,6 +31,7 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
      * @param evalId 评价唯一标识
      * @return 评价完整实体
      */
+    @Select("SELECT * FROM evaluation WHERE eval_id = #{evalId}")
     Evaluation selectById(@Param("evalId") Long evalId);
 
     /**
@@ -37,14 +40,6 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
      * @return 影响行数
      */
     int updateById(Evaluation evaluation);
-
-    /**
-     * 删除评价（逻辑删除，更新status状态）
-     * @param evalId 评价ID
-     * @param status 目标状态（如"HIDDEN"）
-     * @return 影响行数
-     */
-    int deleteById(@Param("evalId") Long evalId, @Param("status") EvaluationStatusEnum status);
 
     /**
      * 删除评价详情
@@ -155,10 +150,10 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
             "<script>",
             "SELECT COUNT(*)",
             "FROM evaluation e",
-            "JOIN `order` o USING (order_id)",  // 修复：USING添加括号，order表名加反引号
+            "JOIN `order` o USING (order_id)",
             "WHERE o.product_id = #{productId}",
-            "<if test='minScore != null'>AND e.score >= #{minScore}</if>",  // 优化：符号去转义
-            "<if test='maxScore != null'>AND e.score <= #{maxScore}</if>",  // 优化：符号去转义
+            "<if test='minScore != null'>AND e.score &gt;= #{minScore}</if>",   // 是否需要转义取决于 SQL 语句是否被 MyBatis 当作 XML 格式解析。
+            "<if test='maxScore != null'>AND e.score &lt;= #{maxScore}</if>",
             "</script>"})
     int countProductScoreLevel(@Param("productId") Long productId,
                                 @Param("minScore") Integer minScore,

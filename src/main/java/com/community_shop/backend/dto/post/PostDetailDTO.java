@@ -1,6 +1,7 @@
 package com.community_shop.backend.dto.post;
 
 import com.community_shop.backend.entity.Post;
+import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,9 @@ public class PostDetailDTO extends Post {
 
     /** 发布时间 */
     private LocalDateTime createTime;
+
+    /** 帖子状态 */
+    private PostStatusEnum status;
 
     /**
      * 发布者简易信息内部类

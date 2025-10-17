@@ -453,6 +453,17 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
     }
 
     /**
+     * 统计帖子数量
+     *
+     * @param postQueryDTO 帖子查询参数
+     * @return 帖子数量
+     */
+    @Override
+    public int countPosts(PostQueryDTO postQueryDTO) {
+        return postMapper.countByQuery(postQueryDTO);
+    }
+
+    /**
      * 批量删除违规帖子（管理员操作）
      *
      * @param postIds  帖子ID列表

@@ -62,6 +62,13 @@ public interface PostService extends BaseService<Post> {
     PageResult<PostListItemDTO> queryPosts(PostQueryDTO postQueryDTO);
 
     /**
+     * 多条件查询帖子数量
+     * @param postQueryDTO 帖子查询参数（关键词、排序、分页）
+     * @return 帖子数量
+     */
+    int countPosts(PostQueryDTO postQueryDTO);
+
+    /**
      * 批量删除违规帖子（管理员操作）
      * @param postIds 帖子ID列表
      * @param adminId 管理员ID

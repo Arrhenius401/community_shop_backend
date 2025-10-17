@@ -1,14 +1,10 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
-import com.community_shop.backend.enums.SimpleEnum.PermissionTypeEnum;
-import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -54,7 +50,14 @@ public interface UserService extends BaseService<User>{
      * @param userQueryDTO 包含分页参数和筛选条件的查询DTO
      * @return 分页用户列表结果
      */
-    PageResult<UserDetailDTO> selectUserList(UserQueryDTO userQueryDTO);
+    PageResult<UserDetailDTO> queryUsers(UserQueryDTO userQueryDTO);
+
+    /**
+     * 统计用户数量（支持多条件筛选）
+     * @param userQueryDTO 筛选条件DTO
+     * @return 用户数量
+     */
+    int countUsers(UserQueryDTO userQueryDTO);
 
     /**
      * 更新用户资料（仅支持昵称、头像等非敏感字段）

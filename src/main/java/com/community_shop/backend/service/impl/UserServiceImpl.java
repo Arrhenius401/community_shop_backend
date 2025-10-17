@@ -218,6 +218,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     }
 
+    /**
+     * 第三方登录
+     *
+     * @param thirdPartyLoginDTO 第三方登录信息
+     * @return 登录结果
+     */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public LoginResultDTO loginByThirdParty(ThirdPartyLoginDTO thirdPartyLoginDTO) {
@@ -271,6 +277,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
     }
 
+    /**
+     * 获取用户详情
+     *
+     * @param userId 用户ID
+     * @return 用户详情
+     */
     @Override
     public UserDetailDTO selectUserById(Long userId) {
         try {
@@ -304,6 +316,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     }
 
+    /**
+     * 更新用户信息
+     *
+     * @param userId      用户ID
+     * @param profileDTO  用户信息
+     * @return 更新后的用户信息
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UserDetailDTO updateProfile(Long userId, UserProfileUpdateDTO profileDTO) {
@@ -350,6 +369,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
     }
 
+    /**
+     * 修改密码
+     *
+     * @param passwordDTO 密码修改信息
+     * @return 修改结果
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean updatePassword(PasswordUpdateDTO passwordDTO) {
@@ -398,6 +423,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
     }
 
+    /**
+     * 更新信用分
+     *
+     * @param userId      用户ID
+     * @param scoreChange 信用分变化量
+     * @param reason      信用分变化原因
+     * @return 更新结果
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateCreditScore(Long userId, Integer scoreChange, String reason) {
@@ -435,8 +468,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
     }
 
+    /**
+     * 查询用户列表
+     *
+     * @param userQueryDTO 查询条件
+     * @return 用户列表
+     */
     @Override
-    public PageResult<UserDetailDTO> selectUserList(UserQueryDTO userQueryDTO) {
+    public PageResult<UserDetailDTO> queryUsers(UserQueryDTO userQueryDTO) {
         // 1. 参数校验（UserQueryDTO继承PageParam，默认pageNum=1，pageSize=10）
         if (userQueryDTO == null) {
             userQueryDTO = new UserQueryDTO();
@@ -461,7 +500,21 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     }
 
     /**
+     * 统计用户数量
+     *
+     * @param userQueryDTO 查询条件
+     * @return 用户数量
+     */
+    public int countUsers(UserQueryDTO userQueryDTO){
+        return userMapper.countByQuery(userQueryDTO);
+    }
+
+    /**
      * 更新用户角色
+     *
+     * @param userId 用户ID
+     * @param role 目标角色枚举
+     * @return
      */
     @Override
     public Boolean updateUserRole(Long userId, UserRoleEnum role) {
@@ -482,6 +535,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 更新用户状态
+     *
+     * @param userId 用户ID
+     * @param status 目标状态枚举
      */
     @Override
     public Boolean updateUserStatus(Long userId, UserStatusEnum status) {
@@ -503,6 +559,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     /**
      * 新增：密码校验方法（使用Spring Security的匹配器）
      * 用于登录时验证密码正确性
+     *
+     * @param userId 用户ID
+     * @param rawPassword 原始密码
      */
     @Override
     public Boolean verifyPassword(Long userId, String rawPassword) {
@@ -515,6 +574,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 验证用户角色（通过Token）
+     *
+     * @param userId 用户ID
+     * @param role 目标角色枚举
      */
     @Override
     public Boolean verifyRole(Long userId, UserRoleEnum role) {

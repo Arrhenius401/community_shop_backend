@@ -1,7 +1,10 @@
 package com.community_shop.backend.utils;
 
+import com.community_shop.backend.entity.User;
+import com.community_shop.backend.mapper.UserMapper;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +34,10 @@ public class TokenUtil {
     @Value("${jwt.secret}")
     private static String KEY;
 
+    /** 用户服务，用于业务检验TOKEN */
+    @Autowired
+    private UserMapper userMapper;
+
 
     /**
      * 生成令牌
@@ -58,7 +65,7 @@ public class TokenUtil {
 
     /**
      * 获取令牌中的用户ID
-     * @param token
+     * @param token 令牌字符串
      * @return 用户ID
      */
     public Long getUserIdByToken(String token){
@@ -76,7 +83,7 @@ public class TokenUtil {
 
     /**
      * 获取令牌中的过期时间（Date）
-     * @param token
+     * @param token 令牌字符串
      * @return 过期时间
      */
     public Date getExpirationFromToken(String token){
@@ -85,7 +92,7 @@ public class TokenUtil {
 
     /**
      * 获取令牌中的过期时间（LocalDateTime）
-     * @param token
+     * @param token 令牌字符串
      * @return 过期时间
      */
     public LocalDateTime getExpirationTimeFromToken(String token){
@@ -98,7 +105,7 @@ public class TokenUtil {
 
     /**
      * 获取令牌中的签发时间
-     * @param token
+     * @param token 令牌字符串
      * @return 令牌中的某个字段
      */
     public Date getIssuedAtFromToken(String token){
@@ -107,8 +114,8 @@ public class TokenUtil {
 
     /**
      * 获取令牌中的某个字段
-     * @param token
-     * @param claimResolver
+     * @param token 令牌字符串
+     * @param claimResolver 获取字段的函数
      * @return 令牌中的某个字段
      */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimResolver){
@@ -118,7 +125,7 @@ public class TokenUtil {
 
     /**
      * 获取令牌中的所有字段
-     * @param token
+     * @param token 令牌字符串
      * @return 令牌中的所有字段
      */
     private Claims getAllClaimsFromToken(String token){
@@ -131,7 +138,7 @@ public class TokenUtil {
 
     /**
      * 验证令牌
-     * @param token
+     * @param token 令牌字符串
      * @return true: 验证通过
      */
     public Boolean validateToken(String token){
@@ -141,16 +148,22 @@ public class TokenUtil {
         }
 
         try {
-            // 3. 验证令牌是否过期，以及签发时间是否合理（如防止未来签发的令牌）
+            // 2. 验证令牌是否过期，以及签发时间是否合理（如防止未来签发的令牌）
             if (isTokenExpired(token) || !isTokenIssuedAtReasonable(token)) {
                 return false; // 令牌已过期
             }
 
-            // 4. 可选：业务层面验证（如检查令牌是否被注销）
-            // 例如：从Redis黑名单中检查是否存在该token
-            // if (redisTemplate.hasKey("blacklist:" + token)) {
-            //     return false; // 令牌已被注销
-            // }
+            // 3. 获取用户ID
+            Long userID = getUserIdByToken(token);
+            if (userID == null) {
+                return false;
+            }
+
+            // 4. 通过用户ID检查对应用户
+            User user = userMapper.selectById(userID);
+            if (user == null) {
+                return false;
+            }
 
             // 所有验证通过
             return true;
@@ -172,7 +185,7 @@ public class TokenUtil {
 
     /**
      * 打印令牌
-     * @param token
+     * @param token 令牌字符串
      */
     public void printToken(String token){
         Claims claims = getAllClaimsFromToken(token);
@@ -184,7 +197,7 @@ public class TokenUtil {
 
     /**
      * 判断令牌是否过期
-     * @param token
+     * @param token 令牌字符串
      * @return true: 过期
      */
     private Boolean isTokenExpired(String token){
@@ -194,7 +207,7 @@ public class TokenUtil {
 
     /**
      * 判断令牌签发时间是否合理
-     * @param token
+     * @param token 令牌字符串
      * @return 新的令牌
      */
     private Boolean isTokenIssuedAtReasonable(String token){

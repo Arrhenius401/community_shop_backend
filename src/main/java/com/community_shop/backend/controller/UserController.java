@@ -1,6 +1,7 @@
 package com.community_shop.backend.controller;
 
 import com.community_shop.backend.annotation.LoginRequired;
+import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.service.base.UserService;
@@ -174,6 +175,40 @@ public class UserController {
         Long currentUserId = parseUserIdFromToken();
         Boolean isAdmin = userService.verifyRole(currentUserId, UserRoleEnum.ADMIN);
         return ResultVO.success(isAdmin);
+    }
+
+    /**
+     * 用户查询接口
+     * @param userQueryDTO 查询参数（用户ID、昵称、手机号、邮箱等）
+     * @return 查询结果（分页）
+     */
+    @GetMapping("/query/list")
+    @LoginRequired
+    @Operation(
+            summary = "用户查询接口，查询符合条件的用户具体信息列表",
+            description = "用户查询接口，需登录后访问"
+    )
+    public ResultVO<PageResult<UserDetailDTO>> queryUserList(UserQueryDTO userQueryDTO) {
+        // 调用Service层进行查询
+        PageResult<UserDetailDTO> queryResult = userService.queryUsers(userQueryDTO);
+        return ResultVO.success(queryResult);
+    }
+
+    /**
+     * 用户查询接口
+     * @param userQueryDTO 查询参数（用户ID、昵称、手机号、邮箱等）
+     * @return 查询结果（数量）
+     */
+    @GetMapping("/query/count")
+    @LoginRequired
+    @Operation(
+            summary = "用户查询接口，查询符合条件的用户数量",
+            description = "用户查询接口，需登录后访问"
+    )
+    public ResultVO<Integer> queryUserCount(UserQueryDTO userQueryDTO) {
+        // 调用Service层进行查询
+        int queryCount = userService.countUsers(userQueryDTO);
+        return ResultVO.success(queryCount);
     }
 
     /**

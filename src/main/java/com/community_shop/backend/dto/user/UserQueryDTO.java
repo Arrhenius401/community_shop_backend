@@ -1,6 +1,7 @@
 package com.community_shop.backend.dto.user;
 
 import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.enums.SortEnum.ProductSortFieldEnum;
 import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import lombok.Data;
@@ -12,6 +13,9 @@ import java.util.List;
  */
 @Data
 public class UserQueryDTO extends PageParam {
+
+    /** 用户状态 */
+    private UserStatusEnum status;
 
     /** 兴趣标签列表（匹配selectByInterestTags接口） */
     private List<String> interestTags;

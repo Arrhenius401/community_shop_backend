@@ -165,7 +165,7 @@ public class UserController {
      * 检验用户是否是管理员
      * @return 检验结果
      */
-    @GetMapping("/is-admin")
+    @GetMapping("/check/admin")
     @LoginRequired
     @Operation(
             summary = "检验用户是否是管理员接口",
@@ -175,6 +175,21 @@ public class UserController {
         Long currentUserId = parseUserIdFromToken();
         Boolean isAdmin = userService.verifyRole(currentUserId, UserRoleEnum.ADMIN);
         return ResultVO.success(isAdmin);
+    }
+
+    /**
+     * 检验用户是否登录
+     * @return 检验结果
+     */
+    @GetMapping("/check/login")
+    @LoginRequired
+    @Operation(
+            summary = "检验用户是否登录接口",
+            description = "检验当前登录用户是否登录，需登录后访问"
+    )
+    public ResultVO<Boolean> checkIsLogin() {
+        Long currentUserId = parseUserIdFromToken();
+        return ResultVO.success(true);
     }
 
     /**

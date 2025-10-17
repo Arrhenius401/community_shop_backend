@@ -162,7 +162,7 @@ public class PostController {
      * @param postQueryDTO 列表查询参数（关键词、排序方式、分页信息）
      * @return 包含分页帖子列表的统一响应
      */
-    @GetMapping("/list")
+    @GetMapping("/query/list")
     @Operation(
             summary = "分页查询帖子列表接口",
             description = "支持按关键词搜索、按发布时间/点赞数排序，默认按发布时间降序分页返回"
@@ -174,6 +174,20 @@ public class PostController {
     ) {
         PageResult<PostListItemDTO> postPage = postService.queryPosts(postQueryDTO);
         return ResultVO.success(postPage);
+    }
+
+    /**
+     * 查询帖子数量接口
+     * @param postQueryDTO 列表查询参数（关键词、排序方式、分页信息）
+     * @return 帖子数量
+     */
+    @GetMapping("/query/count")
+    @Operation(
+            summary = "查询帖子数量接口",
+            description = "查询帖子数量"
+    )
+    public ResultVO<Integer> queryPostCount(PostQueryDTO postQueryDTO) {
+        return ResultVO.success(postService.countPosts(postQueryDTO));
     }
 
     /**

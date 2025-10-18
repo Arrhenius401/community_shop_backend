@@ -14,11 +14,9 @@ import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
 import com.community_shop.backend.mapper.PostMapper;
-import com.community_shop.backend.mapper.UserPostLikeMapper;
 import com.community_shop.backend.service.base.*;
 import com.community_shop.backend.utils.OssUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -75,9 +73,6 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
     private UserPostLikeService userPostLikeService;
 
     @Autowired
-    private MessageService messageService;
-
-    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
@@ -85,7 +80,6 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
 
     @Autowired
     private OssUtil ossUtil;
-
 
     /**
      * 发布帖子
@@ -147,8 +141,8 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
     /**
      * 编辑帖子
      *
-     * @param postId        帖子ID
-     * @param userId        操作用户ID
+     * @param postId 帖子ID
+     * @param userId 操作用户ID
      * @param postUpdateDTO 编辑参数（标题、内容、图片等）
      * @return 编辑后的帖子详情
      * @throws BusinessException 无权限（非作者）、帖子已删除时抛出
@@ -265,7 +259,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
 
             // 5. 判断用户当前点赞状态（已点赞/未点赞）
             Boolean isLiked = userPostLikeService.isLiked(userId, postId);
-            int likeCountChange = 0; // 点赞数变更量（+1/-1）
+            int likeCountChange; // 点赞数变更量（+1/-1）
 
             if (isLike) {
                 // 点赞操作：未点赞则新增记录，已点赞则忽略
@@ -423,7 +417,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             }
 
             // 3. 分页查询数据库（只查正常状态的帖子）
-            Long total = (long)postMapper.countByQuery(postQueryDTO);
+            long total = postMapper.countByQuery(postQueryDTO);
             List<Post> postList = postMapper.selectByQuery(postQueryDTO);
             Long totalPages = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
 
@@ -804,48 +798,6 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
         }
     }
 
-
-    /**
-     * 更新帖子内容
-     * @param postVO 帖子更新信息
-     * @param userId 操作人ID
-     * @return 操作结果
-     */
-    @Override
-    public Boolean updatePostContent(Long userId, PostUpdateDTO postVO) {
-        try {
-            Long postId = postVO.getPostId();
-            String newTitle = postVO.getTitle();
-            String newContent = postVO.getContent();
-            if (postId == null || !StringUtils.hasText(newContent) || userId == null) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
-
-            // 1. 校验帖子存在及作者权限
-            Post post = getById(postId);
-            if (!post.getUserId().equals(userId)) {
-                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
-            }
-
-            // 2. 调用Mapper更新内容
-            int rows = postMapper.updatePostContent(postId, newTitle, newContent, LocalDateTime.now());
-            if (rows <= 0) {
-                log.error("更新帖子内容失败，帖子ID：{}，操作用户：{}", postId, userId);
-                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
-            }
-
-            // 3. 清除缓存（设计文档要求缓存更新触发点为内容变更）
-            redisTemplate.delete(String.format(CACHE_KEY_POST_DETAIL, postId));
-            log.info("更新帖子内容成功，帖子ID：{}，操作用户：{}", postId, userId);
-            return true;
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("更新帖子内容系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-        }
-    }
-
     /**
      * 删除帖子
      * @param postId 帖子ID
@@ -864,7 +816,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             Post post = getById(postId);
             User operator = userService.getById(operatorId);
             boolean isAuthor = post.getUserId().equals(operatorId);
-            boolean isAdmin = "ROLE_ADMIN".equals(operator.getRole());
+            boolean isAdmin = UserRoleEnum.ADMIN.equals(operator.getRole());
             if (!isAuthor && !isAdmin) {
                 throw new BusinessException(ErrorCode.PERMISSION_DENIED);
             }
@@ -997,6 +949,62 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
 
         log.info("查询置顶帖子成功，数量：{}", voList.size());
         return voList;
+    }
+
+    /**
+     * 更新帖子内容
+     * 逻辑：校验参数，更新帖子内容，更新缓存（帖子详情+热门缓存）
+     * @param operatorId 操作用户ID
+     * @param postId 帖子ID
+     * @param status 目标帖子状态
+     * @return 是否更新成功
+     */
+    @Override
+    public Boolean updatePostStatus(Long operatorId, Long postId, PostStatusEnum status) {
+        // 1.基本参数检验
+        if(operatorId == null || postId == null || status == null){
+            throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+
+        // 2. 获取帖子详情
+        Post post = postMapper.selectById(postId);
+        if (post == null) {
+            throw new BusinessException(ErrorCode.POST_NOT_EXISTS);
+        }
+
+        // 3. 校验操作者权限，要么是管理员，要么是作者
+        User user = userService.getById(operatorId);
+        if (!user.isAdmin() && post.getUserId().equals(operatorId)) {
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+        }
+
+        // 4. 检验帖子前后状态的合法性
+        // 不允许修改已删除的帖子状态
+        if (post.getStatus() == PostStatusEnum.DELETED) {
+            throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
+        }
+        if (user.isAdmin()){
+            // 管理员不允许将帖子状态设置为草稿，隐藏和删除
+            if (status == PostStatusEnum.DRAFT || status == PostStatusEnum.HIDDEN || status == PostStatusEnum.DELETED) {
+                throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
+            }
+        } else {
+            // 非管理员不允许修改已封禁的帖子状态
+            if (post.getStatus() == PostStatusEnum.BLOCKED) {
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+            }
+            // 作者不允许将帖子状态设置为草稿或隐藏
+            if (status == PostStatusEnum.DRAFT) {
+                throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
+            }
+            if (status == PostStatusEnum.HIDDEN) {
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+            }
+        }
+
+        // 5. 更新帖子状态
+        post.setStatus(status);
+        return postMapper.updateById(post) > 0;
     }
 
     // ------------------------------ 辅助方法保持不变 ------------------------------

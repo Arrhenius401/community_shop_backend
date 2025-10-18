@@ -112,11 +112,15 @@
     <select id="countByQuery" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM user
         <where>
-            <!-- 条件0：状态筛选 -->
+            <!-- 条件1：状态筛选 -->
             <if test="status != null">
                 status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
             </if>
-            <!-- 条件1：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
+            <!-- 条件2：角色筛选 -->
+            <if test="role != null">
+                role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 条件3：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
             <if test="interestTags != null and interestTags.size() > 0">
                 AND (
                 <foreach collection="interestTags" item="tag" separator="OR">
@@ -124,7 +128,7 @@
                 </foreach>
                 )
             </if>
-            <!-- 条件2：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
+            <!-- 条件4：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
             <if test="filterField != null and filterValue != null">
                 AND ${filterField} = #{filterValue,jdbcType=VARCHAR}
             </if>
@@ -135,7 +139,15 @@
     <select id="selectByQuery" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user
         <where>
-            <!-- 条件1：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
+            <!-- 条件1：状态筛选 -->
+            <if test="status != null">
+                status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 条件2：角色筛选 -->
+            <if test="role != null">
+                role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 条件3：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
             <if test="interestTags != null and interestTags.size() > 0">
                 AND (
                 <foreach collection="interestTags" item="tag" separator="OR">
@@ -143,7 +155,7 @@
                 </foreach>
                 )
             </if>
-            <!-- 条件2：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
+            <!-- 条件4：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
             <if test="filterField != null and filterValue != null">
                 AND ${filterField} = #{filterValue,jdbcType=VARCHAR}
             </if>

@@ -2,20 +2,17 @@ package com.community_shop.backend.dto.user;
 
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
-import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
- * 用户详情响应DTO（匹配Service层selectUserById方法的返回值）
+ * 用户列表项DTO（匹配Service层selectUsersByQuery方法的返回值）
  */
 @Data
-public class UserDetailDTO {
+public class UserListItemDTO {
+
     /** 用户ID（唯一标识） */
-    @NotNull(message = "用户ID不能为空")
     private Long userId;
 
     /** 用户名（登录显示用） */
@@ -30,26 +27,11 @@ public class UserDetailDTO {
     /** 头像URL（匹配数据库profile_picture字段） */
     private String avatarUrl;
 
-    /** 个性签名（用户自我描述） */
-    private String bio;
-
     /** 信用分（初始100分，匹配credit_score字段） */
-    private Integer creditScore;
-
-    /** 发帖数（匹配post_count字段） */
-    private Integer postCount;
-
-    /** 兴趣标签列表（将数据库逗号分隔的字符串转为列表） */
-    private List<String> interestTags;
+    private int creditScore;
 
     /** 注册时间（数据库创建时间） */
     private LocalDateTime createTime;
-
-    /** 最后活跃时间（数据库更新时间） */
-    private LocalDateTime activityTime;
-
-    /** 性别（枚举类型，匹配数据库gender字段） */
-    private GenderEnum gender;
 
     /** 用户状态 */
     private UserStatusEnum status;

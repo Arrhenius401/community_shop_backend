@@ -27,6 +27,12 @@ public interface UserConvert {
     UserDetailDTO userToUserDetailDTO(User user);
 
     /**
+     * User 实体 -> UserListItemDTO（用户列表项响应）
+     * 映射说明：仅返回部分字段，忽略部分字段
+     */
+    UserListItemDTO userToUserListItemDTO(User user);
+
+    /**
      * RegisterDTO（注册请求）-> User 实体
      * 映射说明：
      * 1. 注册时默认初始化信用分 100、状态为激活、角色为普通用户

@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.post;
 
+import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +19,7 @@ public class PostStatusUpdateDTO {
 
     /** 目标状态（非空，需为PostStatusEnum中的合法值） */
     @NotBlank(message = "目标状态不能为空")
-    private ProductStatusEnum targetStatus;
+    private PostStatusEnum status;
 
     /** 操作人ID（非空，用于权限校验） */
     @NotNull(message = "操作人ID不能为空")

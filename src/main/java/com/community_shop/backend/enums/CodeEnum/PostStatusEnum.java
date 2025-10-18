@@ -4,12 +4,10 @@ package com.community_shop.backend.enums.CodeEnum;
 public enum PostStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
     DRAFT("DRAFT", "草稿"),
-    PENDING("PENDING_REVIEW", "待审核"), // 新用户发帖需审核时的状态
-    PASSED("PASSED", "审核通过"),
-    REJECTED("REJECTED", "审核驳回"),
+    PENDING("PENDING", "待审核"), // 新用户发帖需审核时的状态
     NORMAL("NORMAL", "正常"),
-    TOP("TOP", "置顶"), // 吧主/管理员设置的置顶状态（最多5篇）
-    ESSENCE("ESSENCE", "精华帖"), // 吧主标记的优质内容
+    HIDDEN("HIDDEN", "隐藏"),
+    BLOCKED("BLOCKED", "封禁"),
     DELETED("DELETED", "已删除"); // 逻辑删除状态
 
     private final String code;

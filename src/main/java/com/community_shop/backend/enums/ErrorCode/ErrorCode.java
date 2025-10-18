@@ -79,6 +79,7 @@ public enum ErrorCode {
     POST_TITLE_INVALID("POST_022", "帖子标题不符合规范"),
     POST_CONTENT_INVALID("POST_023", "帖子内容不符合规范"),
     POST_IMAGE_FORMAT_INVALID("POST_024", "帖子图片格式错误"),
+    POST_STATUS_INVALID("POST_025", "帖子状态参数错误"),
 
     POST_IMAGE_TOO_MANY("POST_031", "帖子图片数量过多"),
 

@@ -50,7 +50,7 @@ public interface UserService extends BaseService<User>{
      * @param userQueryDTO 包含分页参数和筛选条件的查询DTO
      * @return 分页用户列表结果
      */
-    PageResult<UserDetailDTO> queryUsers(UserQueryDTO userQueryDTO);
+    PageResult<UserListItemDTO> queryUsers(UserQueryDTO userQueryDTO);
 
     /**
      * 统计用户数量（支持多条件筛选）
@@ -85,19 +85,21 @@ public interface UserService extends BaseService<User>{
 
     /**
      * 更新用户角色（管理员操作）
+     * @param operatorId 操作人ID
      * @param userId 用户ID
      * @param role 目标角色枚举
      * @return 操作结果（true成功/false失败）
      */
-    Boolean updateUserRole(Long userId, UserRoleEnum role);
+    Boolean updateUserRole(Long operatorId, Long userId, UserRoleEnum role);
 
     /**
      * 更新用户账号状态（启用/禁用/注销）
+     * @param operatorId 操作人ID
      * @param userId 用户ID
      * @param status 目标状态枚举
      * @return 操作结果（true成功/false失败）
      */
-    Boolean updateUserStatus(Long userId, UserStatusEnum status);
+    Boolean updateUserStatus(Long operatorId, Long userId, UserStatusEnum status);
 
     /**
      * 验证密码（业务方法）

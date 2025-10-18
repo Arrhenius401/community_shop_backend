@@ -475,7 +475,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
      * @return 用户列表
      */
     @Override
-    public PageResult<UserDetailDTO> queryUsers(UserQueryDTO userQueryDTO) {
+    public PageResult<UserListItemDTO> queryUsers(UserQueryDTO userQueryDTO) {
         // 1. 参数校验（UserQueryDTO继承PageParam，默认pageNum=1，pageSize=10）
         if (userQueryDTO == null) {
             userQueryDTO = new UserQueryDTO();
@@ -490,13 +490,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         List<User> userList = userMapper.selectByQuery(userQueryDTO);
 
         // 3. 转换为UserDetailDTO列表
-        List<UserDetailDTO> dtoList = userList.stream()
-                .map(userConvert::userToUserDetailDTO)
+        List<UserListItemDTO> dtoList = userList.stream()
+                .map(userConvert::userToUserListItemDTO)
                 .collect(Collectors.toList());
 
         // 4. 封装PageResult（匹配PageResult结构）
         long totalPages = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
-        return new PageResult<UserDetailDTO>(total, totalPages, dtoList, pageNum, pageSize);
+        return new PageResult<UserListItemDTO>(total, totalPages, dtoList, pageNum, pageSize);
     }
 
     /**
@@ -512,14 +512,18 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     /**
      * 更新用户角色
      *
+     * @param operatorId 操作者ID
      * @param userId 用户ID
      * @param role 目标角色枚举
      * @return
      */
     @Override
-    public Boolean updateUserRole(Long userId, UserRoleEnum role) {
-        if (userId == null || role == null) {
+    public Boolean updateUserRole(Long operatorId, Long userId, UserRoleEnum role) {
+        if (operatorId == null || userId == null || role == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+        if (!verifyRole(operatorId, UserRoleEnum.ADMIN)) {
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
         selectUserById(userId);
         int rows = userMapper.updateUserRole(role, userId);
@@ -536,13 +540,17 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     /**
      * 更新用户状态
      *
+     * @param operatorId 操作者ID
      * @param userId 用户ID
      * @param status 目标状态枚举
      */
     @Override
-    public Boolean updateUserStatus(Long userId, UserStatusEnum status) {
-        if (userId == null || status == null) {
+    public Boolean updateUserStatus(Long operatorId, Long userId, UserStatusEnum status) {
+        if (operatorId == null || userId == null || status == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
+        }
+        if (!verifyRole(operatorId, UserRoleEnum.ADMIN)) {
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
         selectUserById(userId);
         int rows = userMapper.updateUserStatus(userId, status);

@@ -191,6 +191,24 @@ public class PostController {
     }
 
     /**
+     * 帖子状态更新接口
+     * @param postStatusUpdateDTO 帖子状态更新参数（帖子ID、目标状态、操作人ID、状态变更原因）
+     * @return 操作结果统一响应
+     */
+    @PatchMapping("/{postId}/status")
+    @LoginRequired
+    @Operation(
+            summary = "帖子状态更新接口",
+            description = "管理员或作者可更新帖子状态，如审核通过、驳回、删除等"
+    )
+    public ResultVO<Boolean> updatePostStatus(PostStatusUpdateDTO postStatusUpdateDTO) {
+        Long operatorId = parseUserIdFromToken();
+        postService.updatePostStatus(operatorId, postStatusUpdateDTO.getPostId(), postStatusUpdateDTO.getStatus());
+
+        return ResultVO.success(true);
+    }
+
+    /**
      * 工具方法：从请求头令牌中解析用户ID（实际项目需结合JWT工具实现）
      * @return 当前登录用户ID（未登录时返回null）
      */

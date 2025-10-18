@@ -4,6 +4,7 @@ import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.entity.Post;
+import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import com.community_shop.backend.exception.BusinessException;
 
 import java.util.List;
@@ -89,16 +90,6 @@ public interface PostService extends BaseService<Post> {
     PostDetailDTO selectPostById(Long userId, Long postId);
 
     /**
-     * 更新帖子内容（基础CRUD）
-     * 核心逻辑：校验仅帖子作者可操作，调用PostMapper.updateById更新内容
-     * @param userId 操作用户ID（需与帖子作者ID一致）
-     * @param postUpdateDTO 帖子更新参数（标题、内容）
-     * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.PostMapper#updateById(Post)
-     */
-    Boolean updatePostContent(Long userId, PostUpdateDTO postUpdateDTO);
-
-    /**
      * 按帖子ID删除（基础CRUD，逻辑删除）
      * 核心逻辑：校验作者或管理员权限，删除帖子同时同步删除关联点赞记录
      * @param operatorId 操作用户ID（作者或管理员）
@@ -134,4 +125,14 @@ public interface PostService extends BaseService<Post> {
      */
     List<PostDetailDTO> selectTopPosts();
 
+    /**
+     * 修改帖子状态（业务方法）
+     * 逻辑：校验操作权限，修改帖子状态
+     * @param operatorId 操作用户ID
+     * @param postId 帖子ID
+     * @param status 帖子状态
+     * @return 修改成功返回true，失败抛出异常或返回false
+     * @see com.community_shop.backend.mapper.PostMapper#updateById(Post)
+     */
+    Boolean updatePostStatus(Long operatorId, Long postId, PostStatusEnum status);
 }

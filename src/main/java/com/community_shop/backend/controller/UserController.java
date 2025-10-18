@@ -193,6 +193,23 @@ public class UserController {
     }
 
     /**
+     * 更新用户状态接口
+     * @param userStatusChangeDTO 状态更新参数（目标用户ID、目标状态）
+     * @return 更新结果
+     */
+    @PutMapping("/change/status")
+    @LoginRequired
+    @Operation(
+            summary = "更新用户状态接口",
+            description = "更新当前登录用户的状态（启用、禁用、删除等），需管理员权限访问"
+    )
+    public ResultVO<Boolean> changeUserStatus(UserStatusChangeDTO userStatusChangeDTO){
+        Long currentUserId = parseUserIdFromToken();
+        userService.updateUserStatus(currentUserId, userStatusChangeDTO.getUserId(), userStatusChangeDTO.getStatus());
+        return ResultVO.success(true);
+    }
+
+    /**
      * 用户查询接口
      * @param userQueryDTO 查询参数（用户ID、昵称、手机号、邮箱等）
      * @return 查询结果（分页）
@@ -203,9 +220,9 @@ public class UserController {
             summary = "用户查询接口，查询符合条件的用户具体信息列表",
             description = "用户查询接口，需登录后访问"
     )
-    public ResultVO<PageResult<UserDetailDTO>> queryUserList(UserQueryDTO userQueryDTO) {
+    public ResultVO<PageResult<UserListItemDTO>> queryUserList(UserQueryDTO userQueryDTO) {
         // 调用Service层进行查询
-        PageResult<UserDetailDTO> queryResult = userService.queryUsers(userQueryDTO);
+        PageResult<UserListItemDTO> queryResult = userService.queryUsers(userQueryDTO);
         return ResultVO.success(queryResult);
     }
 

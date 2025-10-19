@@ -4,7 +4,7 @@ import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import lombok.Data;
 
 @Data
-public class UserStatusChangeDTO {
+public class UserStatusUpdateDTO {
 
     /** 目标用户ID */
     private Long userId;

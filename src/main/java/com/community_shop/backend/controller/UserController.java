@@ -194,7 +194,7 @@ public class UserController {
 
     /**
      * 更新用户状态接口
-     * @param userStatusChangeDTO 状态更新参数（目标用户ID、目标状态）
+     * @param userStatusUpdateDTO 状态更新参数（目标用户ID、目标状态）
      * @return 更新结果
      */
     @PutMapping("/update/status")
@@ -203,9 +203,9 @@ public class UserController {
             summary = "更新用户状态接口",
             description = "更新当前登录用户的状态（启用、禁用、删除等），需管理员权限访问"
     )
-    public ResultVO<Boolean> updateUserStatus(UserStatusChangeDTO userStatusChangeDTO){
+    public ResultVO<Boolean> updateUserStatus(UserStatusUpdateDTO userStatusUpdateDTO){
         Long currentUserId = parseUserIdFromToken();
-        userService.updateUserStatus(currentUserId, userStatusChangeDTO.getUserId(), userStatusChangeDTO.getStatus());
+        userService.updateUserStatus(currentUserId, userStatusUpdateDTO.getUserId(), userStatusUpdateDTO.getStatus());
         return ResultVO.success(true);
     }
 

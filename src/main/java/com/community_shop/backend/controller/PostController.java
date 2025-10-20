@@ -195,7 +195,7 @@ public class PostController {
      * @param postStatusUpdateDTO 帖子状态更新参数（帖子ID、目标状态、操作人ID、状态变更原因）
      * @return 操作结果统一响应
      */
-    @PatchMapping("/{postId}/status")
+    @PatchMapping("/update/status")
     @LoginRequired
     @Operation(
             summary = "帖子状态更新接口",

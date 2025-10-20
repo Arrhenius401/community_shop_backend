@@ -1,5 +1,8 @@
 package com.community_shop.backend.enums.CodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
 public enum PostFollowStatusEnum {
     // code：数据库存储标识（适配varchar类型）；desc：状态描述（用于前端展示/业务逻辑说明）
     NORMAL("NORMAL", "正常展示"), // 跟帖内容合规，无举报/违规，在帖子详情页正常显示（支持用户查看、互动）
@@ -10,6 +13,7 @@ public enum PostFollowStatusEnum {
     DELETED("DELETED", "用户/管理员删除"); // 跟帖发布者主动删除，或管理员强制删除（逻辑删除，保留数据用于违规统计）
 
     private final String code; // 核心标识，用于MySQL varchar字段存储
+    @Getter
     private final String desc; // 辅助说明，用于前端展示（如“该评论已被举报待审核”）、开发调试
 
     // 构造器（枚举值不可修改，无Setter方法）
@@ -19,12 +23,10 @@ public enum PostFollowStatusEnum {
     }
 
     // Getter方法：提供code和desc的读取能力，适配MyBatis转换与前端展示
+    // 在getCode()方法上添加@JsonValue注解，明确指定序列化时只输出 code 的值
+    @JsonValue
     public String getCode() {
         return code;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     // 辅助方法：根据数据库存储的code反向获取枚举对象（支撑MyBatis类型转换）

@@ -1,11 +1,15 @@
 package com.community_shop.backend.enums.CodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
 public enum MessageTypeEnum {
     // code：数据库存储标识（适配varchar类型）；desc：状态描述（用于前端展示/业务逻辑说明）
     SYSTEM("SYSTEM", "系统消息"),
     ORDER("ORDER", "订单消息");
 
     private final String code;
+    @Getter
     private final String desc;
 
     MessageTypeEnum(String code, String desc) {
@@ -14,10 +18,8 @@ public enum MessageTypeEnum {
     }
 
     // getters
-    public String getDesc() {
-        return desc;
-    }
-
+    // 在getCode()方法上添加@JsonValue注解，明确指定序列化时只输出 code 的值
+    @JsonValue
     public String getCode() {
         return code;
     }

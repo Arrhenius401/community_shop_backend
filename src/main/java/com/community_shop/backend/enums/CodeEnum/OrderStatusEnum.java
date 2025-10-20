@@ -1,5 +1,8 @@
 package com.community_shop.backend.enums.CodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
 public enum OrderStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
     PENDING_PAYMENT("PENDING_PAYMENT", "待支付"), // 下单后未支付
@@ -15,6 +18,7 @@ public enum OrderStatusEnum {
     ARBITRATION("ARBITRATION", "平台仲裁中"); // 卖家超时未响应售后时的状态
 
     private final String code;
+    @Getter
     private final String desc;
 
     OrderStatusEnum(String code, String desc) {
@@ -23,8 +27,9 @@ public enum OrderStatusEnum {
     }
 
     // getters
+    // 在getCode()方法上添加@JsonValue注解，明确指定序列化时只输出 code 的值
+    @JsonValue
     public String getCode() { return code; }
-    public String getDesc() { return desc; }
 
     // 辅助方法：根据code反向获取枚举对象
     public static OrderStatusEnum getByCode(String code) {

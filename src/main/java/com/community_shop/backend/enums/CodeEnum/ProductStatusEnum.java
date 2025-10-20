@@ -1,5 +1,8 @@
 package com.community_shop.backend.enums.CodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
 public enum ProductStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
     PENDING_REVIEW("PENDING_REVIEW", "待审核"), // 新发布商品（尤其新用户发布），需管理员预审（参考帖子预审逻辑）
@@ -10,6 +13,7 @@ public enum ProductStatusEnum {
     DELETED("DELETED", "已删除"); // 卖家删除商品（逻辑删除，保留交易关联数据）
 
     private final String code; // 用于数据库存储（varchar类型）
+    @Getter
     private final String desc; // 用于前端展示、商品列表筛选
 
     // 构造器
@@ -19,12 +23,10 @@ public enum ProductStatusEnum {
     }
 
     // Getter方法
+    // 在getCode()方法上添加@JsonValue注解，明确指定序列化时只输出 code 的值
+    @JsonValue
     public String getCode() {
         return code;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     // 辅助方法：根据code反向获取枚举对象

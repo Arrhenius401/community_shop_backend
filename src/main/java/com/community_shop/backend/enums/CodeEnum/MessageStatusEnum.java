@@ -1,5 +1,8 @@
 package com.community_shop.backend.enums.CodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
 public enum MessageStatusEnum {
     // code：数据库存储标识（适配varchar类型）；desc：状态描述（用于前端展示/业务逻辑说明）
     // 未读状态：用户尚未查看该消息
@@ -10,6 +13,7 @@ public enum MessageStatusEnum {
     DELETED("DELETED", "已删除");
 
     private final String code;
+    @Getter
     private final String desc;
 
     MessageStatusEnum(String code, String desc) {
@@ -18,12 +22,10 @@ public enum MessageStatusEnum {
     }
 
     // getters
+    // 在getCode()方法上添加@JsonValue注解，明确指定序列化时只输出 code 的值
+    @JsonValue
     public String getCode() {
         return code;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     // 辅助方法：根据code反向获取枚举对象

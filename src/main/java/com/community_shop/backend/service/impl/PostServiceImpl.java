@@ -984,8 +984,8 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
         }
         if (user.isAdmin()){
-            // 管理员不允许将帖子状态设置为草稿，隐藏和删除
-            if (status == PostStatusEnum.DRAFT || status == PostStatusEnum.HIDDEN || status == PostStatusEnum.DELETED) {
+            // 管理员不允许将帖子状态设置为草稿，隐藏
+            if (status == PostStatusEnum.DRAFT || status == PostStatusEnum.HIDDEN) {
                 throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
             }
         } else {

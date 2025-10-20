@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.post;
 
+import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -39,6 +40,9 @@ public class PostListItemDTO {
 
     /** 发布时间 */
     private LocalDateTime createTime;
+
+    /** 帖子状态 */
+    private PostStatusEnum status;
 
     /**
      * 发布者极简信息内部类

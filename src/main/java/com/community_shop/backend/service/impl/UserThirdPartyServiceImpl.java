@@ -10,7 +10,6 @@ import com.community_shop.backend.mapper.UserThirdPartyMapper;
 import com.community_shop.backend.service.base.UserThirdPartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;

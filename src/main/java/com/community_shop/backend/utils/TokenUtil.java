@@ -32,7 +32,7 @@ public class TokenUtil {
 
     /** 密钥 */
     @Value("${jwt.secret}")
-    private static String KEY;
+    private String KEY;
 
     /** 用户服务，用于业务检验TOKEN */
     @Autowired

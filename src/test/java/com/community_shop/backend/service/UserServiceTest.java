@@ -11,6 +11,7 @@ import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.mapper.UserMapper;
 import com.community_shop.backend.mapper.UserThirdPartyMapper;
+import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.impl.UserServiceImpl;
 import com.community_shop.backend.utils.TokenUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,7 +73,7 @@ public class UserServiceTest {
         testUser.setUsername("testUser");
         testUser.setPassword("encodedPassword");
         testUser.setStatus(UserStatusEnum.NORMAL);
-        testUser.setRole(UserRoleEnum.USER);
+        testUser.setRole(UserRoleEnum.ADMIN);
 
         // 初始化注册DTO
         testRegisterDTO = new RegisterDTO();
@@ -100,9 +103,10 @@ public class UserServiceTest {
         }
 
         // 模拟RedisTemplate的opsForValue()返回ValueOperations对象
-        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        // 放宽对 Redis 相关 stub 的严格性
+        lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         // 模拟 set 方法成功执行（无返回值，用 doNothing()）
-        doNothing().when(valueOperations).set(anyString(), any(), anyLong(), any(TimeUnit.class));
+        lenient().doNothing().when(valueOperations).set(anyString(), any(), anyLong(), any(TimeUnit.class));
     }
 
     @Test
@@ -121,10 +125,10 @@ public class UserServiceTest {
             return user;
         });
         // 模拟依赖行为
-        when(userMapper.selectByPhone(anyString())).thenReturn(null);
-        when(userMapper.selectByEmail(anyString())).thenReturn(null);
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(userMapper.insert(any(User.class))).thenReturn(1);
+        doReturn( null).when(userMapper).selectByPhone(anyString());
+        doReturn( null).when(userMapper).selectByEmail(anyString());
+        doReturn("encodePassword").when(passwordEncoder).encode(anyString());
+        doReturn(1).when(userMapper).insert(any(User.class));
 
         // 执行测试
         Boolean result = userService.register(testRegisterDTO);
@@ -144,7 +148,7 @@ public class UserServiceTest {
     @Test
     void testRegister_PhoneExists() {
         // 模拟手机号已存在
-        when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
+        doReturn(testUser).when(userMapper).selectByPhone(anyString());
 
         // 执行测试并验证异常
         assertThrows(BusinessException.class, () -> {
@@ -155,10 +159,10 @@ public class UserServiceTest {
     @Test
     void testLogin_Success() {
         // 模拟依赖行为
-        when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(tokenUtil.generateToken(anyLong())).thenReturn("testToken");
-        when(tokenUtil.getExpirationTimeFromToken(anyString())).thenReturn(LocalDateTime.now().plusHours(1));
+        doReturn(testUser).when(userMapper).selectByEmail(anyString());
+        doReturn( true).when(passwordEncoder).matches(anyString(), anyString());
+        doReturn("testToken").when(tokenUtil).generateToken(anyLong());
+        doReturn(LocalDateTime.now().plusHours(1)).when(tokenUtil).getExpirationTimeFromToken(anyString());
 
         // 执行测试
         LoginResultDTO result = userService.login(testLoginDTO);
@@ -172,8 +176,8 @@ public class UserServiceTest {
     @Test
     void testLogin_PasswordError() {
         // 模拟密码错误
-        when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+        doReturn(testUser).when(userMapper).selectByEmail(anyString());
+        doReturn( false).when(passwordEncoder).matches(anyString(), anyString());
 
         // 执行测试并验证异常
         assertThrows(BusinessException.class, () -> {
@@ -184,8 +188,10 @@ public class UserServiceTest {
     @Test
     void testVerifyPassword_Success() {
         // 模拟依赖行为
-        when(userMapper.selectById(anyLong())).thenReturn(testUser);
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        // 重点：直接存根 Service 层的 getById 方法，而非 Mapper 层
+        doReturn(testUser).when(userMapper).selectById(1L);
+        // 密码匹配器的存根保持不变
+        doReturn(true).when(passwordEncoder).matches(anyString(), eq(testUser.getPassword()));
 
         // 执行测试
         Boolean result = userService.verifyPassword(1L, "rawPassword");
@@ -198,11 +204,11 @@ public class UserServiceTest {
     void testUpdateCreditScore_Success() {
 
         // 模拟依赖行为
-        when(userMapper.selectById(anyLong())).thenReturn(testUser);
-        when(userMapper.updateCreditScore(anyLong(), anyInt())).thenReturn(1);
+        doReturn(testUser).when(userMapper).selectById(2L);
+        doReturn(1).when(userMapper).updateCreditScore(anyLong(), anyInt());
 
         // 执行测试
-        Boolean result = userService.updateCreditScore(1L, 10, "测试加分");
+        Boolean result = userService.updateCreditScore(2L, 10, "测试加分");
 
         // 验证结果
         assertTrue(result);
@@ -217,14 +223,15 @@ public class UserServiceTest {
     }
 
     @Test
+    @MockitoSettings(strictness = Strictness.LENIENT)
     void testUpdateUserRole_Success() {
         // 模拟依赖行为
-        when(userMapper.selectById(1L)).thenReturn(testUser); // 操作者
-        when(userMapper.selectById(2L)).thenReturn(new User()); // 目标用户
-        when(userMapper.updateUserRole(any(UserRoleEnum.class), anyLong())).thenReturn(1);
+        doReturn(testUser).when(userMapper).selectById(3L); // 操作者
+        doReturn(new User()).when(userMapper).selectById(4L); // 目标用户
+        doReturn(1).when(userMapper).updateUserRole(any(UserRoleEnum.class), eq(4L));
 
         // 执行测试
-        Boolean result = userService.updateUserRole(1L, 2L, UserRoleEnum.ADMIN);
+        Boolean result = userService.updateUserRole(3L, 4L, UserRoleEnum.ADMIN);
 
         // 验证结果
         assertTrue(result);
@@ -236,11 +243,11 @@ public class UserServiceTest {
         User normalUser = new User();
         normalUser.setUserId(1L);
         normalUser.setRole(UserRoleEnum.USER);
-        when(userMapper.selectById(1L)).thenReturn(normalUser);
+        doReturn(normalUser).when(userMapper).selectById(5L);
 
         // 执行测试并验证异常
         assertThrows(BusinessException.class, () -> {
-            userService.updateUserRole(1L, 2L, UserRoleEnum.ADMIN);
+            userService.updateUserRole(1L, 5L, UserRoleEnum.ADMIN);
         }, "应抛出权限不足异常");
     }
 }

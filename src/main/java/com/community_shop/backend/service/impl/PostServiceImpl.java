@@ -770,7 +770,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             }
 
             // 1. 优先查询缓存（按设计文档缓存策略）
-            String cacheKey = String.format(CACHE_KEY_POST_DETAIL, postId);
+            String cacheKey = CACHE_KEY_POST_DETAIL + postId;
             PostDetailDTO postDetailDTO = (PostDetailDTO) redisTemplate.opsForValue().get(cacheKey);
             if (Objects.nonNull(postDetailDTO)) {
                 return postDetailDTO;
@@ -832,7 +832,8 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             userPostLikeService.batchDeleteByPostId(postId);
 
             // 4. 清除缓存（帖子详情+热门缓存）
-            redisTemplate.delete(String.format(CACHE_KEY_POST_DETAIL, postId));
+            String cacheKey = CACHE_KEY_POST_DETAIL + postId;
+            redisTemplate.delete(cacheKey);
 
             log.info("删除帖子成功，帖子ID：{}，操作用户：{}（角色：{}）",
                     postId, operatorId, isAdmin ? "管理员" : "作者");

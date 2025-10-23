@@ -27,12 +27,12 @@ public interface EvaluationConvert {
     /**
      * Evaluation 实体 -> EvaluationDetailDTO（评价详情响应）
      * 映射说明：
-     * 1. 实体 evalId 对应 DTO evaluationId
+     * 1. 实体 evalId 对应 DTO evalId
      * 2. 关联商品信息需 Service 层补充
      * 3. 评价人信息需脱敏后赋值
      */
     @Mappings({
-            @Mapping(target = "evaluationId", source = "evalId"),
+            @Mapping(target = "evalId", source = "evalId"),
             @Mapping(target = "evaluator.userId", source = "userId"),
             @Mapping(target = "evaluator.username", ignore = true), // 需脱敏后赋值
             @Mapping(target = "evaluator.avatarUrl", ignore = true), // 需关联 User 实体查询
@@ -49,7 +49,7 @@ public interface EvaluationConvert {
      * 2. 图片列表取前3张作为缩略图
      */
     @Mappings({
-            @Mapping(target = "evaluationId", source = "evalId"),
+            @Mapping(target = "evalId", source = "evalId"),
             @Mapping(target = "contentSummary", expression = "java(getContentSummary(evaluation.getContent()))"),
     })
     EvaluationListItemDTO evaluationToEvaluationListItemDTO(Evaluation evaluation);

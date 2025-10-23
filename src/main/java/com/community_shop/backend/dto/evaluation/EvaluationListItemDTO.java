@@ -13,7 +13,7 @@ import java.util.List;
 public class EvaluationListItemDTO {
 
     /** 评价ID（用于跳转详情） */
-    private Long evaluationId;
+    private Long evalId;
 
     /** 评价人信息 */
     private EvaluatorSimpleDTO evaluator;

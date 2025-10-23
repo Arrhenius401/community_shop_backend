@@ -1,7 +1,9 @@
 package com.community_shop.backend.dto.evaluation;
 
+import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 public class EvaluationDetailDTO {
 
     /** 评价ID */
-    private Long evaluationId;
+    private Long evalId;
 
     /** 订单ID（关联的订单） */
     private Long orderId;
@@ -48,11 +50,15 @@ public class EvaluationDetailDTO {
     /** 评价时间 */
     private LocalDateTime createTime;
 
+    /** 评价状态 */
+    private EvaluationStatusEnum status;
+
 //    /** 追评信息（可选，null表示未追评） */
 //    private AdditionalEvaluationDTO additionalEvaluation;
 
     /** 商品简易信息内部类 */
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductSimpleDTO {
         private Long productId;
@@ -62,6 +68,7 @@ public class EvaluationDetailDTO {
 
     /** 评价人信息内部类（脱敏） */
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class EvaluatorDTO {
         private Long userId;

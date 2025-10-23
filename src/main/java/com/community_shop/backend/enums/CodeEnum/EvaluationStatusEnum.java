@@ -5,11 +5,12 @@ import lombok.Getter;
 
 public enum EvaluationStatusEnum {
     // code：数据库存储标识；desc：状态描述（用于前端展示/开发理解）
-    NORMAL("NORMAL", "正常展示"), // 评价通过校验，无举报/违规，正常显示
-    REPORTED_PENDING("REPORTED_PENDING", "举报待审核"), // 用户发起举报，平台未完成审核（周期24小时）
-    REPORTED_VALID("REPORTED_VALID", "举报成立"), // 审核后确认是虚假评价，标记为违规
-    REPORTED_INVALID("REPORTED_INVALID", "举报不成立"), // 审核后确认评价真实，维持正常展示
-    DELETED("DELETED", "已删除"); // 评价被用户/管理员删除（逻辑删除，保留数据）
+    DRAFT("DRAFT", "草稿"),
+    PENDING("PENDING", "待审核"), // 新用户发帖需审核时的状态
+    NORMAL("NORMAL", "正常"),
+    HIDDEN("HIDDEN", "隐藏"),
+    BLOCKED("BLOCKED", "封禁"),
+    DELETED("DELETED", "已删除"); // 逻辑删除状态
 
     private final String code; // 用于数据库存储（varchar类型）
     @Getter

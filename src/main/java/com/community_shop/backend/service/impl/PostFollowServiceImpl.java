@@ -330,7 +330,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             }
 
             // 3. 管理员或作者权限校验
-            if (!userService.verifyRole(userId, UserRoleEnum.ADMIN) || !postFollow.getUserId().equals(userId)) {
+            if (!userService.verifyRole(userId, UserRoleEnum.ADMIN) && !postFollow.getUserId().equals(userId)) {
                 throw new BusinessException(ErrorCode.PERMISSION_DENIED);
             }
 

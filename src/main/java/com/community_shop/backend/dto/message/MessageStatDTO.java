@@ -2,12 +2,14 @@ package com.community_shop.backend.dto.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 未读消息统计DTO
  * 用于展示用户总未读消息数及各类型未读消息数
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class MessageStatDTO {
 

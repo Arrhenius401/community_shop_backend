@@ -4,11 +4,13 @@ import com.community_shop.backend.enums.CodeEnum.MessageStatusEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 消息状态更新DTO（匹配MessageService.updateMessageStatus方法）
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class MessageStatusUpdateDTO {
 

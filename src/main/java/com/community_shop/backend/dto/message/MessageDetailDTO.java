@@ -3,6 +3,7 @@ package com.community_shop.backend.dto.message;
 import com.community_shop.backend.enums.CodeEnum.MessageStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +43,7 @@ public class MessageDetailDTO {
      */
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class SenderDTO {
         private Long userId;
         private String username;

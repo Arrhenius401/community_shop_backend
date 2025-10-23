@@ -15,12 +15,6 @@ public interface UserPostLikeMapper extends BaseMapper<UserPostLike> {
 
 
     // ==================== 基础操作 ====================
-    /**
-     * 新增点赞记录
-     * @param userPostLike 点赞实体（含用户ID、帖子ID等信息）
-     * @return 影响行数
-     */
-    int insert(UserPostLike userPostLike);
 
     /**
      * 取消点赞（逻辑删除）

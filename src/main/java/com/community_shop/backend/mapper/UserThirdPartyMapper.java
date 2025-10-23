@@ -13,22 +13,6 @@ import java.util.List;
 @Mapper
 public interface UserThirdPartyMapper extends BaseMapper<UserThirdParty> {
 
-    // ==================== 基础CRUD ====================
-    /**
-     * 新增第三方账号绑定记录
-     * @param userThirdParty 第三方关联实体（含用户ID、openid、平台类型等核心字段）
-     * @return 影响行数
-     */
-    int insert(UserThirdParty userThirdParty);
-
-    /**
-     * 通过绑定记录ID查询详情
-     * @param id 自增主键ID
-     * @return 第三方关联实体
-     */
-    UserThirdParty selectById(@Param("id") Long id);
-
-
     // ==================== 关联查询 ====================
     /**
      * 通过平台类型+openid查询有效绑定记录（第三方登录校验）

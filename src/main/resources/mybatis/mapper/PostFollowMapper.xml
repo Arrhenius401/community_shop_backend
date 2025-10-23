@@ -19,37 +19,6 @@
         post_follow_id, post_id, user_id, parent_id, content, status, create_time, update_time
     </sql>
 
-
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.PostFollow">
-        INSERT INTO post_follow (
-            post_id, user_id, parent_id, content, status, create_time, update_time
-        ) VALUES (
-                     #{postId}, #{userId}, #{parentId}, #{content},
-                     #{status.code,jdbcType=VARCHAR},
-                     #{createTime}, #{updateTime}
-                 )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM post_follow WHERE post_follow_id = #{postFollowId}
-    </select>
-
-    <update id="updateById" parameterType="com.community_shop.backend.entity.PostFollow">
-        UPDATE post_follow
-        <set>
-            <if test="content != null">content = #{content},</if>
-            <if test="status != null">status = #{status.code,jdbcType=VARCHAR},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </set>
-        WHERE post_follow_id = #{postFollowId}
-    </update>
-
-    <delete id="deleteById">
-        UPDATE post_follow SET status = 'DELETED' WHERE post_follow_id = #{postFollowId}
-    </delete>
-
-
     <!-- ==================== 关联查询 ==================== -->
     <select id="selectByPostId" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM post_follow

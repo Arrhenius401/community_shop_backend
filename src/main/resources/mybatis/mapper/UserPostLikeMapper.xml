@@ -18,15 +18,6 @@
 
 
     <!-- ==================== 基础操作 ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.UserPostLike">
-        INSERT INTO user_post_like (
-            user_id, post_id, status, create_time
-        ) VALUES (
-                     #{userId}, #{postId},
-                     #{status.code,jdbcType=VARCHAR},
-                     #{createTime}
-                 )
-    </insert>
 
     <delete id="deleteByUserAndPost">
         UPDATE user_post_like

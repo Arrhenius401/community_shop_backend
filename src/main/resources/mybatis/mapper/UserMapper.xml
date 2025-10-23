@@ -26,49 +26,6 @@
     </sql>
 
 
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.User">
-        INSERT INTO user (
-        username, email, phone_number, password, avatar_url, bio, gender, role,
-        credit_score,= interest_tags, activity_time, create_time
-        ) VALUES (
-        #{username}, #{email}, #{phoneNumber}, #{password}, #{avatarUrl}, #{bio},
-        #{gender.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-        #{role.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-        #{creditScore}, #{interestTags,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-        #{activityTime}, #{createTime}
-        )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user WHERE user_id = #{userId}
-    </select>
-
-    <update id="updateById" parameterType="com.community_shop.backend.entity.User">
-        UPDATE user
-        <set>
-            <if test="username != null">username = #{username},</if>
-            <if test="email != null">email = #{email},</if>
-            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
-            <if test="password != null">password = #{password},</if>
-            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
-            <if test="bio != null">bio = #{bio},</if>
-            <if test="gender != null">
-                gender = #{gender.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-            </if>
-            <if test="role != null">
-                role = #{role.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-            </if>
-            <if test="activityTime != null">activity_time = #{activityTime},</if>
-        </set>
-        WHERE user_id = #{userId}
-    </update>
-
-    <delete id="deleteById">
-        DELETE FROM user WHERE user_id = #{userId}
-    </delete>
-
-
     <!-- ==================== 登录与身份校验 ==================== -->
     <select id="selectByUsername" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user WHERE username = #{username}

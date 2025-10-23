@@ -21,20 +21,6 @@
         status, create_time, update_time
     </sql>
 
-
-    <!-- ==================== 基础CRUD ==================== -->
-    <update id="updateById" parameterType="com.community_shop.backend.entity.Evaluation">
-        UPDATE evaluation
-        <set>
-            <if test="content != null">content = #{content},</if>
-            <if test="score != null">score = #{score},</if>
-            <if test="status != null">status = #{status.code,jdbcType=VARCHAR},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </set>
-        WHERE eval_id = #{evalId}
-        AND user_id = #{userId}
-    </update>
-
     <!-- ==================== 关联查询 ==================== -->
     <select id="selectByOrderId" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM evaluation

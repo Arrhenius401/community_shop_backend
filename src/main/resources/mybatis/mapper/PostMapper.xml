@@ -25,48 +25,6 @@
     </sql>
 
 
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.Post">
-        INSERT INTO post (
-        title, content, user_id, like_count, post_follow_count,
-        is_hot, is_essence, is_top, status, create_time, update_time
-        ) VALUES (
-        #{title}, #{content}, #{userId}, #{likeCount}, #{postFollowCount},
-        #{isHot}, #{isEssence}, #{isTop},
-        #{status.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-        #{createTime}, #{updateTime}
-        )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM post WHERE post_id = #{postId}
-    </select>
-
-    <update id="updateById" parameterType="com.community_shop.backend.entity.Post">
-        UPDATE post
-        <set>
-            <if test="title != null">title = #{title},</if>
-            <if test="content != null">content = #{content},</if>
-            <if test="userId != null">user_id = #{userId},</if>
-            <if test="likeCount != null">like_count = #{likeCount},</if>
-            <if test="postFollowCount != null">post_follow_count = #{postFollowCount},</if>
-            <if test="isHot != null">is_hot = #{isHot},</if>
-            <if test="isEssence != null">is_essence = #{isEssence},</if>
-            <if test="isTop != null">is_top = #{isTop},</if>
-            <if test="status != null">
-                status = #{status.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
-            </if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </set>
-        WHERE post_id = #{postId}
-    </update>
-
-    <delete id="deleteById">
-        DELETE FROM post WHERE post_id = #{postId}
-    </delete>
-
-
     <!-- ==================== 列表查询（多维度排序） ==================== -->
     <select id="getAllPostByUserID" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM post

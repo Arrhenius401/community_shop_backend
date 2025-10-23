@@ -21,23 +21,6 @@
     </sql>
 
 
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.UserThirdParty">
-        INSERT INTO user_third_party (
-            user_id, openid, third_type, access_token,
-            bind_time, remark, is_valid
-        ) VALUES (
-                     #{userId}, #{openid}, #{thirdType.code,jdbcType=VARCHAR},
-                     #{accessToken}, #{bindTime}, #{remark}, #{isValid}
-                 )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user_third_party
-        WHERE id = #{id}
-    </select>
-
-
     <!-- ==================== 关联查询 ==================== -->
     <select id="selectByThirdTypeAndOpenid" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM user_third_party

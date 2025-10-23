@@ -17,23 +17,6 @@ import java.util.List;
  */
 public interface MessageMapper extends BaseMapper<Message> {
 
-
-    // ==================== 基础CRUD ====================
-    /**
-     * 新增消息（发送通知）
-     * @param message 消息实体（含接收人ID、类型、内容等核心字段）
-     * @return 影响行数
-     */
-    int insert(Message message);
-
-    /**
-     * 通过消息ID查询消息详情
-     * @param msgId 消息唯一标识
-     * @return 消息完整实体
-     */
-    Message selectById(@Param("msgId") Long msgId);
-
-
     // ==================== 状态更新 ====================
     /**
      * 更新消息阅读状态

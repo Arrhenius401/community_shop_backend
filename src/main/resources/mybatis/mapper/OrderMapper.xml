@@ -32,34 +32,6 @@
         create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time
     </sql>
 
-
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.Order">
-        INSERT INTO `order` (
-            product_id, buyer_id, seller_id, ordrer_no, total_amount, quantity,
-            receiver_name, address, phone_number, buyer_remark, status, pay_type,
-            create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time
-        ) VALUES (
-                     #{productId}, #{buyerId}, #{sellerId}, #{orderNo} #{totalAmount}, #{quantity},
-                     #{receiverName}, #{address}, #{phoneNumber}, #{buyerRemark},
-                     #{status.code,jdbcType=VARCHAR}, #{payType.code,jdbcType=VARCHAR},
-                     #{createTime}, #{payTime}, #{shipTime}, #{receiveTime},
-                     #{cancelTime}, #{payExpireTime}
-                 )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM `order`
-        WHERE order_id = #{orderId}
-    </select>
-
-    <delete id="deleteById">
-        DELETE FROM `order`
-        WHERE order_id = #{orderId}
-          AND status = 'PENDING_PAY' -- 仅允许删除未支付订单
-    </delete>
-
-
     <!-- ==================== 状态与时间更新 ==================== -->
     <update id="updateStatus">
         UPDATE `order`

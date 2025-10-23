@@ -18,34 +18,6 @@ public interface PostMapper extends BaseMapper<Post> {
     //MyBatis 会把 Mapper 接口里的每个方法映射成一个唯一的 SQL 语句
     //映射的键由命名空间（也就是 Mapper 接口的全限定名）和方法名组合而成
 
-    // ==================== 基础CRUD ====================
-    /**
-     * 发布帖子
-     * @param post 帖子实体（含标题、内容、发布者ID等信息）
-     * @return 影响行数
-     */
-    int insert(Post post);
-
-    /**
-     * 通过帖子ID查询帖子详情
-     * @param postId 帖子唯一标识
-     * @return 帖子完整实体
-     */
-    Post selectById(@Param("postId") Long postId);
-
-    /**
-     * 更新帖子完整信息
-     * @param post 帖子实体（含需更新的字段）
-     * @return 影响行数
-     */
-    int updateById(Post post);
-
-    /**
-     * 删除帖子
-     * @param postId 帖子ID
-     * @return 影响行数
-     */
-    int deleteById(@Param("postId") Long postId);
 
     // ==================== 列表查询（多维度排序） ====================
     /**

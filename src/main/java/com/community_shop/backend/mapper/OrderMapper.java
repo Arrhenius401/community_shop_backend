@@ -37,28 +37,6 @@ public interface OrderMapper extends BaseMapper<Order> {
      * "    双引号    &quot;   当属性值用双引号包裹时，内部双引号需转义
      */
 
-    // ==================== 基础CRUD ====================
-    /**
-     * 创建订单（插入订单数据）
-     * @param order 订单实体（含商品ID、买卖双方ID、金额等核心字段）
-     * @return 影响行数
-     */
-    int insert(Order order);
-
-    /**
-     * 通过订单ID查询订单详情
-     * @param orderId 订单唯一标识
-     * @return 订单完整实体
-     */
-    Order selectById(@Param("orderId") Long orderId);
-
-    /**
-     * 删除订单（仅限未支付等特定状态）
-     * @param orderId 订单ID
-     * @return 影响行数
-     */
-    int deleteById(@Param("orderId") Long orderId);
-
 
     // ==================== 状态与时间更新 ====================
     /**

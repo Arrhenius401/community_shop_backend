@@ -29,36 +29,6 @@ public interface UserMapper extends BaseMapper<User> {
      * 用于直接替换SQL片段（如列名、表名、排序方向等）
      */
 
-
-    // ==================== 基础CRUD ====================
-    /**
-     * 插入用户（注册功能）
-     * @param user 用户实体（含用户名、邮箱、手机号、密码等核心信息）
-     * @return 影响行数（1=成功，0=失败）
-     */
-    int insert(User user);
-
-    /**
-     * 通过用户ID查询用户详情
-     * @param userId 用户唯一标识
-     * @return 用户完整实体（含信用分、发帖数等统计字段）
-     */
-    User selectById(@Param("userId") Long userId);
-
-    /**
-     * 通过用户ID更新用户资料
-     * @param user 用户实体（含需更新的字段：用户名、邮箱、头像等）
-     * @return 影响行数
-     */
-    int updateById(User user);
-
-    /**
-     * 通过用户ID注销账号（删除核心数据）
-     * @param userId 用户唯一标识
-     * @return 影响行数
-     */
-    int deleteById(@Param("userId") Long userId);
-
     // ==================== 登录与身份校验 ====================
     /**
      * 通过用户名查询用户（账号密码登录场景）

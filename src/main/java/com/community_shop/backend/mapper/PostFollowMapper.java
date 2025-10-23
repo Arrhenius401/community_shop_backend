@@ -16,37 +16,6 @@ import java.util.List;
 @Mapper
 public interface PostFollowMapper extends BaseMapper<PostFollow> {
 
-
-    // ==================== 基础CRUD ====================
-    /**
-     * 添加帖子评论
-     * @param postFollow 评论实体（含帖子ID、用户ID、评论内容等信息）
-     * @return 影响行数
-     */
-    int insert(PostFollow postFollow);
-
-    /**
-     * 通过评论ID查询评论详情
-     * @param postFollowId 评论唯一标识
-     * @return 评论完整实体
-     */
-    PostFollow selectById(@Param("postFollowId") Long postFollowId);
-
-    /**
-     * 更新评论内容
-     * @param postFollow 评论实体（含需更新的字段）
-     * @return 影响行数
-     */
-    int updateById(PostFollow postFollow);
-
-    /**
-     * 删除评论（逻辑删除，更新状态）
-     * @param postFollowId 评论ID
-     * @return 影响行数
-     */
-    int deleteById(@Param("postFollowId") Long postFollowId);
-
-
     // ==================== 关联查询 ====================
     /**
      * 查询指定帖子的所有跟帖（分页）

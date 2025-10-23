@@ -24,25 +24,6 @@
     </sql>
 
 
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.Message">
-        INSERT INTO message (
-            receiver_id, sender_id, type, is_read, is_deleted,
-            title, content, order_id, create_time, update_time
-        ) VALUES (
-                     #{receiverId}, #{senderId}, #{type.code,jdbcType=VARCHAR},
-                     #{isRead}, #{isDeleted}, #{title}, #{content}, #{orderId},
-                     #{createTime}, #{updateTime}
-                 )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM message
-        WHERE msg_id = #{msgId}
-        AND is_deleted = 0 -- 仅查询未删除的消息
-    </select>
-
-
     <!-- ==================== 状态更新 ==================== -->
     <update id="updateReadStatus">
         UPDATE message

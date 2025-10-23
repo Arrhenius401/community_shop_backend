@@ -16,45 +16,6 @@ import java.util.List;
 @Mapper
 public interface ProductMapper extends BaseMapper<Product> {
 
-    // ==================== 基础CRUD ====================
-    /**
-     * 发布商品（插入商品数据）
-     * @param product 商品实体（含标题、类别、价格等核心字段）
-     * @return 影响行数
-     */
-    int insert(Product product);
-
-    /**
-     * 通过商品ID查询商品详情
-     * @param productId 商品唯一标识
-     * @return 商品完整实体
-     */
-    Product selectById(@Param("productId") Long productId);
-
-    /**
-     * 更新商品完整信息
-     * @param product 商品实体（含需更新的字段）
-     * @return 影响行数
-     */
-    int updateById(Product product);
-
-    /**
-     * 删除商品（逻辑删除，更新status状态）
-     * @param productId 商品ID
-     * @param status 目标状态（如"DELETED"）
-     * @return 影响行数
-     */
-    int deleteById(@Param("productId") Long productId, @Param("status") ProductStatusEnum status);
-
-    /**
-     * 删除商品信息
-     * @param productId 商品ID
-     * @return 删除结果影响行数
-     */
-    @Delete("DELETE FROM product WHERE product_id = #{productId}")
-    int deleteById(Long productId);
-
-
     // ==================== 搜索与筛选 ====================
 
     /**

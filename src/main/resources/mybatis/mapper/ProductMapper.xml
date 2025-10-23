@@ -26,48 +26,6 @@
     </sql>
 
 
-    <!-- ==================== 基础CRUD ==================== -->
-    <insert id="insert" parameterType="com.community_shop.backend.entity.Product">
-        INSERT INTO product (
-            title, description, category, price, stock,
-            `condition`, seller_id, view_count, status,
-            create_time, update_time
-        ) VALUES (
-                     #{title}, #{description}, #{category}, #{price}, #{stock},
-                     #{condition.code,jdbcType=VARCHAR},
-                     #{sellerId}, #{viewCount}, #{status.code,jdbcType=VARCHAR},
-                     #{createTime}, #{updateTime}
-                 )
-    </insert>
-
-    <select id="selectById" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM product
-        WHERE product_id = #{productId}
-    </select>
-
-    <update id="updateById" parameterType="com.community_shop.backend.entity.Product">
-        UPDATE product
-        <set>
-            <if test="title != null">title = #{title},</if>
-            <if test="description != null">description = #{description},</if>
-            <if test="category != null">category = #{category},</if>
-            <if test="price != null">price = #{price},</if>
-            <if test="stock != null">stock = #{stock},</if>
-            <if test="condition != null">`condition` = #{condition.code,jdbcType=VARCHAR},</if>
-            <if test="status != null">status = #{status.code,jdbcType=VARCHAR},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </set>
-        WHERE product_id = #{productId}
-    </update>
-
-    <update id="deleteById">
-        UPDATE product
-        SET status = #{status.code,jdbcType=VARCHAR},
-            update_time = NOW()
-        WHERE product_id = #{productId}
-    </update>
-
-
     <!-- ==================== 搜索与筛选 ==================== -->
     <select id="selectByCondition" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM product

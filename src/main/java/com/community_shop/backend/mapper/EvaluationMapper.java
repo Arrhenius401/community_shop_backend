@@ -14,42 +14,6 @@ import java.util.List;
 @Mapper
 public interface EvaluationMapper extends BaseMapper<Evaluation> {
 
-
-
-    // ==================== 基础CRUD ====================
-    /**
-     * 提交评价（插入评价数据）
-     * @param evaluation 评价实体（含订单ID、评价者ID、评分等核心字段）
-     * @return 影响行数
-     */
-    @Insert("INSERT INTO evaluation (order_id, buyer_id, seller_id, score, content, status, create_time, update_time)" +
-            "VALUES (#{orderId}, #{buyerId}, #{sellerId}, #{score}, #{content}, #{status}, #{createTime}, #{updateTime})")
-    int insert(Evaluation evaluation);
-
-    /**
-     * 通过评价ID查询评价详情
-     * @param evalId 评价唯一标识
-     * @return 评价完整实体
-     */
-    @Select("SELECT * FROM evaluation WHERE eval_id = #{evalId}")
-    Evaluation selectById(@Param("evalId") Long evalId);
-
-    /**
-     * 更新评价信息（评价者编辑场景）
-     * @param evaluation 评价实体（含需更新的字段）
-     * @return 影响行数
-     */
-    int updateById(Evaluation evaluation);
-
-    /**
-     * 删除评价详情
-     * @param evalId 评价ID
-     * @return 删除结果影响行数
-     */
-    @Delete("DELETE FROM evaluation WHERE eval_id = #{evalId}")
-    int deleteById(Long evalId);
-
-
     // ==================== 关联查询 ====================
     /**
      * 通过订单ID查询评价（判断是否已评价）

@@ -135,7 +135,7 @@ public enum ErrorCode {
 
     STOCK_INSUFFICIENT("ORDER_021", "商品库存不足"),
 
-    ORDER_STATUS_NOT_COMPLETED("ORDER_005", "订单未完成"),
+    ORDER_NOT_COMPLETED("ORDER_005", "订单未完成"),
 
 
     // 评价模块

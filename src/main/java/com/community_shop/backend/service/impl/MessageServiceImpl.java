@@ -140,10 +140,11 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
                 messageDetailDTO.setSender(new MessageDetailDTO.SenderDTO(
                         message.getSenderId(), "未知", null)
                 );
+            } else {
+                messageDetailDTO.setSender(new MessageDetailDTO.SenderDTO(
+                        message.getSenderId(), sender.getUsername(), sender.getAvatarUrl())
+                );
             }
-            messageDetailDTO.setSender(new MessageDetailDTO.SenderDTO(
-                    message.getSenderId(), sender.getUsername(), sender.getAvatarUrl())
-            );
 
             return messageDetailDTO;
 

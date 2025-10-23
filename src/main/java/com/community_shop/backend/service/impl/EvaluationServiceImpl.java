@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class EvaluationServiceImpl implements EvaluationService {
+public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Evaluation> implements EvaluationService {
 
     // 缓存相关常量
     private static final String CACHE_KEY_SELLER_AVG_SCORE = "evaluation:seller:avgScore:"; // 卖家平均评分缓存Key前缀
@@ -219,7 +219,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                     .map(eval -> {
                         EvaluationListItemDTO listDTO = new EvaluationListItemDTO();
                         // 评价基础信息
-                        listDTO.setEvaluationId(eval.getEvalId());
+                        listDTO.setEvalId(eval.getEvalId());
                         listDTO.setScore(eval.getScore());
                         listDTO.setCreateTime(eval.getCreateTime());
 //                        listDTO.setHelpfulCount(eval.getHelpfulCount());
@@ -364,6 +364,8 @@ public class EvaluationServiceImpl implements EvaluationService {
             throw new BusinessException(ErrorCode.DATA_DELETE_FAILED);
         }
 
+        // 后期可能添加的删除缓存位置
+
         log.info("删除评价成功，ID：{}，操作人：{}", evalId, operatorId);
         return true;
     }
@@ -390,11 +392,11 @@ public class EvaluationServiceImpl implements EvaluationService {
         scoreDTO.setAverageScore(avgScore != null ? avgScore : 0.0);
 
         // 4. 统计各星级数量
-        int fiveStar = evaluationMapper.countProductScoreLevel(sellerId, 5, 5);
-        int fourStar = evaluationMapper.countProductScoreLevel(sellerId, 4, 4);
-        int threeStar = evaluationMapper.countProductScoreLevel(sellerId, 3, 3);
-        int twoStar = evaluationMapper.countProductScoreLevel(sellerId, 2, 2);
-        int oneStar = evaluationMapper.countProductScoreLevel(sellerId, 1, 1);
+        int fiveStar = evaluationMapper.countSellerScoreLevel(sellerId, 5, 5);
+        int fourStar = evaluationMapper.countSellerScoreLevel(sellerId, 4, 4);
+        int threeStar = evaluationMapper.countSellerScoreLevel(sellerId, 3, 3);
+        int twoStar = evaluationMapper.countSellerScoreLevel(sellerId, 2, 2);
+        int oneStar = evaluationMapper.countSellerScoreLevel(sellerId, 1, 1);
 
         // 5. 设置星级统计数据
         scoreDTO.setFiveStarCount(fiveStar);
@@ -409,6 +411,9 @@ public class EvaluationServiceImpl implements EvaluationService {
         int negativeCount = twoStar + oneStar;
         scoreDTO.setPositiveRate(total > 0 ? (double) positiveCount / total * 100 : 0.0);
         scoreDTO.setNegativeRate(total > 0 ? (double) negativeCount / total * 100 : 0.0);
+        scoreDTO.setTotalCount(total);
+
+        // 未来可添加缓存模块
 
         log.info("计算卖家评分完成，卖家ID：{}，总评价数：{}，平均评分：{}",
                 sellerId, total, scoreDTO.getAverageScore());
@@ -427,7 +432,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         scoreDTO.setProductId(productId);
 
         // 3. 查询平均评分
-        Double avgScore = evaluationMapper.selectSellerAverageScore(productId);
+        Double avgScore = evaluationMapper.selectProductAverageScore(productId);
         scoreDTO.setAverageScore(avgScore != null ? avgScore : 0.0);
 
         // 4. 统计各星级数量
@@ -450,6 +455,9 @@ public class EvaluationServiceImpl implements EvaluationService {
         int negativeCount = twoStar + oneStar;
         scoreDTO.setPositiveRate(total > 0 ? (double) positiveCount / total * 100 : 0.0);
         scoreDTO.setNegativeRate(total > 0 ? (double) negativeCount / total * 100 : 0.0);
+        scoreDTO.setTotalCount(total);
+
+        // 未来可添加缓存模块
 
         log.info("计算商品评分完成，商品ID：{}，总评价数：{}，平均评分：{}",
                 productId, total, scoreDTO.getAverageScore());
@@ -579,7 +587,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         if (!OrderStatusEnum.COMPLETED.equals(order.getStatus())) {
             log.error("提交评价失败，订单状态非已完成，订单ID：{}，当前状态：{}",
                     order.getOrderId(), order.getStatus());
-            throw new BusinessException(ErrorCode.ORDER_STATUS_NOT_COMPLETED);
+            throw new BusinessException(ErrorCode.ORDER_NOT_COMPLETED);
         }
     }
 

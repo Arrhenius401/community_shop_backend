@@ -5,12 +5,12 @@ import lombok.Getter;
 
 public enum PostFollowStatusEnum {
     // code：数据库存储标识（适配varchar类型）；desc：状态描述（用于前端展示/业务逻辑说明）
-    NORMAL("NORMAL", "正常展示"), // 跟帖内容合规，无举报/违规，在帖子详情页正常显示（支持用户查看、互动）
-    REPORTED_PENDING("REPORTED_PENDING", "举报待审核"), // 用户发起跟帖举报（参考评价举报逻辑），平台未完成审核（可沿用24小时审核周期）
-    REPORTED_VALID("REPORTED_VALID", "举报成立-隐藏"), // 审核确认跟帖违规（如含不良信息），管理员标记后隐藏，普通用户不可见
-    REPORTED_INVALID("REPORTED_INVALID", "举报不成立-恢复展示"), // 审核确认跟帖合规，维持/恢复正常展示状态
-    ADMIN_HIDDEN("ADMIN_HIDDEN", "管理员手动隐藏"), // 管理员直接发现违规跟帖（未触发用户举报），手动隐藏（如广告、恶意评论）
-    DELETED("DELETED", "用户/管理员删除"); // 跟帖发布者主动删除，或管理员强制删除（逻辑删除，保留数据用于违规统计）
+    DRAFT("DRAFT", "草稿"),
+    PENDING("PENDING", "待审核"), // 新用户发帖需审核时的状态
+    NORMAL("NORMAL", "正常"),
+    HIDDEN("HIDDEN", "隐藏"),
+    BLOCKED("BLOCKED", "封禁"),
+    DELETED("DELETED", "已删除"); // 逻辑删除状态
 
     private final String code; // 核心标识，用于MySQL varchar字段存储
     @Getter

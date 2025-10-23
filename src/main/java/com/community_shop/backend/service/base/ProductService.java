@@ -30,7 +30,6 @@ public interface ProductService extends BaseService<Product> {
      * @param userId 操作用户ID（卖家或管理员）
      * @param productId 待删除商品ID
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.ProductMapper#deleteById(Long)
      */
     Boolean deleteProduct(Long userId, Long productId);
 

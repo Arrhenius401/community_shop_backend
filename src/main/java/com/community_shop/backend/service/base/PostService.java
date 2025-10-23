@@ -84,7 +84,6 @@ public interface PostService extends BaseService<Post> {
      * @param userId 操作用户ID
      * @param postId 帖子ID（主键）
      * @return 含发布者信息的帖子详情
-     * @see com.community_shop.backend.mapper.PostMapper#selectById(Long)
      * @see UserService#selectUserById(Long)
      */
     PostDetailDTO selectPostById(Long userId, Long postId);
@@ -95,7 +94,6 @@ public interface PostService extends BaseService<Post> {
      * @param operatorId 操作用户ID（作者或管理员）
      * @param postId 待删除帖子ID
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.PostMapper#deleteById(Long)
      * @see com.community_shop.backend.mapper.UserPostLikeMapper#batchDeleteByPostId(Long)
      */
     Boolean deletePostById(Long operatorId, Long postId);
@@ -132,7 +130,6 @@ public interface PostService extends BaseService<Post> {
      * @param postId 帖子ID
      * @param status 帖子状态
      * @return 修改成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.PostMapper#updateById(Post)
      */
     Boolean updatePostStatus(Long operatorId, Long postId, PostStatusEnum status);
 }

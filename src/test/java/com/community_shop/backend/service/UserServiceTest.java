@@ -11,7 +11,6 @@ import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.mapper.UserMapper;
 import com.community_shop.backend.mapper.UserThirdPartyMapper;
-import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.impl.UserServiceImpl;
 import com.community_shop.backend.utils.TokenUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -241,9 +240,17 @@ public class UserServiceTest {
     void testUpdateUserRole_NoPermission() {
         // 模拟非管理员操作
         User normalUser = new User();
-        normalUser.setUserId(1L);
+        normalUser.setUserId(1L);  // 操作者ID是1L
         normalUser.setRole(UserRoleEnum.USER);
-        doReturn(normalUser).when(userMapper).selectById(5L);
+        // 修正：为操作者ID(1L)添加stub
+        doReturn(normalUser).when(userMapper).selectById(1L);
+
+        // 目标用户ID是5L
+        // 但在代码执行过程中，会在 verifyRole() 处爆出异常,不会去查询目标用户（5L）的信息
+        // 因此 selectById(5L) 的 stub 定义了但未被使用，成为不必要的 stub
+//        User targetUser = new User();
+//        targetUser.setUserId(5L);
+//        doReturn(targetUser).when(userMapper).selectById(5L);
 
         // 执行测试并验证异常
         assertThrows(BusinessException.class, () -> {

@@ -1,6 +1,8 @@
 package com.community_shop.backend.service.impl;
 
 import com.community_shop.backend.convert.OrderConvert;
+import com.community_shop.backend.convert.ProductConvert;
+import com.community_shop.backend.convert.UserConvert;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.message.MessageSendDTO;
 import com.community_shop.backend.dto.order.*;
@@ -23,6 +25,7 @@ import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -58,6 +61,10 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
     private static final long CACHE_TTL_ORDER = 30; // 订单缓存有效期（分钟）
     private static final long CACHE_TTL_ORDER_LIST = 15; // 订单列表缓存有效期（分钟）
 
+    // 支付相关常量
+    @Value("${pay.callback.secret}")
+    private static String ORDER_PAY_CALLBACK_SECRET;
+
     // 信用分最低要求（下单）
     private static final Integer MIN_CREDIT_FOR_ORDER = 60;
 
@@ -77,7 +84,14 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
     private OrderConvert orderConvert;
 
     @Autowired
+    private ProductConvert productConvert;
+
+    @Autowired
+    private UserConvert userConvert;
+
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
     @Autowired
     private OrderService orderService;
 
@@ -116,8 +130,10 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
                         "商品库存不足，当前库存：" + product.getStock());
             }
             // 金额一致性校验（防止前端篡改）
-            BigDecimal actualAmount = product.getPrice().multiply(BigDecimal.valueOf(orderCreateDTO.getQuantity()));
-            if ((actualAmount.subtract(orderCreateDTO.getTotalAmount()).abs().compareTo(BigDecimal.valueOf(0.01))) < 0) {
+            BigDecimal actualAmount = product.getPrice().multiply(BigDecimal.valueOf(orderCreateDTO.getQuantity()));// 计算理论金额与提交金额的差值绝对值
+            BigDecimal diff = actualAmount.subtract(orderCreateDTO.getTotalAmount()).abs();
+            // 当差值 >= 0.01时，判定为异常（不允许超过1分钱的误差）
+            if (diff.compareTo(new BigDecimal("0.01")) >= 0) {
                 throw new BusinessException(ErrorCode.ORDER_AMOUNT_ABNORMAL, "订单金额异常，请重新下单");
             }
 
@@ -144,9 +160,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             }
 
             // 6. 生成支付信息（模拟支付链接，实际项目对接第三方支付接口）
-            OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
-//            orderDetail.setPayUrl(generatePayUrl(order.getOrderNo(), orderCreateDTO.getPayType()));
-//            orderDetail.setPayExpireTime(LocalDateTime.now().plusMinutes(PAY_EXPIRE_MINUTES));
+            OrderDetailDTO orderDetail = this.OrderToOrderDetailDTO(order);
 
             // 7. 缓存订单详情
             redisTemplate.opsForValue().set(
@@ -261,7 +275,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             }
 
             // 2. 签名校验（防止回调伪造，使用系统统一签名密钥）
-            boolean signValid = SignUtil.verifySign(payCallbackDTO, "ORDER_PAY_CALLBACK_SECRET");
+            boolean signValid = SignUtil.verifySign(payCallbackDTO, ORDER_PAY_CALLBACK_SECRET);
             if (!signValid) {
                 log.error("支付回调签名验证失败，订单号：{}", payCallbackDTO.getOrderNo());
                 return "fail:签名验证失败";
@@ -291,7 +305,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             // 6. 更新订单支付信息
             order.setStatus(OrderStatusEnum.PAID);
             order.setPayTime(LocalDateTime.now());
-            order.setPayType(PayTypeEnum.valueOf(payCallbackDTO.getPayType()));
 //            order.setPayNo(payCallbackDTO.getPayNo()); // 第三方支付流水号
             int updateCount = orderMapper.updateById(order);
             if (updateCount != 1) {
@@ -358,21 +371,13 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             // 5. 更新订单发货信息
             order.setStatus(OrderStatusEnum.SHIPPED);
             order.setShipTime(LocalDateTime.now());
-//            order.setExpressCompany(shipDTO.getExpressCompany());
-//            order.setExpressNo(shipDTO.getExpressNo());
-//            order.setShipRemark(shipDTO.getShipRemark());
             int updateCount = orderMapper.updateById(order);
             if (updateCount != 1) {
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED, "订单发货状态更新失败");
             }
 
             // 6. 转换为DTO并补充商品信息
-            OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
-//            Product product = productMapper.selectById(order.getProductId());
-//            if (product != null) {
-//                orderDetail.setProductName(product.getTitle());
-//                orderDetail.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
-//            }
+            OrderDetailDTO orderDetail = this.OrderToOrderDetailDTO(order);
 
             // 7. 缓存更新后的订单详情
             redisTemplate.opsForValue().set(
@@ -440,12 +445,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             }
 
             // 6. 转换为DTO并补充商品信息
-            OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
-//            Product product = productService.getById(order.getProductId());
-//            if (product != null) {
-//                orderDetail.setProductName(product.getTitle());
-//                orderDetail.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
-//            }
+            OrderDetailDTO orderDetail = this.OrderToOrderDetailDTO(order);
 
             // 7. 缓存更新后的订单详情
             redisTemplate.opsForValue().set(
@@ -488,7 +488,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             OrderDetailDTO orderDetail = (OrderDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
             if (orderDetail != null) {
                 // 缓存中存在，先校验权限
-                validateOrderPermission(userId, orderDetail.getBuyerId(), orderDetail.getSellerId());
+                validateOrderPermission(userId, orderDetail.getBuyer().getUserId(), orderDetail.getSeller().getUserId());
                 return orderDetail;
             }
 
@@ -501,13 +501,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             // 4. 权限校验（买家/卖家/管理员可查看）
             validateOrderPermission(userId, order.getBuyerId(), order.getSellerId());
 
-            // 5. 转换为DTO并补充商品信息
-            orderDetail = orderConvert.orderToOrderDetailDTO(order);
-//            Product product = productMapper.selectById(order.getProductId());
-//            if (product != null) {
-//                orderDetail.setProductName(product.getTitle());
-//                orderDetail.setProductImage(product.getImageUrls().length > 0 ? product.getImageUrls()[0] : "");
-//            }
+            // 5. 转换为DTO
+            orderDetail = this.OrderToOrderDetailDTO(order);
 
             // 6. 缓存订单详情
             redisTemplate.opsForValue().set(
@@ -782,6 +777,33 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
     }
 
     // ---------------------- 私有辅助方法 ----------------------
+
+    private OrderDetailDTO OrderToOrderDetailDTO(Order order) {
+
+        // 1. 转换为DTO
+        OrderDetailDTO orderDetail = orderConvert.orderToOrderDetailDTO(order);
+        orderDetail.initDefaultValue();
+
+        // 2. 补充商品信息
+        Product product = productService.getById(order.getProductId());
+        if(product != null) {
+            orderDetail.setProduct(productConvert.productToProductSimpleDTO(product));
+        }
+
+        // 3.补充买家信息
+        User buyer = userService.getById(order.getBuyerId());
+        if(buyer != null){
+            orderDetail.setBuyer(userConvert.userToBuyerSimpleDTO(buyer));
+        }
+
+        // 4. 补充卖家信息
+        User seller = userService.getById(order.getSellerId());
+        if(seller != null){
+            orderDetail.setSeller(userConvert.userToSellerSimpleDTO(seller));
+        }
+
+        return orderDetail;
+    }
 
     /**
      * 校验订单创建参数

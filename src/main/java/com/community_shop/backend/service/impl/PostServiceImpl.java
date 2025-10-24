@@ -782,12 +782,18 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
                 throw new BusinessException(ErrorCode.POST_NOT_EXISTS);
             }
 
-            // 3. 封装详情DTO
+            // 3. 权限检验（仅管理员和作者可以看到状态异常的帖子）
+            if(post.getStatus() != PostStatusEnum.NORMAL &&
+                    (!userService.verifyRole(userId, UserRoleEnum.ADMIN) && !userId.equals(post.getUserId()))){
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+            }
+
+            // 4. 封装详情DTO
             User publisher = userService.getById(post.getUserId());
             Boolean isliked = userPostLikeService.isLiked(userId, postId);
             postDetailDTO = buildPostDetailDTO(post, publisher, isliked);
 
-            // 4. 更新缓存
+            // 5. 更新缓存
             redisTemplate.opsForValue().set(cacheKey, postDetailDTO, CACHE_TTL_POST_DETAIL, TimeUnit.HOURS);
             return postDetailDTO;
         } catch (BusinessException e) {

@@ -3,7 +3,9 @@ package com.community_shop.backend.dto.order;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -12,20 +14,12 @@ import java.time.LocalDateTime;
  * - 数据库order表+order_item表关联查询结果
  * - Service层规则：详情需包含商品列表、收货信息、支付状态等完整数据
  */
+@NoArgsConstructor
 @Data
 public class OrderDetailDTO {
 
     /** 订单ID */
     private Long orderId;
-
-    /** 商品ID */
-    private Long productId;
-
-    /** 订单所属用户ID */
-    private Long buyerId;
-
-    /** 订单所属卖家ID */
-    private Long sellerId;
 
     /** 订单编号 */
     private String orderNo;
@@ -34,10 +28,10 @@ public class OrderDetailDTO {
     private Integer quantity;
 
     /** 订单总金额 */
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
-//    /** 支付金额（实际支付，可能含优惠） */
-//    private Double payAmount;
+    /** 支付金额（实际支付，可能含优惠） */
+    private BigDecimal payAmount;
 
     /** 收货信息 */
     private String address;
@@ -60,22 +54,75 @@ public class OrderDetailDTO {
     /** 订单备注 */
     private String remark;
 
-    /** 订单状态（枚举：PENDING-待支付；PAID-已支付；SHIPPED-已发货；RECEIVED-已收货；CANCELLED-已取消） */
+    /** 订单状态 */
     private OrderStatusEnum status;
 
     /** 支付方式（ALIPAY/WECHAT） */
     private PayTypeEnum payType;
 
-//    /**
-//     * 买家简易信息内部类
-//     */
-//    @Data
-//    public static class UserSimpleDTO {
-//        private Long userId;
-//        private String username;
-//        private String phone; // 脱敏展示，如138****5678
-//    }
-//
+    /** 买家简易信息 */
+    private BuyerSimpleDTO buyer;
+
+    /** 卖家简易信息 */
+    private SellerSimpleDTO seller;
+
+    /** 订单商品简易信息 */
+    private ProductSimpleDTO product;
+
+    /**
+     * 买家简易信息内部类
+     */
+    @Data
+    public static class BuyerSimpleDTO {
+        private Long userId;
+        private String username;
+        private String phone; // 脱敏展示，如138****5678
+    }
+
+
+    /**
+     * 买家简易信息内部类
+     */
+    @Data
+    public static class SellerSimpleDTO {
+        private Long userId;
+        private String username;
+        private String phone; // 脱敏展示，如138****5678
+    }
+
+    /**
+     * 订单商品详情内部类
+     */
+    @Data
+    public static class ProductSimpleDTO {
+        private Long productId; // 商品ID
+        private String title;
+        private Integer quantity;
+        private BigDecimal price; // 单项总价（unitPrice*quantity）
+    }
+
+    /**
+     * 初始化默认值
+     */
+    public void initDefaultValue() {
+        this.buyer = new BuyerSimpleDTO();
+        this.seller = new SellerSimpleDTO();
+        this.product = new ProductSimpleDTO();
+
+        this.buyer.setUserId(-1L);
+        this.buyer.setUsername("未知");
+        this.buyer.setPhone("未知");
+
+        this.seller.setUserId(-1L);
+        this.seller.setUsername("未知");
+        this.seller.setPhone("未知");
+
+        this.product.setPrice(BigDecimal.ZERO);
+        this.product.setQuantity(0);
+        this.product.setTitle("未知");
+        this.product.setProductId(-1L);
+    }
+
 //    /**
 //     * 收货地址信息内部类
 //     */
@@ -84,19 +131,5 @@ public class OrderDetailDTO {
 //        private String receiverName;
 //        private String receiverPhone;
 //        private String fullAddress; // 省+市+区+详细地址
-//    }
-//
-//    /**
-//     * 订单商品详情内部类
-//     */
-//    @Data
-//    public static class OrderItemDetailDTO {
-//        private Long itemId; // 订单项ID
-//        private Long productId;
-//        private String productName;
-//        private String productImage; // 商品图片
-//        private Double unitPrice; // 购买时单价
-//        private Integer quantity;
-//        private Double totalPrice; // 单项总价（unitPrice*quantity）
 //    }
 }

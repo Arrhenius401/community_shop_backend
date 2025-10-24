@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -55,9 +57,6 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private EvaluationService evaluationService;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -293,7 +292,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             }
 
             // 3. 验证权限（必须是商品所属卖家或者管理员）
-            if (!Objects.equals(product.getSellerId(), userID) || userService.verifyRole(userID, UserRoleEnum.ADMIN)) {
+            if (!Objects.equals(product.getSellerId(), userID) && !userService.verifyRole(userID, UserRoleEnum.ADMIN)) {
                 throw new BusinessException(ErrorCode.PERMISSION_DENIED);
             }
 
@@ -430,6 +429,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
 
     /**
      * 商品详情查询（同时自增浏览量）
+     * 普通用户查看
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
@@ -455,7 +455,14 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             }
 
             // 4. 验证商品状态（已下架商品不能查看详情）
-            if (ProductStatusEnum.OFF_SHELF_PERMANENT.equals(product.getStatus())) {
+            List<ProductStatusEnum> statusList = Arrays.asList(
+                    ProductStatusEnum.PENDING,
+                    ProductStatusEnum.OFF_SHELF,
+                    ProductStatusEnum.DELETED,
+                    ProductStatusEnum.BLOCKED,
+                    ProductStatusEnum.HIDDEN
+            );
+            if (statusList.contains(product.getStatus())) {
                 throw new BusinessException(ErrorCode.PRODUCT_ALREADY_OFF_SALE);
             }
 
@@ -499,7 +506,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
         }
 
         // 价格校验
-        if (publishDTO.getPrice() == null || publishDTO.getPrice() <= 0) {
+        if (publishDTO.getPrice() == null || publishDTO.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ErrorCode.PRODUCT_PRICE_INVALID);
         }
 
@@ -542,7 +549,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
         }
 
         // 价格校验（如果有更新）
-        if (updateDTO.getPrice() != null && updateDTO.getPrice() <= 0) {
+        if (updateDTO.getPrice() != null && updateDTO.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ErrorCode.PRODUCT_PRICE_INVALID);
         }
 

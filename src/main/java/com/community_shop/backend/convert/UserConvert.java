@@ -1,5 +1,7 @@
 package com.community_shop.backend.convert;
 
+import com.community_shop.backend.dto.order.OrderDetailDTO;
+import com.community_shop.backend.dto.post.PostDetailDTO;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
@@ -77,7 +79,25 @@ public interface UserConvert {
     UserThirdParty thirdPartyBindDtoToUserThirdParty(ThirdPartyBindDTO dto);
 
     /**
-     * UserThirdParty 实体 -> BindingItemDTO（第三方绑定列表项）
+     * User 实体 -> OrderDetailDTO.BuyerSimpleDTO（订单详情中的买家信息）
+     * 映射说明：仅返回部分字段，忽略部分字段
+     */
+    OrderDetailDTO.BuyerSimpleDTO userToBuyerSimpleDTO(User user);
+
+    /**
+     * User 实体 -> OrderDetailDTO.SellerSimpleDTO（订单详情中的卖家信息）
+     * 映射说明：仅返回部分字段，忽略部分字段
+     */
+    OrderDetailDTO.SellerSimpleDTO userToSellerSimpleDTO(User user);
+
+    /**
+     * User 实体 -> PostDetailDTO.PublisherDTO（帖子详情中的发布者信息）
+     * 映射说明：仅返回部分字段，忽略部分字段
+     */
+    PostDetailDTO.PublisherDTO userToPostDetailPublisherDTO(User user);
+
+    /**
+     * UserThirdParty 实体 -> ThirdPartyBindingListDTO.BindingItemDTO（第三方绑定列表项）
      * 映射说明：对 openid 进行脱敏处理（示例：微信用户 ****1234）
      */
     @Mappings({

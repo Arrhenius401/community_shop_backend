@@ -1,5 +1,6 @@
 package com.community_shop.backend.convert;
 
+import com.community_shop.backend.dto.order.OrderDetailDTO;
 import com.community_shop.backend.dto.product.*;
 import com.community_shop.backend.entity.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,6 +60,11 @@ public interface ProductConvert {
             @Mapping(target = "createTime", ignore = true), // 创建时间不可修改
     })
     void updateProductFromUpdateDto(ProductUpdateDTO dto, @MappingTarget Product product);
+
+    /**
+     * Product 列表 -> OrderDetailDTO.ProductSimpleDTO
+     */
+    OrderDetailDTO.ProductSimpleDTO productToProductSimpleDTO(Product product);
 
     /**
      * 批量转换 Product 列表 -> ProductDetailDTO 列表

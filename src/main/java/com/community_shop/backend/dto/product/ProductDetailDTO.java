@@ -3,6 +3,7 @@ package com.community_shop.backend.dto.product;
 import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -24,7 +25,7 @@ public class ProductDetailDTO {
     private String category;
 
     /** 商品单价 */
-    private Double price;
+    private BigDecimal price;
 
     /** 剩余库存 */
     private Integer stock;

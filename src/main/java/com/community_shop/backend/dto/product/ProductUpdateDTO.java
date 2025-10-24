@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -39,7 +40,7 @@ public class ProductUpdateDTO {
      */
     @NotNull(message = "价格不能为空")
     @DecimalMin(value = "0.0", inclusive = false, message = "价格必须大于0")
-    private Double price;
+    private BigDecimal price;
 
     /**
      * 商品库存

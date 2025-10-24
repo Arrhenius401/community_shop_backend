@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * 商品列表项DTO
  */
@@ -24,7 +26,7 @@ public class ProductListItemDTO {
     /** 商品单价（非空，必须大于0） */
     @NotNull(message = "商品单价不能为空")
     @Positive(message = "商品单价必须大于0")
-    private Double price;
+    private BigDecimal price;
 
     /** 库存数量（非空，必须大于0） */
     @NotNull(message = "库存数量不能为空")

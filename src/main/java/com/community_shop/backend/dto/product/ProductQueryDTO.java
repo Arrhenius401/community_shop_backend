@@ -7,6 +7,8 @@ import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * 商品搜索条件DTO（匹配ProductService.selectProductByKeyword及Mapper层selectByCondition）
  */
@@ -20,10 +22,10 @@ public class ProductQueryDTO extends PageParam {
     private String category;
 
     /** 最低价格（价格区间下限） */
-    private Double minPrice;
+    private BigDecimal minPrice;
 
     /** 最高价格（价格区间上限） */
-    private Double maxPrice;
+    private BigDecimal maxPrice;
 
     /** 商品成色（精确筛选，如“全新”“9成新”） */
     private ProductConditionEnum condition;

@@ -1,5 +1,6 @@
 package com.community_shop.backend.dto.order;
 
+import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ public class PayCallbackDTO {
     /**
      * 支付方式（如：WECHAT_PAY, ALIPAY, UNION_PAY等）
      */
-    private String payType;
+    private PayTypeEnum payType;
 
     /**
      * 第三方支付流水号

@@ -1,46 +1,94 @@
--- 1. 帖子表（Post实体，枚举字段status存储code，对应PostStatusEnum）
-DROP TABLE IF EXISTS `post`;
-CREATE TABLE `post` (
-                        post_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                        user_id BIGINT NOT NULL COMMENT '发布者ID（关联user表user_id）',
-                        like_count INT DEFAULT 0 COMMENT '点赞数',
-                        post_follow_count INT DEFAULT 0 COMMENT '跟帖数',
-                        title VARCHAR(100) NOT NULL COMMENT '帖子标题',
-                        content TEXT NOT NULL COMMENT '帖子内容',
-                        create_time DATETIME NOT NULL COMMENT '发布时间',
-                        update_time DATETIME COMMENT '修改时间',
-                        is_hot BOOLEAN DEFAULT FALSE COMMENT '是否热门帖',
-                        is_essence BOOLEAN DEFAULT FALSE COMMENT '是否精华帖',
-                        is_top BOOLEAN DEFAULT FALSE COMMENT '是否置顶帖',
-                        status VARCHAR(20) NOT NULL DEFAULT 'NORMAL' COMMENT '帖子状态（枚举PostStatusEnum的code：NORMAL/OFF_SHELF）',
-                        FOREIGN KEY (user_id) REFERENCES `user`(user_id)
-) COMMENT '社区帖子表';
+-- 1. 初始化帖子数据（枚举字段status使用枚举code）
+INSERT INTO `post` (user_id, like_count, post_follow_count, title, content, create_time, is_hot, is_essence, is_top, status)
+VALUES
+-- 置顶精华帖（status=NORMAL，用于PostMapper.selectTopPosts测试）
+(
+    3,  -- test_admin的user_id=3
+    100,
+    20,
+    '【置顶】社区交易规则',
+    '规范交易行为，维护社区环境...',
+    '2024-01-01 08:30:00',
+    TRUE,
+    TRUE,
+    TRUE,
+    'NORMAL'  -- PostStatusEnum.NORMAL的code
+),
+-- 普通用户帖子（status=NORMAL，用于PostMapper.selectByUserId测试）
+(
+    1,  -- test_buyer的user_id=1
+    30,
+    5,
+    '求推荐二手安卓手机',
+    '预算3000左右，求性价比高的机型',
+    '2024-01-02 11:00:00',
+    FALSE,
+    FALSE,
+    FALSE,
+    'NORMAL'
+),
+-- 下架帖子（status=OFF_SHELF，用于PostMapper.updateStatus测试）
+(
+    1,
+    5,
+    1,
+    '闲置物品转让（已售）',
+    '闲置书架，自提100元',
+    '2024-01-03 15:00:00',
+    FALSE,
+    FALSE,
+    FALSE,
+    'OFF_SHELF'  -- PostStatusEnum.OFF_SHELF的code
+);
 
--- 2. 跟帖表（PostFollow实体，枚举字段status存储code，对应PostFollowStatusEnum）
-DROP TABLE IF EXISTS `post_follow`;
-CREATE TABLE `post_follow` (
-                               post_follow_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                               post_id BIGINT NOT NULL COMMENT '所属帖子ID（关联post表post_id）',
-                               user_id BIGINT NOT NULL COMMENT '跟帖者ID（关联user表user_id）',
-                               parent_id BIGINT DEFAULT 0 COMMENT '父跟帖ID（0=顶级跟帖，非0=嵌套回复）',
-                               content TEXT NOT NULL COMMENT '跟帖内容',
-                               like_count INT DEFAULT 0 COMMENT '跟帖点赞数',
-                               create_time DATETIME NOT NULL COMMENT '发布时间',
-                               update_time DATETIME COMMENT '修改时间',
-                               status VARCHAR(20) DEFAULT 'NORMAL' COMMENT '跟帖状态（枚举PostFollowStatusEnum的code：NORMAL/HIDDEN）',
-                               FOREIGN KEY (post_id) REFERENCES `post`(post_id),
-                               FOREIGN KEY (user_id) REFERENCES `user`(user_id)
-) COMMENT '帖子跟帖表';
+-- 2. 初始化跟帖数据（枚举字段status使用枚举code）
+INSERT INTO `post_follow` (post_id, user_id, parent_id, content, like_count, create_time, status)
+VALUES
+-- 顶级跟帖（status=NORMAL）
+(
+    1,  -- 置顶帖post_id=1
+    2,  -- test_seller的user_id=2
+    0,
+    '支持规则，共同维护社区！',
+    15,
+    '2024-01-01 09:00:00',
+    'NORMAL'  -- PostFollowStatusEnum.NORMAL的code
+),
+-- 嵌套回复（status=NORMAL）
+(
+    1,
+    1,
+    1,  -- 父跟帖ID=1
+    '纠纷处理流程在哪看？',
+    3,
+    '2024-01-01 09:10:00',
+    'NORMAL'
+),
+-- 隐藏跟帖（status=HIDDEN，用于PostFollowMapper.updateStatus测试）
+(
+    2,  -- 普通帖子post_id=2
+    4,  -- 封禁用户user_id=4
+    0,
+    '违规广告内容',
+    0,
+    '2024-01-02 11:30:00',
+    'HIDDEN'  -- PostFollowStatusEnum.HIDDEN的code
+);
 
--- 3. 帖子点赞表（UserPostLike实体，枚举字段status存储code，对应LikeStatusEnum）
-DROP TABLE IF EXISTS `user_post_like`;
-CREATE TABLE `user_post_like` (
-                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                  user_id BIGINT NOT NULL COMMENT '用户ID（关联user表user_id）',
-                                  post_id BIGINT NOT NULL COMMENT '帖子ID（关联post表post_id）',
-                                  like_time DATETIME NOT NULL COMMENT '点赞时间',
-                                  status VARCHAR(20) DEFAULT 'ACTIVE' COMMENT '点赞状态（枚举LikeStatusEnum的code：ACTIVE/CANCELLED）',
-                                  FOREIGN KEY (user_id) REFERENCES `user`(user_id),
-                                  FOREIGN KEY (post_id) REFERENCES `post`(post_id),
-                                  UNIQUE KEY uk_user_post (user_id, post_id)  -- 避免重复点赞
-) COMMENT '用户帖子点赞关联表';
+-- 3. 初始化点赞数据（枚举字段status使用枚举code）
+INSERT INTO `user_post_like` (user_id, post_id, like_time, status)
+VALUES
+-- 有效点赞（status=ACTIVE，用于UserPostLikeMapper.selectByUserAndPost测试）
+(
+    1,
+    2,  -- 普通帖子post_id=2
+    '2024-01-02 11:10:00',
+    'ACTIVE'  -- LikeStatusEnum.ACTIVE的code
+),
+-- 取消点赞（status=CANCELLED，用于UserPostLikeMapper.deleteByUserAndPost测试）
+(
+    1,
+    3,  -- 下架帖子post_id=3
+    '2024-01-03 15:10:00',
+    'CANCELLED'  -- LikeStatusEnum.CANCELLED的code
+);

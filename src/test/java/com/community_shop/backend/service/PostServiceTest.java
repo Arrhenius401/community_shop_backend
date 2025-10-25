@@ -359,7 +359,7 @@ public class PostServiceTest {
         when(userService.getById(1L)).thenReturn(testAdminUser);
         when(postMapper.selectById(1001L)).thenReturn(testPost);
         when(postMapper.countTopPosts()).thenReturn(4); // 当前置顶4篇（未达上限5篇）
-        when(postMapper.updatePostStatus(1001L, true, true)).thenReturn(1);
+        when(postMapper.updatePostEssenceAndTop(1001L, true, true)).thenReturn(1);
 
         // 2. 执行测试方法
         Boolean result = postService.setEssenceOrTop(1L, testEssenceTopDTO);
@@ -369,7 +369,7 @@ public class PostServiceTest {
 
         // 4. 验证依赖调用
         verify(postMapper, times(1)).countTopPosts();
-        verify(postMapper, times(1)).updatePostStatus(1001L, true, true);
+        verify(postMapper, times(1)).updatePostEssenceAndTop(1001L, true, true);
         verify(redisTemplate, times(2)).delete(anyString()); // 清除帖子详情+置顶列表缓存
     }
 

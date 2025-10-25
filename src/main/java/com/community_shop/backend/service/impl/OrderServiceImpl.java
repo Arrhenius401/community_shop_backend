@@ -92,9 +92,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
-    private OrderService orderService;
-
 
     /**
      * 创建订单（支持单商品）
@@ -420,7 +417,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
 
             // 2. 订单校验（优先查缓存）
             OrderDetailDTO cacheOrder = (OrderDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_ORDER + orderId);
-            Order order = cacheOrder != null ? orderService.getById(cacheOrder.getOrderId()) : orderMapper.selectById(orderId);
+            Order order = cacheOrder != null ? getById(cacheOrder.getOrderId()) : orderMapper.selectById(orderId);
             if (order == null) {
                 throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
             }

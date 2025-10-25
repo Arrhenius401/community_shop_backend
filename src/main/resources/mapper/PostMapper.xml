@@ -155,20 +155,6 @@
 
 
     <!-- ==================== 管理功能 ==================== -->
-    <update id="updatePostStatus">
-        UPDATE post
-        SET status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
-        WHERE post_id = #{postID}
-    </update>
-
-    <update id="updatePostStatus" parameterType="map">
-        UPDATE post
-        <set>
-            <if test="isEssence != null">is_essence = #{isEssence},</if>
-            <if test="isTop != null">is_top = #{isTop},</if>
-        </set>
-        WHERE post_id = #{postId}
-    </update>
 
     <update id="updatePostContent">
         UPDATE post

@@ -14,7 +14,6 @@
         <result column="gender" property="gender"/> <!-- 自动匹配GenderEnumTypeHandler -->
         <result column="role" property="role"/> <!-- 自动匹配UserRoleEnumTypeHandler -->
         <result column="credit_score" property="creditScore"/>
-        <result column="interest_tags" property="interestTags"/> <!-- 自动匹配ListStringTypeHandler -->
         <result column="activity_time" property="activityTime"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
@@ -22,33 +21,33 @@
     <!-- 基础字段SQL片段，减少冗余 -->
     <sql id="Base_Column_List">
         user_id, username, email, phone_number, password, avatar_url, bio, gender, role,
-        credit_score, interest_tags, activity_time, create_time
+        credit_score, activity_time, create_time
     </sql>
 
 
     <!-- ==================== 登录与身份校验 ==================== -->
     <select id="selectByUsername" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user WHERE username = #{username}
+        SELECT <include refid="Base_Column_List"/> FROM `user` WHERE username = #{username}
     </select>
 
     <select id="selectByPhone" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user WHERE phone_number = #{phoneNumber}
+        SELECT <include refid="Base_Column_List"/> FROM `user` WHERE phone_number = #{phoneNumber}
     </select>
 
     <select id="selectByEmail" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user WHERE email = #{email}
+        SELECT <include refid="Base_Column_List"/> FROM `user` WHERE email = #{email}
     </select>
 
 
     <!-- ==================== 信用分与统计 ==================== -->
     <update id="updateCreditScore">
-        UPDATE user SET credit_score = #{score} WHERE user_id = #{userId}
+        UPDATE `user` SET credit_score = #{score} WHERE user_id = #{userId}
     </update>
 
 
     <!-- ==================== 条件查询 ==================== -->
     <select id="getUsersByAllParam" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user
+        SELECT <include refid="Base_Column_List"/> FROM `user`
         <where>
             <if test="compareIndex != null and compareParam != null">
                 ${compareIndex} = #{compareParam}
@@ -61,13 +60,13 @@
     </select>
 
     <select id="selectByRole" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user
+        SELECT <include refid="Base_Column_List"/> FROM `user`
         WHERE role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
     </select>
 
     <!-- 1. 多条件统计用户总数 -->
     <select id="countByQuery" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultType="java.lang.Integer">
-        SELECT COUNT(1) FROM user
+        SELECT COUNT(1) FROM `user`
         <where>
             <!-- 条件1：状态筛选 -->
             <if test="status != null">
@@ -77,15 +76,7 @@
             <if test="role != null">
                 role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
             </if>
-            <!-- 条件3：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
-            <if test="interestTags != null and interestTags.size() > 0">
-                AND (
-                <foreach collection="interestTags" item="tag" separator="OR">
-                    FIND_IN_SET(#{tag,jdbcType=VARCHAR}, interest_tags)
-                </foreach>
-                )
-            </if>
-            <!-- 条件4：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
+            <!-- 条件3：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
             <if test="filterField != null and filterValue != null">
                 AND ${filterField} = #{filterValue,jdbcType=VARCHAR}
             </if>
@@ -94,7 +85,7 @@
 
     <!-- 2. 多条件查询用户列表（支持标签、筛选、排序、分页） -->
     <select id="selectByQuery" parameterType="com.community_shop.backend.dto.user.UserQueryDTO" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM user
+        SELECT <include refid="Base_Column_List"/> FROM `user`
         <where>
             <!-- 条件1：状态筛选 -->
             <if test="status != null">
@@ -103,14 +94,6 @@
             <!-- 条件2：角色筛选 -->
             <if test="role != null">
                 role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
-            </if>
-            <!-- 条件3：兴趣标签匹配（支持多个标签，满足任一标签即匹配） -->
-            <if test="interestTags != null and interestTags.size() > 0">
-                AND (
-                <foreach collection="interestTags" item="tag" separator="OR">
-                    FIND_IN_SET(#{tag,jdbcType=VARCHAR}, interest_tags)
-                </foreach>
-                )
             </if>
             <!-- 条件4：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
             <if test="filterField != null and filterValue != null">

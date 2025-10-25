@@ -76,7 +76,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param newPassword 新密码
      * @return 影响行数
      */
-    @Update("UPDATE user SET password = #{newPassword} WHERE user_id = #{userId}")
+    @Update("UPDATE `user` SET password = #{newPassword} WHERE user_id = #{userId}")
     int updatePassword(@Param("userId") Long userId, @Param("newPassword") String newPassword);
 
     /**
@@ -85,7 +85,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param status
      * @return
      */
-    @Update("UPDATE homework_web.user SET status = #{status} where user_id = #{userID}")
+    @Update("UPDATE `user` SET status = #{status} where user_id = #{userID}")
     int updateUserStatus(Long userID, UserStatusEnum status);
 
     /**
@@ -94,14 +94,14 @@ public interface UserMapper extends BaseMapper<User> {
      * @param id
      * @return
      */
-    @Update("UPDATE user SET role = #{role} WHERE user_id = #{id}")
+    @Update("UPDATE `user` SET role = #{role} WHERE user_id = #{id}")
     int updateUserRole(UserRoleEnum role, Long id);
 
     /**
      * 获取用户总数
      * @return 用户总数
      */
-    @Select("SELECT COUNT(1) FROM user")
+    @Select("SELECT COUNT(1) FROM `user`")
     int getCount();
 
     // ==================== 条件查询 ====================

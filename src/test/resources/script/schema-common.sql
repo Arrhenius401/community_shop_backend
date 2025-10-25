@@ -1,3 +1,6 @@
+-- 0. 纯测试环境专用：清空数据库所有对象（表、约束、索引等），消除依赖问题
+DROP ALL OBJECTS;
+
 -- 1. 用户表（User实体，枚举字段status/role存储枚举code，对应UserStatusEnum/UserRoleEnum）
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (

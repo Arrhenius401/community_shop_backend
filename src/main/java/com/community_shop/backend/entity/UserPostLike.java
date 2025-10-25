@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
  * 用户帖子点赞关系实体类
  */
 @Data
+@NoArgsConstructor
 @TableName("user_post_like")
 public class UserPostLike {
 
@@ -25,20 +27,6 @@ public class UserPostLike {
     private Long postId;
 
     /** 点赞时间 */
-    private LocalDateTime likeTime;
+    private LocalDateTime createTime;
 
-    public UserPostLike(){}
-
-    public UserPostLike(Long userId, Long postId, LocalDateTime likeTime) {
-        this.userId = userId;
-        this.postId = postId;
-        this.likeTime = likeTime;
-    }
-
-    public UserPostLike(Long id, Long userId, Long postId, LocalDateTime likeTime) {
-        this.id = id;
-        this.userId = userId;
-        this.postId = postId;
-        this.likeTime = likeTime;
-    }
 }

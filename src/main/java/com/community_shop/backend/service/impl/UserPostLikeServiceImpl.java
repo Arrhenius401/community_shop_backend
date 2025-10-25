@@ -79,7 +79,7 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             UserPostLike userPostLike = new UserPostLike();
             userPostLike.setUserId(userId);
             userPostLike.setPostId(postId);
-            userPostLike.setLikeTime(LocalDateTime.now());
+            userPostLike.setCreateTime(LocalDateTime.now());
             int insertRows = userPostLikeMapper.insert(userPostLike);
             if (insertRows <= 0) {
                 log.error("点赞失败，插入记录异常，用户ID：{}，帖子ID：{}", userId, postId);

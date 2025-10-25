@@ -69,9 +69,6 @@ public interface UserPostLikeMapper extends BaseMapper<UserPostLike> {
      * @param userId 用户ID
      * @return 帖子ID列表（按点赞时间倒序）
      */
-    @Select("SELECT post_id FROM user_post_like " +
-            "WHERE user_id = #{userId} " +
-            "ORDER BY like_time DESC")
     List<Long> selectPostIdsByUserId(Long userId);
 
     /**

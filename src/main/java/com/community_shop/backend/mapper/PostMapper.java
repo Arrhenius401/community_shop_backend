@@ -137,7 +137,8 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param postID 帖子ID
      * @param status 帖子状态
      */
-    void updatePostStatus(@Param("postID") Long postID, @Param("status") String status);
+    @Update("UPDATE post SET status = #{status} WHERE post_id = #{postID}")
+    int updatePostStatus(@Param("postID") Long postID, @Param("status") String status);
 
     /**
      * 设置帖子为精华/置顶
@@ -146,7 +147,8 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param isTop 是否置顶
      * @return 影响行数
      */
-    int updatePostStatus(
+    @Update("UPDATE post SET is_essence = #{isEssence}, is_top = #{isTop}, update_time = #{updateTime} WHERE post_id = #{postId}")
+    int updatePostEssenceAndTop(
             @Param("postId") Long postId,
             @Param("isEssence") boolean isEssence,
             @Param("isTop") boolean isTop

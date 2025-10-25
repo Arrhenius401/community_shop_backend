@@ -267,7 +267,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
                     UserPostLike userPostLike = new UserPostLike();
                     userPostLike.setUserId(userId);
                     userPostLike.setPostId(postId);
-                    userPostLike.setLikeTime(LocalDateTime.now());
+                    userPostLike.setCreateTime(LocalDateTime.now());
                     userPostLikeService.save(userPostLike);
                     likeCountChange = 1;
                     // 增加用户当日点赞次数
@@ -360,7 +360,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             }
 
             // 5. 执行状态更新（精华/置顶）
-            int updateRows = postMapper.updatePostStatus(postId, isEssence, isTop);
+            int updateRows = postMapper.updatePostEssenceAndTop(postId, isEssence, isTop);
             if (updateRows <= 0) {
                 log.error("设置帖子精华/置顶失败，数据库更新无生效行数，参数：{}", postEssenceTopDTO);
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);

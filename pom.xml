@@ -119,13 +119,13 @@
             <optional>true</optional>
         </dependency>
 
-        <!--    mail    -->
+        <!-- mail -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!--    redis    -->
+        <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -167,7 +167,7 @@
             <version>1.6.15</version> <!-- 适配Spring Boot 2.7.x -->
         </dependency>
 
-        <!-- 单元测试核心依赖 -->
+        <!-- JUnit 单元测试核心依赖 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -195,6 +195,14 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- MyBatis 测试支持 -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter-test</artifactId>
+            <version>2.3.1</version>
             <scope>test</scope>
         </dependency>
 

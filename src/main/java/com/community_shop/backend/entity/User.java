@@ -88,12 +88,6 @@ public class User{
      */
     private GenderEnum gender;
 
-    /**
-     * 兴趣标签（如"数码""二手交易"）
-     * 对应文档5原字段：interestTags；文档1个人资料编辑需求
-     */
-    private List<String> interestTags;
-
     // ===================== 3. 社区与交易统计信息（文档4业务关联字段） =====================
     //对象创建阶段：当 ORM 框架（如 MyBatis、Hibernate）从数据库查询数据时，会先通过无参构造方法创建一个实体对象，此时 postCount 会被初始化为 0。
     //数据映射阶段：框架会根据查询结果，将数据库中 post_count 字段的值（假设有值 5）通过反射或 setter 方法赋值给 postCount 字段，覆盖初始值 0。

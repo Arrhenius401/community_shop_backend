@@ -27,7 +27,7 @@ VALUES
     FALSE,
     'NORMAL'
 ),
--- 下架帖子（status=OFF_SHELF，用于PostMapper.updateStatus测试）
+-- 隐藏帖子（status=OFF_SHELF，用于PostMapper.updateStatus测试）
 (
     1,
     5,
@@ -38,7 +38,7 @@ VALUES
     FALSE,
     FALSE,
     FALSE,
-    'OFF_SHELF'  -- PostStatusEnum.OFF_SHELF的code
+    'HIDDEN'  -- PostStatusEnum.HIDDEN的code
 );
 
 -- 2. 初始化跟帖数据（枚举字段status使用枚举code）
@@ -88,7 +88,7 @@ VALUES
 -- 取消点赞（status=CANCELLED，用于UserPostLikeMapper.deleteByUserAndPost测试）
 (
     1,
-    3,  -- 下架帖子post_id=3
+    3,  -- 隐藏帖子post_id=3
     '2024-01-03 15:10:00',
     'CANCELLED'  -- LikeStatusEnum.CANCELLED的code
 );

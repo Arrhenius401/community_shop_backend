@@ -12,7 +12,7 @@ CREATE TABLE `post` (
                         is_hot BOOLEAN DEFAULT FALSE COMMENT '是否热门帖',
                         is_essence BOOLEAN DEFAULT FALSE COMMENT '是否精华帖',
                         is_top BOOLEAN DEFAULT FALSE COMMENT '是否置顶帖',
-                        status VARCHAR(20) NOT NULL DEFAULT 'NORMAL' COMMENT '帖子状态（枚举PostStatusEnum的code：NORMAL/OFF_SHELF）',
+                        status VARCHAR(20) NOT NULL DEFAULT 'NORMAL' COMMENT '帖子状态（枚举PostStatusEnum的code：NORMAL/HIDDEN）',
                         FOREIGN KEY (user_id) REFERENCES `user`(user_id)
 ) COMMENT '社区帖子表';
 

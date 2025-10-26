@@ -13,6 +13,7 @@
         <result column="bio" property="bio"/>
         <result column="gender" property="gender"/> <!-- 自动匹配GenderEnumTypeHandler -->
         <result column="role" property="role"/> <!-- 自动匹配UserRoleEnumTypeHandler -->
+        <result column="status" property="status"/> <!-- 自动匹配UserStatusEnumTypeHandler -->
         <result column="credit_score" property="creditScore"/>
         <result column="activity_time" property="activityTime"/>
         <result column="create_time" property="createTime"/>
@@ -20,7 +21,7 @@
 
     <!-- 基础字段SQL片段，减少冗余 -->
     <sql id="Base_Column_List">
-        user_id, username, email, phone_number, password, avatar_url, bio, gender, role,
+        user_id, username, email, phone_number, password, avatar_url, bio, gender, `role`, `status`,
         credit_score, activity_time, create_time
     </sql>
 
@@ -46,22 +47,10 @@
 
 
     <!-- ==================== 条件查询 ==================== -->
-    <select id="getUsersByAllParam" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM `user`
-        <where>
-            <if test="compareIndex != null and compareParam != null">
-                ${compareIndex} = #{compareParam}
-            </if>
-        </where>
-        <if test="order != null and direction != null">
-            ORDER BY ${order} ${direction}
-        </if>
-        LIMIT #{offset}, #{limit}
-    </select>
 
     <select id="selectByRole" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM `user`
-        WHERE role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+        WHERE `role` = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
     </select>
 
     <!-- 1. 多条件统计用户总数 -->
@@ -74,7 +63,7 @@
             </if>
             <!-- 条件2：角色筛选 -->
             <if test="role != null">
-                role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+                AND `role` = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
             </if>
             <!-- 条件3：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
             <if test="filterField != null and filterValue != null">
@@ -93,7 +82,7 @@
             </if>
             <!-- 条件2：角色筛选 -->
             <if test="role != null">
-                role = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+                AND `role` = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
             </if>
             <!-- 条件4：筛选字段+筛选值匹配（如creditScore=80、postCount=5） -->
             <if test="filterField != null and filterValue != null">

@@ -105,24 +105,6 @@ public interface UserMapper extends BaseMapper<User> {
     int getCount();
 
     // ==================== 条件查询 ====================
-    /**
-     * 多条件组合查询用户
-     * @param compareIndex 筛选字段（如"credit_score"、"post_count"）
-     * @param compareParam 筛选参数（如"100"、"5"）
-     * @param order 排序字段（如"create_time"、"follower_count"）
-     * @param direction 排序方向（ASC/DESC）
-     * @param limit 每页条数
-     * @param offset 偏移量（从第几条开始查询）
-     * @return 符合条件的用户分页列表
-     */
-    List<User> getUsersByAllParam(
-            @Param("compareIndex") String compareIndex,
-            @Param("compareParam") String compareParam,
-            @Param("order") String order,
-            @Param("direction") String direction,
-            @Param("limit") int limit,
-            @Param("offset") int offset
-    );
 
     /**
      * 按角色查询用户（管理员权限管理场景）

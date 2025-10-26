@@ -5,6 +5,7 @@ import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
 import com.community_shop.backend.enums.SortEnum.ProductSortFieldEnum;
 import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,6 +15,10 @@ import java.math.BigDecimal;
  */
 @Data
 public class ProductQueryDTO extends PageParam {
+
+    /** 卖家ID（当前登录卖家） */
+    @NotNull(message = "卖家ID不能为空")
+    private Long sellerId;
 
     /** 搜索关键词（模糊匹配标题/描述） */
     private String keyword;

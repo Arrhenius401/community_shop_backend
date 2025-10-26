@@ -16,4 +16,10 @@ public class PageParam {
     /** 偏移量（默认0） */
     private Integer offset = 0;
 
+    /**
+     * 计算偏移量
+     */
+    public void setOffset() {
+        this.offset = (this.pageNum - 1) * this.pageSize;
+    }
 }

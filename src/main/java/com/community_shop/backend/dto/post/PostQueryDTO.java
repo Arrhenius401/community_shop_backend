@@ -22,6 +22,15 @@ public class PostQueryDTO extends PageParam {
     /** 帖子状态 */
     private PostStatusEnum status;
 
+    /** 是否为热门帖 */
+    private Boolean isHot;
+
+    /** 是否为置顶帖 */
+    private Boolean isTop;
+
+    /** 是否为精华帖 */
+    private Boolean isEssence;
+
     /** 排序字段（枚举：CREATE_TIME-发布时间；LIKE_COUNT-点赞数；COMMENT_COUNT-评论数） */
     @NotNull(message = "排序字段不能为空")
     private PostSortFieldEnum sortField = PostSortFieldEnum.CREATE_TIME;

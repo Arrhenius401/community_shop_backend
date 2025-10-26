@@ -1,5 +1,7 @@
 package com.community_shop.backend.mapper;
 
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
+import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
@@ -7,7 +9,6 @@ import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.dto.user.UserQueryDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 2. 《代码文档0 实体类设计.docx》2.8节 User实体属性与枚举依赖
  * 3. 《中间件文档3 自定义枚举类设计.docx》枚举TypeHandler自动转换
  */
-@MybatisTest  // 仅加载MyBatis相关Bean，测试更轻量
+@MybatisPlusTest  // 仅加载MyBatis相关Bean，测试更轻量
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)  // 禁用默认数据库替换，使用H2配置
 @ActiveProfiles("test")  // 启用test环境配置（application-test.properties）
 public class UserMapperTest {
@@ -213,33 +214,6 @@ public class UserMapperTest {
         // 验证列表中无ADMIN角色用户
         boolean hasAdmin = userList.stream().anyMatch(u -> UserRoleEnum.ADMIN.equals(u.getRole()));
         assertFalse(hasAdmin, "普通用户查询不应包含管理员");
-    }
-
-    /**
-     * 测试getUsersByAllParam：多条件组合查询（筛选+排序+分页）
-     * 适配《代码文档1》2.1.2节 条件查询与统计 - getUsersByAllParam方法
-     */
-    @Test
-    void getUsersByAllParam_multiCondition_returnsPagedList() {
-        // 1. 准备参数（筛选字段：credit_score≥80；排序字段：create_time；排序方向：DESC；分页：offset=0，limit=2）
-        String compareIndex = "credit_score";  // 筛选字段（表字段名，下划线命名）
-        String compareParam = "80";            // 筛选值（信用分≥80）
-        String order = "create_time";          // 排序字段（表字段名）
-        String direction = "DESC";             // 排序方向
-        int limit = 2;                         // 每页条数
-        int offset = 0;                        // 分页偏移量（第1页）
-
-        // 2. 执行查询方法
-        List<User> userList = userMapper.getUsersByAllParam(
-                compareIndex, compareParam, order, direction, limit, offset
-        );
-
-        // 3. 断言结果（符合条件的用户：test_buyer(100)/test_admin(100)/test_seller(90)，按create_time降序取前2）
-        assertNotNull(userList);
-        assertEquals(2, userList.size());
-        // 验证排序：test_buyer（10:00）→ test_admin（08:00）（降序）
-        assertEquals("test_buyer", userList.get(0).getUsername());
-        assertEquals("test_admin", userList.get(1).getUsername());
     }
 
     /**

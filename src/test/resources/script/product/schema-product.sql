@@ -10,7 +10,8 @@ CREATE TABLE `product` (
                            stock INT NOT NULL DEFAULT 0 COMMENT '库存数量',
                            view_count INT DEFAULT 0 COMMENT '浏览量',
                            create_time DATETIME NOT NULL COMMENT '发布时间',
+                           update_time DATETIME COMMENT '修改时间',
                            status VARCHAR(20) NOT NULL DEFAULT 'ON_SALE' COMMENT '商品状态（枚举ProductStatusEnum的code：ON_SALE/OFF_SHELF/OUT_OF_STOCK）',
-                           `condition` VARCHAR(20) COMMENT '商品成色（枚举ProductConditionEnum的code：NEW/USED_95/USED_9/USED_8）',
+                           `condition` VARCHAR(32) COMMENT '商品成色（枚举ProductConditionEnum的code：NEW/NINETY_FIVE_PERCENT_NEW/NINETY_PERCENT_NEW/EIGHTY_PERCENT_NEW）',
                            FOREIGN KEY (seller_id) REFERENCES `user`(user_id)
 ) COMMENT '商品信息表';

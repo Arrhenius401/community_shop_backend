@@ -81,18 +81,18 @@ public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 更新用户状态
-     * @param userID
-     * @param status
-     * @return
+     * @param userID 用户ID
+     * @param status 状态枚举（NORMAL/BANNED）
+     * @return 影响行数
      */
     @Update("UPDATE `user` SET status = #{status} where user_id = #{userID}")
     int updateUserStatus(Long userID, UserStatusEnum status);
 
     /**
      * 更新用户角色
-     * @param role
-     * @param id
-     * @return
+     * @param role 角色枚举（USER/ADMIN）
+     * @param id 用户ID
+     * @return 更新行数
      */
     @Update("UPDATE `user` SET role = #{role} WHERE user_id = #{id}")
     int updateUserRole(UserRoleEnum role, Long id);

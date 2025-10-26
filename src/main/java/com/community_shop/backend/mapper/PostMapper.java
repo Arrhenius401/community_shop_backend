@@ -3,6 +3,7 @@ package com.community_shop.backend.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.dto.post.PostQueryDTO;
 import com.community_shop.backend.entity.Post;
+import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
@@ -74,37 +75,18 @@ public interface PostMapper extends BaseMapper<Post> {
     List<Post> selectTopPosts(@Param("limit") int limit);
 
     /**
-     * 多条件分页查询帖子
-     * @param keyword 关键词
-     * @param status 帖子状态
-     * @param offset 偏移量
-     * @param limit 每页条数
-     * @param orderBy 排序字段
-     * @param direction 排序方向
-     * @return 帖子分页列表
-     */
-    List<Post> selectByCondition(
-            @Param("keyword") String keyword,
-            @Param("status") String status,
-            @Param("offset") int offset,
-            @Param("limit") int limit,
-            @Param("orderBy") String orderBy,
-            @Param("direction") String direction
-    );
-
-    /**
      * 根据查询条件统计帖子数量
      * @param queryDTO 查询条件DTO
      * @return 符合条件的帖子总数
      */
-    int countByQuery(@Param("query") PostQueryDTO queryDTO);
+    int countByQuery(PostQueryDTO queryDTO);
 
     /**
      * 根据查询条件分页查询帖子列表
      * @param queryDTO 查询条件DTO（含分页参数、关键词、排序条件等）
      * @return 帖子列表
      */
-    List<Post> selectByQuery(@Param("query") PostQueryDTO queryDTO);
+    List<Post> selectByQuery(PostQueryDTO queryDTO);
 
 
     // ==================== 互动数据更新 ====================
@@ -188,7 +170,7 @@ public interface PostMapper extends BaseMapper<Post> {
      */
     int batchUpdateStatus(
             @Param("postIds") List<Long> postIds,
-            @Param("status") String status
+            @Param("status") PostStatusEnum status
     );
 
 

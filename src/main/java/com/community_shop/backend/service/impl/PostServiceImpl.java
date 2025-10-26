@@ -496,7 +496,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             }
 
             // 4. 批量逻辑删除帖子（更新状态为DELETED）
-            int deleteRows = postMapper.batchUpdateStatus(validPostIds, PostStatusEnum.DELETED.name());
+            int deleteRows = postMapper.batchUpdateStatus(validPostIds, PostStatusEnum.DELETED);
             if (deleteRows <= 0) {
                 log.error("批量删除帖子失败，数据库更新无生效行数，有效帖子ID：{}", validPostIds);
                 throw new BusinessException(ErrorCode.DATA_DELETE_FAILED);

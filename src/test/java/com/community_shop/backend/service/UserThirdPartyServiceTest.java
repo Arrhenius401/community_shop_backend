@@ -51,14 +51,14 @@ public class UserThirdPartyServiceTest {
         when(userMapper.selectById(anyLong())).thenReturn(testUser);
         when(userThirdPartyMapper.selectByThirdTypeAndOpenid(any(), anyString())).thenReturn(null);
         when(userThirdPartyMapper.selectValidByUserId(anyLong())).thenReturn(List.of());
-        when(userThirdPartyMapper.insert(any())).thenReturn(1);
+        when(userThirdPartyMapper.insert(any(UserThirdParty.class))).thenReturn(1);
 
         // 执行测试
         Boolean result = thirdPartyService.bind(1L, testBindDTO);
 
         // 验证结果
         assertTrue(result);
-        verify(userThirdPartyMapper, times(1)).insert(any());
+        verify(userThirdPartyMapper, times(1)).insert(any(UserThirdParty.class));
     }
 
     @Test

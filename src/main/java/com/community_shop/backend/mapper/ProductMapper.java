@@ -20,30 +20,11 @@ public interface ProductMapper extends BaseMapper<Product> {
 
     /**
      * 验证卖家ID是否存在
-     * @param sellerId
-     * @return
+     * @param sellerId 卖家ID
+     * @return 是否存在（count > 0）
      */
-    @Select("SELECT * FROM product WHERE seller_id = #{sellerId}")
+    @Select("SELECT COUNT(1) FROM product WHERE seller_id = #{sellerId}")
     int verifySellerExists(@Param("sellerId") Long sellerId);
-
-    /**
-     * 多条件分页查询商品（按类别、价格、成色筛选）
-     * @param category 商品类别（如"二手手机"）
-     * @param minPrice 最低价格
-     * @param maxPrice 最高价格
-     * @param condition 商品成色（枚举）
-     * @param offset 偏移量
-     * @param limit 每页条数
-     * @return 商品分页列表
-     */
-    List<Product> selectByCondition(
-            @Param("category") String category,
-            @Param("minPrice") Double minPrice,
-            @Param("maxPrice") Double maxPrice,
-            @Param("condition") ProductConditionEnum condition,
-            @Param("offset") int offset,
-            @Param("limit") int limit
-    );
 
     /**
      * 按关键词模糊搜索商品
@@ -64,21 +45,6 @@ public interface ProductMapper extends BaseMapper<Product> {
      * @return 商品总数
      */
     int countByKeyword(@Param("keyword") String keyword);
-
-    /**
-     * 统计多条件筛选后的商品总数
-     * @param category 商品类别
-     * @param minPrice 最低价格
-     * @param maxPrice 最高价格
-     * @param condition 商品成色
-     * @return 商品总数
-     */
-    int countByCondition(
-            @Param("category") String category,
-            @Param("minPrice") Double minPrice,
-            @Param("maxPrice") Double maxPrice,
-            @Param("condition") ProductConditionEnum condition
-    );
 
     /**
      * 按复杂查询条件统计商品数量
@@ -157,9 +123,9 @@ public interface ProductMapper extends BaseMapper<Product> {
 
     /**
      * 更新商品状态
-     * @param productId
-     * @param status
-     * @return
+     * @param productId 商品ID
+     * @param status 商品状态（枚举）
+     * @return 影响行数
      */
     @Update("UPDATE product SET status = #{status} WHERE product_id = #{productId}")
     int updateStatus(@Param("productId") Long productId, @Param("status") ProductStatusEnum status);

@@ -44,6 +44,9 @@ public class Product {
     /** 创建时间 */
     private LocalDateTime createTime;
 
+    /** 更新时间 */
+    private LocalDateTime updateTime;
+
     /** 商品状态 */
     private ProductStatusEnum status;
 

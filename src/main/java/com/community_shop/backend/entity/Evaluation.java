@@ -29,7 +29,7 @@ public class Evaluation {
     private Long userId;
 
     /** 卖家ID */
-    private Long sellerId;
+    private Long evaluateeId;
 
     /** 评价内容 */
     private String content;

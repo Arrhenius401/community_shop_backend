@@ -140,7 +140,7 @@ public class EvaluationServiceTest {
         testEvaluation.setEvalId(3001L);          // 评价ID
         testEvaluation.setOrderId(1001L);        // 关联订单ID
         testEvaluation.setUserId(1L);           // 评价人ID（买家）
-        testEvaluation.setSellerId(2L);         // 被评价人ID（卖家）
+        testEvaluation.setEvaluateeId(2L);         // 被评价人ID（卖家）
         testEvaluation.setScore(5);             // 评分：5星（好评）
         testEvaluation.setContent("商品质量很好，物流很快！");
         testEvaluation.setStatus(EvaluationStatusEnum.NORMAL); // 状态：可见
@@ -183,7 +183,7 @@ public class EvaluationServiceTest {
 
         // 3. 评价查询DTO（查询卖家2的评价，分页参数）
         testQueryDTO = new EvaluationQueryDTO();
-        testQueryDTO.setSellerId(2L);
+        testQueryDTO.setEvaluateeId(2L);
         testQueryDTO.setPageNum(1);
         testQueryDTO.setPageSize(10);
         testQueryDTO.setSortField(EvaluationSortFieldEnum.CREATE_TIME);
@@ -259,7 +259,7 @@ public class EvaluationServiceTest {
             eval.setScore(dto.getScore());
             eval.setContent(dto.getContent());
             eval.setUserId(1L);
-            eval.setSellerId(2L);
+            eval.setEvaluateeId(2L);
             eval.setStatus(EvaluationStatusEnum.NORMAL);
             return eval;
         });

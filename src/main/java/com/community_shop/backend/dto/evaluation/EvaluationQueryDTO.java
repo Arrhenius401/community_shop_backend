@@ -13,9 +13,9 @@ import lombok.Data;
 @Data
 public class EvaluationQueryDTO extends PageParam {
 
-    /** 卖家ID（查询某卖家的评价） */
-    @NotNull(message = "卖家ID不能为空")
-    private Long sellerId;
+    /** 被评论者家ID（如查询某卖家的评价） */
+    @NotNull(message = "被评论者ID不能为空")
+    private Long evaluateeId;
 
     /** 商品ID（查询某商品的评价） */
     private Long productId;

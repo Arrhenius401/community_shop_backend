@@ -200,7 +200,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
             validateSellerAndPageParam(queryDTO);
 
             // 2. 校验卖家存在
-            Long sellerId = queryDTO.getSellerId();
+            Long sellerId = queryDTO.getEvaluateeId();
             User seller = userService.getById(sellerId);
             if (Objects.isNull(seller)) {
                 log.error("查询卖家评价列表失败，卖家不存在，卖家ID：{}", sellerId);
@@ -504,9 +504,9 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
 //                log.error("举报评价失败，关联订单不存在，订单ID：{}", orderId);
 //                throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
 //            }
-//            if (!order.getBuyerId().equals(userId) && !order.getSellerId().equals(userId)) {
+//            if (!order.getBuyerId().equals(userId) && !order.getEvaluateeId().equals(userId)) {
 //                log.error("举报评价失败，举报人非订单关联方，举报人ID：{}，订单买家ID：{}，卖家ID：{}",
-//                        userId, order.getBuyerId(), order.getSellerId());
+//                        userId, order.getBuyerId(), order.getEvaluateeId());
 //                throw new BusinessException(ErrorCode.NO_EVALUATION_REPORT_PERMISSION);
 //            }
 //
@@ -526,7 +526,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
 //            }
 //
 //            // 6. 清除卖家平均评分缓存（若后续审核通过删除评价，需重新统计）
-//            clearSellerAvgScoreCache(evaluation.getSellerId());
+//            clearSellerAvgScoreCache(evaluation.getEvaluateeId());
 //
 //            log.info("举报评价受理成功，评价ID：{}，举报人ID：{}，举报原因：{}", evalId, userId, reason);
 //            return true;
@@ -624,7 +624,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
      * 校验卖家ID与分页参数合法性
      */
     private void validateSellerAndPageParam(EvaluationQueryDTO queryDTO) {
-        Long sellerId = queryDTO.getSellerId();
+        Long sellerId = queryDTO.getEvaluateeId();
         if (Objects.isNull(queryDTO) || Objects.isNull(sellerId)) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }

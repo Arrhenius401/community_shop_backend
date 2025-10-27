@@ -84,11 +84,6 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
     );
 
     /**
-     * SELECT COUNT(*) FROM evaluation
-     * WHERE order_id IN (1, 2, 3)
-     * AND status = 'VISIBLE';
-     */
-    /**
      * 统计多个订单的评价总数（批量判断是否已评价）
      * @param orderIds 订单ID列表
      * @return 已评价数量
@@ -100,7 +95,6 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
      * @param productId 产品ID
      * @return 平均评分
      */
-    @Select({"SELECT AVG(e.score) FROM evaluation e JOIN `order` o ON e.order_id = o.order_id WHERE o.product_id = #{productId}"})
     Double selectProductAverageScore(Long productId);
 
     /**
@@ -112,7 +106,7 @@ public interface EvaluationMapper extends BaseMapper<Evaluation> {
      */
     @Select({
             "<script>",
-            "SELECT COUNT(*)",
+            "SELECT COUNT(1)",
             "FROM evaluation e",
             "JOIN `order` o USING (order_id)",
             "WHERE o.product_id = #{productId}",

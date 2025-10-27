@@ -2,7 +2,9 @@ package com.community_shop.backend.dto.order;
 
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
-import jakarta.validation.constraints.NotBlank;
+import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
+import com.community_shop.backend.enums.SortEnum.OrderSortFieldEnum;
+import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,18 +21,23 @@ import lombok.NoArgsConstructor;
 @Data
 public class OrderQueryDTO extends PageParam {
 
-    /** 订单ID（非空） */
-    @NotNull(message = "订单ID不能为空")
-    private Long orderId;
+    /** 买家人ID（非空） */
+    private Long buyerId;
+
+    /** 卖家ID（非空） */
+    private Long sellerId;
 
     /** 目标状态（枚举值，非空） */
-    @NotBlank(message = "目标状态不能为空")
     private OrderStatusEnum status;
 
-    /** 操作人类型（枚举：BUYER-买家；SELLER-卖家；SYSTEM-系统，非空） */
-    @NotBlank(message = "操作人类型不能为空")
-    private String operatorType;
+    /** 支付方式 */
+    private PayTypeEnum payType;
 
-    /** 附加信息（如支付流水号、物流单号，可选） */
-    private String extraInfo;
+    /** 排序字段（枚举：CREATE_TIME-发布时间；LIKE_COUNT-点赞数；COMMENT_COUNT-评论数） */
+    @NotNull(message = "排序字段不能为空")
+    private OrderSortFieldEnum sortField = OrderSortFieldEnum.CREATE_TIME;
+
+    /** 排序方向（枚举：ASC-升序；DESC-降序） */
+    @NotNull(message = "排序方向不能为空")
+    private SortDirectionEnum sortDir = SortDirectionEnum.DESC;
 }

@@ -48,6 +48,9 @@ public class Order {
     /** 收货地址 */
     private String address;
 
+    /** 收获手机号码 */
+    private String phoneNumber;
+
     /** 买家留言 */
     private String buyerRemark;
 

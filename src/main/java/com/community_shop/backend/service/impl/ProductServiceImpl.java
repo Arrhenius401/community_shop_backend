@@ -333,7 +333,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
      * 多条件搜索商品
      */
     @Override
-    public PageResult<ProductListItemDTO> searchProducts(ProductQueryDTO queryDTO) {
+    public PageResult<ProductListItemDTO> queryProducts(ProductQueryDTO queryDTO) {
         try {
             // 1. 参数处理
             if (queryDTO == null) {

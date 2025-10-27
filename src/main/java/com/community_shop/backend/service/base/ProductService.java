@@ -65,7 +65,7 @@ public interface ProductService extends BaseService<Product> {
      * @param queryDTO 搜索参数（含关键词、分类、价格区间、分页）
      * @return 分页商品列表
      */
-    PageResult<ProductListItemDTO> searchProducts(ProductQueryDTO queryDTO);
+    PageResult<ProductListItemDTO> queryProducts(ProductQueryDTO queryDTO);
 
     /**
      * 卖家查询自有商品列表

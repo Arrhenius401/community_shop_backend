@@ -157,7 +157,7 @@ public class ProductController {
             @Parameter(description = "商品搜索参数，包含关键词、价格范围、类别及分页信息")
             ProductQueryDTO productQueryDTO
     ) {
-        PageResult<ProductListItemDTO> productPage = productService.searchProducts(productQueryDTO);
+        PageResult<ProductListItemDTO> productPage = productService.queryProducts(productQueryDTO);
         return ResultVO.success(productPage);
     }
 

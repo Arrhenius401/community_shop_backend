@@ -539,7 +539,7 @@ public class ProductServiceTest {
      * 测试商品搜索功能 - 成功场景（从数据库查询）
      */
     @Test
-    void testSearchProducts_Success_FromDb() {
+    void testQueryProducts_Success_FromDb() {
         // 1. 准备测试数据
         List<Product> productList = Arrays.asList(testProduct);
         ProductListItemDTO listItemDTO = new ProductListItemDTO();
@@ -554,7 +554,7 @@ public class ProductServiceTest {
         when(productConvert.productToProductListItemDTO(any(Product.class))).thenReturn(listItemDTO);
 
         // 3. 执行测试方法
-        PageResult<ProductListItemDTO> result = productService.searchProducts(testQueryDTO);
+        PageResult<ProductListItemDTO> result = productService.queryProducts(testQueryDTO);
 
         // 4. 验证结果
         assertNotNull(result);
@@ -575,7 +575,7 @@ public class ProductServiceTest {
      * 测试商品搜索功能 - 成功场景（从缓存查询）
      */
     @Test
-    void testSearchProducts_Success_FromCache() {
+    void testQueryProducts_Success_FromCache() {
         // 1. 准备缓存数据
         ProductListItemDTO listItemDTO = new ProductListItemDTO();
         BeanUtils.copyProperties(testProduct, listItemDTO);
@@ -586,7 +586,7 @@ public class ProductServiceTest {
         when(valueOperations.get(anyString())).thenReturn(cacheResult);
 
         // 3. 执行测试方法
-        PageResult<ProductListItemDTO> result = productService.searchProducts(testQueryDTO);
+        PageResult<ProductListItemDTO> result = productService.queryProducts(testQueryDTO);
 
         // 4. 验证结果
         assertNotNull(result);

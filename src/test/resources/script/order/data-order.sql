@@ -107,7 +107,7 @@ VALUES
 );
 
 -- 2. 初始化评价数据（枚举字段status使用枚举code）
-INSERT INTO `evaluation` (order_id, user_id, seller_id, content, score, status, create_time)
+INSERT INTO `evaluation` (order_id, user_id, evaluatee_id, content, score, status, create_time)
 VALUES
     (
         3,  -- 已完成订单的order_id=3
@@ -126,4 +126,22 @@ VALUES
         3,
         'HIDDEN',  -- EvaluationStatusEnum.HIDDEN的code
         '2024-01-05 11:15:00'
+    ),
+    (
+         2,  -- 待收货订单的order_id=5
+         1,
+         2,
+         '物流太慢了，希望可以取消订单',
+         4,
+         'NORMAL',
+         '2024-01-08 10:15:00'
+    ),
+    (
+         1,  -- 待支付订单的order_id=1（测试异常场景）
+         1,
+         2,
+         '商品太差了，希望可以退款',
+         3,
+         'NORMAL',
+         '2024-01-07 09:05:00'
     );

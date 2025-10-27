@@ -31,7 +31,7 @@ CREATE TABLE `evaluation` (
     eval_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id BIGINT NOT NULL UNIQUE COMMENT '关联订单ID（一个订单对应一个评价）',
     user_id BIGINT NOT NULL COMMENT '评价者ID（买家，关联user表user_id）',
-    seller_id BIGINT NOT NULL COMMENT '被评价卖家ID（关联user表user_id）',
+    evaluatee_id BIGINT NOT NULL COMMENT '被评价者ID（关联user表user_id）',
     content TEXT COMMENT '评价内容',
     score INT NOT NULL CHECK (score BETWEEN 1 AND 5) COMMENT '评分（1-5星）',
     status VARCHAR(20) DEFAULT 'NORMAL' COMMENT '评价状态（枚举EvaluationStatusEnum的code：NORMAL/HIDDEN）',
@@ -39,5 +39,5 @@ CREATE TABLE `evaluation` (
     update_time DATETIME COMMENT '修改时间',
     FOREIGN KEY (order_id) REFERENCES `order`(order_id),
     FOREIGN KEY (user_id) REFERENCES `user`(user_id),
-    FOREIGN KEY (seller_id) REFERENCES `user`(user_id)
+    FOREIGN KEY (evaluatee_id) REFERENCES `user`(user_id)
 ) COMMENT '订单评价表';

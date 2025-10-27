@@ -21,20 +21,6 @@ public interface PostMapper extends BaseMapper<Post> {
 
 
     // ==================== 列表查询（多维度排序） ====================
-    /**
-     * 查询指定用户发布的所有帖子
-     * @param userId 用户ID
-     * @return 帖子列表
-     */
-    List<Post> getAllPostByUserID(@Param("userId") Long userId);
-
-    /**
-     * 查询指定状态的帖子并限制数量
-     * @param status 帖子状态
-     * @param limit 限制条数
-     * @return 帖子列表
-     */
-    List<Post> getAllPostAddLimit(@Param("status") String status, @Param("limit") int limit);
 
     /**
      * 分页查询用户发布的帖子
@@ -182,7 +168,7 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param userId 用户ID
      * @return 帖子数量
      */
-    @Select("SELECT COUNT(*) FROM post WHERE user_id = #{userId}")
+    @Select("SELECT COUNT(1) FROM post WHERE user_id = #{userId}")
     int countPostsByUserId(@Param("userId") Long userId);
 
     /**
@@ -190,7 +176,7 @@ public interface PostMapper extends BaseMapper<Post> {
      *
      * @return 置顶帖子数量
      */
-    @Select("SELECT COUNT(*) FROM post WHERE is_top = 1")
+    @Select("SELECT COUNT(1) FROM post WHERE is_top = 1")
     int countTopPosts();
 
     /**
@@ -198,6 +184,6 @@ public interface PostMapper extends BaseMapper<Post> {
      *
      * @return 精华帖子数量
      */
-    @Select("SELECT COUNT(*) FROM post WHERE is_essence = 1")
+    @Select("SELECT COUNT(1) FROM post WHERE is_essence = 1")
     int countEssencePosts();
 }

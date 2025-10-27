@@ -26,18 +26,6 @@
 
 
     <!-- ==================== 列表查询（多维度排序） ==================== -->
-    <select id="getAllPostByUserID" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM `post`
-        WHERE user_id = #{userId}
-        ORDER BY create_time DESC
-    </select>
-
-    <select id="getAllPostAddLimit" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM `post`
-        WHERE `status` = #{status.code,jdbcType=VARCHAR} <!-- 简化：直接用枚举code -->
-        ORDER BY create_time DESC
-        LIMIT #{limit}
-    </select>
 
     <select id="selectByUserId" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM `post`
@@ -73,7 +61,7 @@
         <where>
             <!-- 条件1：帖子标题关键词搜索 -->
             <if test="keyword != null and keyword != ''">
-                AND (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+                (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
             <!-- 条件2：帖子状态搜索 -->
             <if test="status != null">
@@ -104,7 +92,7 @@
         <where>
             <!-- 帖子标题关键词搜索 -->
             <if test="query.keyword != null and query.keyword != ''">
-                AND (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+                (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
 
             <if test="status != null">

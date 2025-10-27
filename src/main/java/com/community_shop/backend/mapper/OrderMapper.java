@@ -1,6 +1,7 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.community_shop.backend.dto.order.OrderQueryDTO;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
@@ -60,13 +61,14 @@ public interface OrderMapper extends BaseMapper<Order> {
             @Param("payType") PayTypeEnum payType
     );
 
+
     /**
      * 更新发货时间
      * @param orderId 订单ID
      * @param shipTime 发货时间
      * @return 影响行数
      */
-    int updateShipTime(@Param("orderId") Long orderId, @Param("shipTime") LocalDateTime shipTime);
+    int updateShipInfo(@Param("orderId") Long orderId, @Param("shipTime") LocalDateTime shipTime);
 
     /**
      * 更新收货时间
@@ -74,19 +76,24 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @param receiveTime 收货时间
      * @return 影响行数
      */
-    int updateReceiveTime(@Param("orderId") Long orderId, @Param("receiveTime") LocalDateTime receiveTime);
-
-    /**
-     * 更新支付时间（支付成功后）
-     * @param orderId 订单ID
-     * @param payTime 支付时间
-     * @return 更新结果影响行数
-     */
-    @Update("UPDATE `order` SET pay_time = #{payTime} WHERE order_id = #{orderId}")
-    int updatePayTime(@Param("orderId") Long orderId, @Param("payTime") LocalDateTime payTime);
-
+    int updateReceiveInfo(@Param("orderId") Long orderId, @Param("receiveTime") LocalDateTime receiveTime);
 
     // ==================== 条件查询 ====================
+
+    /**
+     * 根据查询条件统计订单数量
+     * @param queryDTO 查询条件DTO
+     * @return 符合条件的订单总数
+     */
+    int countByQuery(OrderQueryDTO queryDTO);
+
+    /**
+     * 根据查询条件分页查询订单列表
+     * @param queryDTO 查询条件DTO（含分页参数、关键词、排序条件等）
+     * @return 订单列表
+     */
+    List<Order> selectByQuery(OrderQueryDTO queryDTO);
+
     /**
      * 分页查询买家订单（支持按状态筛选）
      * @param buyerId 买家ID

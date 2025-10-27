@@ -300,7 +300,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             }
 
             // 6. 更新订单支付信息
-            order.setStatus(OrderStatusEnum.PAID);
+            order.setStatus(OrderStatusEnum.PENDING_SHIPMENT);
             order.setPayTime(LocalDateTime.now());
 //            order.setPayNo(payCallbackDTO.getPayNo()); // 第三方支付流水号
             int updateCount = orderMapper.updateById(order);
@@ -360,7 +360,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             }
 
             // 4. 订单状态校验（仅已支付状态可发货）
-            if (!OrderStatusEnum.PAID.equals(order.getStatus())) {
+            if (!OrderStatusEnum.PENDING_SHIPMENT.equals(order.getStatus())) {
                 throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID,
                         "订单状态为【" + order.getStatus().getDesc() + "】，不允许发货");
             }
@@ -897,11 +897,11 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
         switch (currentStatus) {
             case PENDING_PAYMENT:
                 // 待支付状态仅允许转为已支付或已取消
-                if (!OrderStatusEnum.PAID.equals(targetStatus) && !OrderStatusEnum.CANCELLED.equals(targetStatus)) {
+                if (!OrderStatusEnum.PENDING_SHIPMENT.equals(targetStatus) && !OrderStatusEnum.CANCELLED.equals(targetStatus)) {
                     throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
                 }
                 break;
-            case PAID:
+            case PENDING_SHIPMENT:
                 // 已支付状态仅允许转为已发货或已取消（需特殊业务审批，此处简化处理）
                 if (!OrderStatusEnum.SHIPPED.equals(targetStatus) && !OrderStatusEnum.CANCELLED.equals(targetStatus)) {
                     throw new BusinessException(ErrorCode.ORDER_STATUS_INVALID);
@@ -941,7 +941,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
                     throw new BusinessException(ErrorCode.PERMISSION_DENIED);
                 }
                 break;
-            case PAID:
+            case PENDING_SHIPMENT:
                 // 仅买家可支付订单
                 if (!buyerId.equals(operatorId)) {
                     throw new BusinessException(ErrorCode.PERMISSION_DENIED);

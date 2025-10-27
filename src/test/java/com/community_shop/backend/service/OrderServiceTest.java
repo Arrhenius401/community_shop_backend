@@ -444,7 +444,7 @@ public class OrderServiceTest {
         // 1. 构造已支付的订单
         Order paidOrder = new Order();
         BeanUtils.copyProperties(testOrder, paidOrder);
-        paidOrder.setStatus(OrderStatusEnum.PAID);
+        paidOrder.setStatus(OrderStatusEnum.PENDING_SHIPMENT);
 
         // 2. 模拟依赖行为
         when(redisTemplate.opsForValue().get(anyString())).thenReturn(null);
@@ -524,7 +524,7 @@ public class OrderServiceTest {
         // 1. 构造已支付的订单
         Order paidOrder = new Order();
         BeanUtils.copyProperties(testOrder, paidOrder);
-        paidOrder.setStatus(OrderStatusEnum.PAID);
+        paidOrder.setStatus(OrderStatusEnum.PENDING_SHIPMENT);
 
         // 2. 模拟依赖行为
         when(redisTemplate.opsForValue().get(anyString())).thenReturn(null);

@@ -1,5 +1,5 @@
 -- 1. 初始化订单数据（枚举字段status/payType使用枚举code）
-INSERT INTO `order` (product_id, buyer_id, seller_id, order_no, total_amount, quantity, receiver_name, address, buyer_remark, status, pay_type, create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time)
+INSERT INTO `order` (product_id, buyer_id, seller_id, order_no, total_amount, quantity, receiver_name, address, phone_number, buyer_remark, status, pay_type, create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time)
 VALUES
 -- 待支付订单（status=PENDING_PAYMENT，用于OrderMapper.selectTimeoutPendingOrders测试）
 (
@@ -11,6 +11,7 @@ VALUES
     1,
     '张三',
     '北京市朝阳区XX小区',
+    '17768276455',
     '请尽快发货',
     'PENDING_PAYMENT',  -- OrderStatusEnum.PENDING_PAYMENT的code
     NULL,
@@ -31,9 +32,10 @@ VALUES
     1,
     '张三',
     '北京市朝阳区XX小区',
+    '13399645726',
     '无留言',
-    'PAID',  -- OrderStatusEnum.PAID的code
-    'WECHAT',  -- PayTypeEnum.WECHAT的code
+    'PENDING_SHIPMENT',  -- OrderStatusEnum.PAID的code
+    'WECHAT_PAY',  -- PayTypeEnum.WECHAT的code
     '2024-01-07 10:00:00',
     '2024-01-07 10:05:00',
     NULL,
@@ -51,8 +53,9 @@ VALUES
     1,
     '张三',
     '北京市朝阳区XX小区',
+    '13399645726',
     '尽快发货',
-    'RECEIVED',  -- OrderStatusEnum.RECEIVED的code
+    'COMPLETED',  -- OrderStatusEnum.RECEIVED的code
     'ALIPAY',  -- PayTypeEnum.ALIPAY的code
     '2024-01-06 14:00:00',
     '2024-01-06 14:03:00',
@@ -71,6 +74,7 @@ VALUES
     1,
     '张三',
     '北京市朝阳区XX小区',
+    '13396773544',
     '暂时不需要了',
     'CANCELLED',  -- OrderStatusEnum.CANCELLED的code
     NULL,
@@ -80,6 +84,26 @@ VALUES
     NULL,
     '2024-01-05 11:10:00',
     '2024-01-05 17:00:00'
+),
+-- 待收货订单（status=PENDING_RECEIVE，用于OrderMapper.selectTimeoutShippedOrders测试）
+(3, -- 闲置笔记本的product_id=3
+ 1,
+ 2,
+ 'ORDER20240108001',
+ 1999.00,
+ 1,
+ '张三',
+ '北京市朝阳区XX小区',
+ '13396773544',
+ '请尽快发货',
+ 'PENDING_RECEIVE', -- OrderStatusEnum.PENDING_RECEIVE的code
+ NULL,
+ '2024-01-08 09:00:00',
+ '2024-01-08 10:00:00',
+ '2024-01-08 15:00:00',
+ NULL,
+ NULL,
+ '2024-01-08 20:00:00'
 );
 
 -- 2. 初始化评价数据（枚举字段status使用枚举code）

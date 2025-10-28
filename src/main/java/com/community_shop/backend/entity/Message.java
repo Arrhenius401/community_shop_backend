@@ -3,7 +3,6 @@ package com.community_shop.backend.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.community_shop.backend.enums.CodeEnum.MessageStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
 import lombok.Data;
 
@@ -43,9 +42,6 @@ public class Message {
 
     /** 消息类型 */
     private MessageTypeEnum type;
-
-    /** 消息状态 */
-    private MessageStatusEnum status;
 
     /** 创建时间 */
     private LocalDateTime createTime;

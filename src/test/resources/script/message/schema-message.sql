@@ -9,8 +9,7 @@ CREATE TABLE `message` (
                            order_id BIGINT COMMENT '关联订单ID（非订单消息为null）',
                            is_read BOOLEAN DEFAULT FALSE COMMENT '阅读状态（true=已读）',
                            is_deleted BOOLEAN DEFAULT FALSE COMMENT '删除状态（true=已删除）',
-                           type VARCHAR(20) NOT NULL COMMENT '消息类型（枚举MessageTypeEnum的code：SYSTEM/ORDER）',
-                           status VARCHAR(20) DEFAULT 'NORMAL' COMMENT '消息状态（枚举MessageStatusEnum的code：NORMAL/INVALID）',
+                           type VARCHAR(20) NOT NULL COMMENT '消息类型（枚举MessageTypeEnum的code：SYSTEM/ORDER/PRIVATE）',
                            create_time DATETIME NOT NULL COMMENT '创建时间',
                            update_time DATETIME COMMENT '更新时间'
 ) COMMENT '系统消息表';

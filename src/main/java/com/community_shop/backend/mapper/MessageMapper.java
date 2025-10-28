@@ -24,7 +24,7 @@ public interface MessageMapper extends BaseMapper<Message> {
      * @param isRead 阅读状态（0=未读，1=已读）
      * @return 更新影响行数
      */
-    int updateReadStatus(@Param("msgId") Long msgId, @Param("isRead") int isRead);
+    int updateReadStatus(@Param("msgId") Long msgId, @Param("isRead") boolean isRead);
 
     /**
      * 更新消息删除状态（逻辑删除）
@@ -32,7 +32,7 @@ public interface MessageMapper extends BaseMapper<Message> {
      * @param isDeleted 删除状态（0=未删除，1=已删除）
      * @return 更新影响行数
      */
-    int updateDeleteStatus(@Param("msgId") Long msgId, @Param("isDeleted") int isDeleted);
+    int updateDeleteStatus(@Param("msgId") Long msgId, @Param("isDeleted") boolean isDeleted);
 
     /**
      * 批量更新消息阅读状态
@@ -40,7 +40,7 @@ public interface MessageMapper extends BaseMapper<Message> {
      * @param isRead 阅读状态（0-未读，1-已读）
      * @return 影响行数
      */
-    int batchUpdateReadStatus(@Param("msgIds") List<Long> msgIds, @Param("isRead") int isRead);
+    int batchUpdateReadStatus(@Param("msgIds") List<Long> msgIds, @Param("isRead") boolean isRead);
 
     /**
      * 批量更新用户消息删除状态
@@ -48,7 +48,7 @@ public interface MessageMapper extends BaseMapper<Message> {
      * @param isDeleted 删除状态（0-未删，1-已删）
      * @return 影响行数
      */
-    int batchUpdateDeleteStatus(@Param("receiverId") Long receiverId, @Param("isDeleted") int isDeleted);
+    int batchUpdateDeleteStatus(@Param("receiverId") Long receiverId, @Param("isDeleted") boolean isDeleted);
 
 
     // ==================== 查询与统计 ====================

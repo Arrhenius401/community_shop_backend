@@ -11,7 +11,6 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Message 模块对象转换器
@@ -33,7 +32,6 @@ public interface MessageConvert {
      */
     @Mappings({
             @Mapping(target = "messageId", source = "msgId"),
-            @Mapping(target = "status", expression = "java(getMessageStatus(message.getIsRead(), message.getIsDeleted()))"),
             @Mapping(target = "sender.userId", source = "senderId"),
             @Mapping(target = "sender.username", ignore = true), // 需关联 User 实体脱敏后赋值
     })
@@ -48,7 +46,6 @@ public interface MessageConvert {
     @Mappings({
             @Mapping(target = "messageId", source = "msgId"),
             @Mapping(target = "contentSummary", expression = "java(getContentSummary(message.getContent()))"),
-            @Mapping(target = "status", expression = "java(getMessageStatus(message.getIsRead(), message.getIsDeleted()))")
     })
     MessageListItemDTO messageToMessageListItemDTO(Message message);
 

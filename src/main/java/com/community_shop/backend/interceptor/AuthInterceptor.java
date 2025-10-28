@@ -28,9 +28,21 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService; // 依赖Service层接口，无需实现具体逻辑
 
-    //在当前代码中，我们通过抛异常的方式处理错误（由全局异常处理器统一返回响应），因此不需要直接操作 response。
+    /**
+     * 拦截处理方法
+     * 在当前代码中，我们通过抛异常的方式处理错误（由全局异常处理器统一返回响应），因此不需要直接操作 response
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 0. 放行 Swagger 相关请求，直接返回 true
+        String requestUri = request.getRequestURI();
+        if (requestUri.contains("/swagger-ui")
+                || requestUri.contains("/v3/api-docs")
+                || requestUri.contains("/webjars/")
+                || requestUri.contains("/swagger-resources/")) {
+            return true;
+        }
+
         // 1. 非Controller方法（如静态资源）直接放行
         if (!(handler instanceof HandlerMethod handlerMethod)) {
             return true;

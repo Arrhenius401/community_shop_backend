@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum MessageTypeEnum {
     // code：数据库存储标识（适配varchar类型）；desc：状态描述（用于前端展示/业务逻辑说明）
     SYSTEM("SYSTEM", "系统消息"),
-    ORDER("ORDER", "订单消息");
+    ORDER("ORDER", "订单消息"),
+    PRIVATE("PRIVATE", "私信消息");
 
     private final String code;
     @Getter

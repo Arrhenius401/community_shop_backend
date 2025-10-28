@@ -14,11 +14,15 @@ import lombok.Data;
 @Data
 public class MessageQueryDTO extends PageParam {
 
+    /** 接收者ID */
+    private Long receiverId;
+
     /** 消息类型（可选，如只看“评论回复”） */
+    @NotNull(message = "消息类型不能为空")
     private MessageTypeEnum type;
 
-    /** 消息状态（可选，如只看“未读”消息） */
-    private MessageStatusEnum status;
+    /** 是否已读（可选，如只看“未读”消息） */
+    private Boolean isRead;
 
     /** 搜索关键词（可选，模糊匹配内容） */
     private String keyword;

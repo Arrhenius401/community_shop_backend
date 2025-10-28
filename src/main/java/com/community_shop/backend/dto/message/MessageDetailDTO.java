@@ -1,6 +1,5 @@
 package com.community_shop.backend.dto.message;
 
-import com.community_shop.backend.enums.CodeEnum.MessageStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,7 +32,7 @@ public class MessageDetailDTO {
     private BusinessInfoDTO businessInfo;
 
     /** 消息状态 */
-    private MessageStatusEnum status;
+    private Boolean isRead;
 
     /** 发送时间 */
     private LocalDateTime createTime;

@@ -178,28 +178,30 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             Message message = messageMapper.selectById(statusUpdateDTO.getMessageId());
             validateMessageOwner(message, userId);
 
-            // 3. 校验状态流转合法性（仅允许未读→已读、已读→删除、未读→删除）
-            validateStatusTransition(message.getStatus(), statusUpdateDTO.getTargetStatus());
-
-            // 4. 执行状态更新
-            Message updateMessage = new Message();
-            updateMessage.setMsgId(statusUpdateDTO.getMessageId());
-            updateMessage.setStatus(statusUpdateDTO.getTargetStatus());
-            updateMessage.setUpdateTime(LocalDateTime.now());
-            int updateRows = messageMapper.updateById(updateMessage);
+            // 3. 执行状态更新
+            int updateRows;
+            switch (statusUpdateDTO.getTargetStatus()){
+                case MessageStatusEnum.READ:
+                    updateRows =  messageMapper.updateReadStatus(statusUpdateDTO.getMessageId(), true);
+                    break;
+                case MessageStatusEnum.DELETED:
+                    updateRows = messageMapper.updateDeleteStatus(statusUpdateDTO.getMessageId(), true);
+                    break;
+                default:
+                    throw new BusinessException(ErrorCode.MESSAGE_STATUS_TRANSITION_INVALID);
+            }
 
             if (updateRows > 0) {
                 // 5. 若从“未读”转为其他状态，更新未读缓存（-1）
-                if (MessageStatusEnum.UNREAD.equals(message.getStatus())) {
+                if (!message.getIsRead()) {
                     updateUnreadStatCache(userId, -1);
                 }
                 // 6. 清除相关缓存（最近未读预览）
                 clearRecentUnreadCache(userId);
             }
 
-            log.info("更新消息状态成功，消息ID：{}，操作人ID：{}，原状态：{}，目标状态：{}，成功条数：{}",
-                    statusUpdateDTO.getMessageId(), userId,
-                    message.getStatus(), statusUpdateDTO.getTargetStatus(), updateRows);
+            log.info("更新消息状态成功，消息ID：{}，操作人ID：{}，目标状态：{}，成功条数：{}",
+                    statusUpdateDTO.getMessageId(), userId, statusUpdateDTO.getTargetStatus(), updateRows);
             return updateRows > 0;
         } catch (BusinessException e) {
             throw e;
@@ -407,7 +409,6 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         message.setType(sendDTO.getType());
         message.setContent(sendDTO.getContent());
         message.setOrderId(sendDTO.getBusinessId()); // 关联业务ID（如订单ID）
-        message.setStatus(MessageStatusEnum.UNREAD); // 初始状态为未读
         message.setCreateTime(LocalDateTime.now());
         message.setUpdateTime(LocalDateTime.now());
 //        // 处理附件（JSON格式转列表）
@@ -429,20 +430,6 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             log.error("校验消息归属失败，操作人非接收人，消息ID：{}，操作人ID：{}，接收人ID：{}",
                     message.getMsgId(), operatorId, message.getReceiverId());
             throw new BusinessException(ErrorCode.PERMISSION_DENIED);
-        }
-    }
-
-    /**
-     * 校验消息状态流转合法性
-     */
-    private void validateStatusTransition(MessageStatusEnum currentStatus, MessageStatusEnum targetStatus) {
-        // 允许的流转：未读→已读、未读→删除、已读→删除
-        boolean isAllowed = (MessageStatusEnum.UNREAD.equals(currentStatus) && MessageStatusEnum.READ.equals(targetStatus))
-                || (MessageStatusEnum.UNREAD.equals(currentStatus) && MessageStatusEnum.DELETED.equals(targetStatus))
-                || (MessageStatusEnum.READ.equals(currentStatus) && MessageStatusEnum.DELETED.equals(targetStatus));
-        if (!isAllowed) {
-            log.error("校验消息状态流转失败，不允许从{}转为{}", currentStatus, targetStatus);
-            throw new BusinessException(ErrorCode.MESSAGE_STATUS_TRANSITION_INVALID);
         }
     }
 
@@ -576,7 +563,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         }
 
         // 标记为已读
-        int rows = messageMapper.updateReadStatus(msgId, 1); // 1=已读
+        int rows = messageMapper.updateReadStatus(msgId, true);
         if (rows <= 0) {
             throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
         }

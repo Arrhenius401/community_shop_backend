@@ -112,7 +112,7 @@ public class MessageServiceTest {
         testMessage.setType(MessageTypeEnum.ORDER); // 消息类型（订单通知）
         testMessage.setContent("您的订单已支付成功，订单号：ORDER123456");
         testMessage.setOrderId(123456L);      // 关联业务ID（订单ID）
-        testMessage.setStatus(MessageStatusEnum.UNREAD); // 初始状态：未读
+        testMessage.setIsRead(false); // 初始状态：未读
         testMessage.setCreateTime(LocalDateTime.now().minusHours(1));
         testMessage.setUpdateTime(LocalDateTime.now().minusHours(1));
     }
@@ -135,7 +135,7 @@ public class MessageServiceTest {
 
         // 3. 消息列表查询DTO（查询用户的未读订单消息）
         testMessageQueryDTO = new MessageQueryDTO();
-        testMessageQueryDTO.setStatus(MessageStatusEnum.UNREAD);
+        testMessageQueryDTO.setIsRead(false);
         testMessageQueryDTO.setType(MessageTypeEnum.ORDER);
         testMessageQueryDTO.setPageNum(1);
         testMessageQueryDTO.setPageSize(10);
@@ -209,7 +209,7 @@ public class MessageServiceTest {
             MessageDetailDTO dto = new MessageDetailDTO();
             dto.setMessageId(message.getMsgId());
             dto.setContent(message.getContent());
-            dto.setStatus(message.getStatus());
+            dto.setIsRead(message.getIsRead());
             return dto;
         });
 
@@ -262,7 +262,7 @@ public class MessageServiceTest {
             MessageDetailDTO dto = new MessageDetailDTO();
             dto.setMessageId(message.getMsgId());
             dto.setContent(message.getContent());
-            dto.setStatus(message.getStatus());
+            dto.setIsRead(message.getIsRead());
             // 封装发送者信息
             MessageDetailDTO.SenderDTO senderDTO = new MessageDetailDTO.SenderDTO();
             senderDTO.setUserId(message.getSenderId());
@@ -295,7 +295,8 @@ public class MessageServiceTest {
     void testUpdateMessageStatus_Success_UnreadToRead() {
         // 1. 模拟依赖行为
         when(messageMapper.selectById(1001L)).thenReturn(testMessage); // 消息存在
-        when(messageMapper.updateById(any(Message.class))).thenReturn(1); // 更新成功
+        when(messageMapper.updateDeleteStatus(anyLong(), anyBoolean())).thenReturn(1); // 更新成功
+        when(messageMapper.updateReadStatus(anyLong(), anyBoolean())).thenReturn(1); // 更新成功
         // 模拟未读统计缓存存在
         MessageStatDTO cachedStat = new MessageStatDTO();
         cachedStat.setTotalUnread(5); // 原未读数5
@@ -309,7 +310,7 @@ public class MessageServiceTest {
 
         // 4. 验证依赖调用
         verify(messageMapper, times(1)).selectById(1001L); // 查询消息
-        verify(messageMapper, times(1)).updateById(any(Message.class)); // 更新状态
+        verify(messageMapper, times(1)).updateReadStatus(anyLong(), anyBoolean()); // 更新状态
         verify(redisTemplate, times(1)).delete("message:recent:unread:2"); // 清除最近未读缓存
         verify(valueOperations, times(1)).set(anyString(), any(MessageStatDTO.class), eq(5L), eq(TimeUnit.MINUTES)); // 更新未读统计
     }

@@ -119,17 +119,17 @@
         </where>
 
         <!-- 排序：支持用户常用的排序方式 -->
-        <if test="query.sortField != null and query.sortDir != null">
-            ORDER BY ${query.sortField} ${query.sortDir}
+        <if test="sortField != null and sortDir != null">
+            ORDER BY ${sortField} ${query.sortDir}
         </if>
-        <if test="query.sortField == null">
+        <if test="sortField == null">
             <!-- 默认按更新时间倒序 -->
             ORDER BY update_time DESC
         </if>
 
         <!-- 分页参数 -->
-        <if test="query.pageNum != null and query.pageSize != null">
-            LIMIT #{query.offset}, #{query.pageSize}
+        <if test="pageNum != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
         </if>
     </select>
 

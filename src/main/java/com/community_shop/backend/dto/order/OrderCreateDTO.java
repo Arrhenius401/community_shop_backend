@@ -1,6 +1,7 @@
 package com.community_shop.backend.dto.order;
 
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,56 +15,41 @@ import java.math.BigDecimal;
  * 用于接收前端传递的下单参数，适配创建订单的业务场景
  * 对应文档中"订单创建"功能的前端入参封装
  */
+@Schema(description = "订单创建请求DTO，用于提交下单参数")
 @Data
 public class OrderCreateDTO {
 
-    /**
-     * 商品ID
-     * 关联product表的product_id，必传，用于定位下单商品
-     * 对应文档4中product表的主键字段
-     */
+    /** 商品ID */
+    @Schema(description = "商品ID", example = "3001", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "商品ID不能为空")
     private Long productId;
 
-    /**
-     * 收货地址
-     * 买家收货地址，必传，用于订单配送
-     * 对应文档2中订单创建流程的"收货地址"参数
-     */
+    /** 收货地址 */
+    @Schema(description = "买家收货地址", example = "北京市朝阳区XX街道XX小区1号楼1单元101",
+            maxLength = 500, requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "收货地址不能为空")
     @Length(max = 500, message = "收货地址长度不能超过500字符")
     private String address;
 
-    /**
-     * 购买数量
-     * 商品购买数量，默认1件，支持批量购买
-     * 对应文档4中product表的stock字段扣减依据
-     */
-    @NotNull(message = "金额不能为空")
-    @Positive(message = "金额必须大于0")
-    private Integer quantity = 1;
-
-    /**
-     * 订单总价
-     * 订单总价，默认为商品单价*购买数量
-     * 对应文档4中order表total_amount字段
-     */
+    /** 购买数量 */
+    @Schema(description = "商品购买数量（默认1）", example = "2", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "数量不能为空")
     @Positive(message = "数量必须大于0")
+    private Integer quantity = 1;
+
+    /** 订单总价 */
+    @Schema(description = "订单总价", example = "99.99", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "金额不能为空")
+    @Positive(message = "金额必须大于0")
     private BigDecimal totalAmount;
 
-    /**
-     * 买家留言
-     * 买家对订单的特殊备注（如配送时间要求），非必传
-     */
+    /** 买家留言 */
+    @Schema(description = "买家留言", example = "请在周末送货", maxLength = 200)
     @Length(max = 200, message = "买家留言长度不能超过200字符")
     private String buyerRemark;
 
-    /**
-     * 支付方式
-     * 支付渠道选择（如ALIPAY-支付宝、WECHAT-微信支付）
-     * 对应文档2中支付流程的"支付平台"选择
-     */
+    /** 支付方式 */
+    @Schema(description = "支付方式（枚举）", example = "WECHAT", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "支付方式不能为空")
     private PayTypeEnum payType;
 }

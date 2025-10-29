@@ -1,7 +1,9 @@
 package com.community_shop.backend.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,21 +12,27 @@ import java.util.List;
  * @param <T> 泛型参数，存储分页数据列表（如Post、Product）
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
+@Schema(description = "分页查询结果封装")
 public class PageResult<T> {
-    // 总记录数
+    /** 总记录数 */
+    @Schema(description = "总记录数", example = "100")
     private Long total;
-    // 总页数
+
+    /** 总页数 */
+    @Schema(description = "总页数", example = "10")
     private Long totalPages;
-    // 当前页数据列表
+
+    /** 当前页数据列表 */
+    @Schema(description = "当前页数据列表")
     private List<T> list;
-    // 当前页码
+
+    /** 当前页码 */
+    @Schema(description = "当前页码", example = "1")
     private Integer pageNum;
-    // 每页条数
+
+    /** 每页条数 */
+    @Schema(description = "每页条数", example = "10")
     private Integer pageSize;
-
-    // @Data 不会提供构造函数
-    // 添加无参构造函数
-    public PageResult() {}
-
 }

@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResultVO<?> handleBusinessException(BusinessException e) {
         log.warn("业务异常：{}（错误码：{}）", e.getMessage(), e.getCode());
-        return ResultVO.fail(e.getCode(), e.getMessage());
+        return ResultVO.fail(e.getStandardCode().toString(), e.getMessage());
     }
 
     /**

@@ -30,6 +30,7 @@
         <java.version>21</java.version>
         <mockito.version>4.11.0</mockito.version>
     </properties>
+
     <dependencies>
 
         <dependency>
@@ -167,8 +168,8 @@
         <!-- Swagger/SpringDoc（接口文档生成） -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.15</version> <!-- 适配Spring Boot 2.7.x -->
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.7.0</version>
         </dependency>
 
         <!-- JUnit 单元测试核心依赖 -->

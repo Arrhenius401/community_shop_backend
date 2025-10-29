@@ -36,9 +36,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 替代 csrf().disable() 的新写法
+                // 1. 关闭 CSRF（开发环境）
                 .csrf(csrf -> csrf.disable())
-                // 替代 authorizeRequests() 的新写法
+                // 2. 配置请求权限：放行所有 SpringDoc 相关接口
                 .authorizeHttpRequests(auth -> auth
                         // 放行Swagger相关资源
                         .requestMatchers(
@@ -50,9 +50,10 @@ public class SecurityConfig {
                         // 其他所有请求需要认证
                         .anyRequest().authenticated()
                 )
-                // 保留表单登录
+                // 3. 保留表单登录（可选，不影响 Swagger 访问）
                 .formLogin(form -> form.permitAll())
-                // 保留HTTP基本认证
+                // 4. 关键：排除 SpringDoc 接口的 Security 过滤器（避免拦截）
+                .securityMatcher("/api/**") // 仅对 /api/** 路径应用 Security 规则
                 .httpBasic(httpBasic -> {});
 
         return http.build();

@@ -31,15 +31,23 @@ public class AuthInterceptor implements HandlerInterceptor {
     /**
      * 拦截处理方法
      * 在当前代码中，我们通过抛异常的方式处理错误（由全局异常处理器统一返回响应），因此不需要直接操作 response
+     * Spring Security 拦截器优先于自定义的 AuthInterceptor 执行，因此放行一个接口还需要再 SecurityConfig 中配置放行
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 0. 放行 Swagger 相关请求，直接返回 true
+        // 0.放行无需认证的接口
+        // 放行 Swagger 相关请求，直接返回 true
         String requestUri = request.getRequestURI();
         if (requestUri.contains("/swagger-ui")
                 || requestUri.contains("/v3/api-docs")
                 || requestUri.contains("/webjars/")
                 || requestUri.contains("/swagger-resources/")) {
+            return true;
+        }
+
+        // 放行注册和登录接口
+        if (requestUri.contains("/api/v1/users/register")
+                || requestUri.contains("/api/v1/users/login")) {
             return true;
         }
 

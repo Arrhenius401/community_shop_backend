@@ -117,6 +117,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             user.setStatus(UserStatusEnum.NORMAL);
             user.setRole(UserRoleEnum.USER);
             user.setCreateTime(LocalDateTime.now());
+            user.setActivityTime(LocalDateTime.now());
 
             // 5. 插入数据库（匹配UserMapper.insert方法）
             int insertRows = userMapper.insert(user);

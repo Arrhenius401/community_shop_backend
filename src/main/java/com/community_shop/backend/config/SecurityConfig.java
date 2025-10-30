@@ -47,6 +47,11 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/swagger-resources/**"
                         ).permitAll()
+                        // 放行登录、注册接口
+                        .requestMatchers(
+                                "/api/v1/users/login/**",
+                                "/api/v1/users/register"
+                        ).permitAll()
                         // 其他所有请求需要认证
                         .anyRequest().authenticated()
                 )

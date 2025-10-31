@@ -60,15 +60,13 @@
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         <where>
             <!-- 帖子ID搜索 -->
-            <if test="postId != null">
-                AND post_id = #{post_id} <!-- 简化：无需显式指定typeHandler -->
+            <if test="query.postId != null">
+                AND post_id = #{query.postId} <!-- 简化：无需显式指定typeHandler -->
             </if>
 
-            <if test="status != null and status != ''">
-                AND status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
             </if>
-            <!-- 分页 -->
-            LIMIT #{query.offset}, #{query.limit}
         </where>
 
         <!-- 排序：支持用户常用的排序方式 -->

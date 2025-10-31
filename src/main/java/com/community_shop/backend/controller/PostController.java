@@ -144,6 +144,8 @@ public class PostController {
             PostUpdateDTO postUpdateDTO
     ) {
         Long currentUserId = parseUserIdFromToken();
+        postUpdateDTO.setOperatorId(currentUserId);
+        postUpdateDTO.setPostId(postId);
         PostDetailDTO updatedPost = postService.updatePost(postId, currentUserId, postUpdateDTO);
         return ResultVO.success(updatedPost);
     }

@@ -32,14 +32,4 @@ public class LoginDTO {
     @Schema(description = "手机号登录时的验证码（仅手机号登录必填）", example = "123456")
     private String verifyCode;
 
-
-    /** 辅助方法：判断是否为手机号登录（用于Controller层参数适配） */
-    public boolean isPhoneLogin() {
-        return LoginTypeEnum.PHONE_NUMBER.equals(this.loginType);
-    }
-
-    /** 辅助方法：判断是否为邮箱登录（用于Controller层参数适配） */
-    public boolean isEmailLogin() {
-        return LoginTypeEnum.EMAIL.equals(this.loginType);
-    }
 }

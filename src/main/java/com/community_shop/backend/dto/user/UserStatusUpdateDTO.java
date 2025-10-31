@@ -15,6 +15,6 @@ public class UserStatusUpdateDTO {
 
     /** 目标状态 */
     @NotNull(message = "目标状态不能为空")
-    @Schema(description = "目标状态（NORMAL-正常，DISABLED-禁用）", example = "DISABLED")
+    @Schema(description = "目标状态（NORMAL-正常，BANNED-禁用）", example = "BANNED")
     private UserStatusEnum status;
 }

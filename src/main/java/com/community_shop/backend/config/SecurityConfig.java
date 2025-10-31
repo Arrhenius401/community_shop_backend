@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     /**
      * 配置安全过滤链
-     * 放行 Swagger 资源
+     * 仅负责基础安全配置，将认证逻辑完全交给自定义拦截器
      * @param http HttpSecurity对象
      * @return SecurityFilterChain对象
      * @throws Exception 异常
@@ -38,22 +38,10 @@ public class SecurityConfig {
         http
                 // 1. 关闭 CSRF（开发环境）
                 .csrf(csrf -> csrf.disable())
-                // 2. 配置请求权限：放行所有 SpringDoc 相关接口
+                // 2. 配置请求权限
                 .authorizeHttpRequests(auth -> auth
-                        // 放行Swagger相关资源
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/webjars/**",
-                                "/swagger-resources/**"
-                        ).permitAll()
-                        // 放行登录、注册接口
-                        .requestMatchers(
-                                "/api/v1/users/login/**",
-                                "/api/v1/users/register"
-                        ).permitAll()
-                        // 其他所有请求需要认证
-                        .anyRequest().authenticated()
+                        // 放行所有请求，由AuthInterceptor处理权限校验
+                        .anyRequest().permitAll()
                 )
                 // 3. 保留表单登录（可选，不影响 Swagger 访问）
                 .formLogin(form -> form.permitAll())

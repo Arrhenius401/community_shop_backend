@@ -2,7 +2,6 @@ package com.community_shop.backend.dto.order;
 
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -26,7 +25,7 @@ public class OrderPayDTO {
      * 支付方式（枚举：ALIPAY-支付宝；WECHAT-微信支付；CARD-银行卡）
      */
     @Schema(description = "支付方式（枚举）", example = "ALIPAY", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "支付方式不能为空")
+    @NotNull(message = "支付方式不能为空")
     private PayTypeEnum payType;
 
     /**

@@ -3,6 +3,7 @@ package com.community_shop.backend.dto.user;
 import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -13,7 +14,7 @@ import lombok.Data;
 public class LoginDTO {
 
     /** 登录类型（枚举：USERNAME-账号密码登录；PHONE-手机号登录） */
-    @NotBlank(message = "登录类型不能为空")
+    @NotNull(message = "登录类型不能为空")
     @Schema(description = "登录类型（PHONE_NUMBER-手机号登录，EMAIL-邮箱密码登录）", example = "EMAIL")
     private LoginTypeEnum loginType;
 

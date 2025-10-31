@@ -3,6 +3,7 @@ package com.community_shop.backend.dto.user;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -13,7 +14,7 @@ import lombok.Data;
 public class ThirdPartyBindDTO {
 
     /** 第三方平台类型（WECHAT/QQ/ALIPAY，必填） */
-    @NotBlank(message = "第三方平台类型不能为空")
+    @NotNull(message = "第三方平台类型不能为空")
     @Schema(description = "第三方平台类型", example = "WECHAT")
     private ThirdPartyTypeEnum thirdType;
 

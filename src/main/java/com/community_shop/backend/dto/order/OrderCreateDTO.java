@@ -50,6 +50,6 @@ public class OrderCreateDTO {
 
     /** 支付方式 */
     @Schema(description = "支付方式（枚举）", example = "WECHAT", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "支付方式不能为空")
+    @NotNull(message = "支付方式不能为空")
     private PayTypeEnum payType;
 }

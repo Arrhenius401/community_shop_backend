@@ -2,7 +2,6 @@ package com.community_shop.backend.dto.post;
 
 import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -24,7 +23,6 @@ public class PostStatusUpdateDTO {
     private PostStatusEnum status;
 
     /** 操作人ID（非空，用于权限校验） */
-    @NotNull(message = "操作人ID不能为空")
     @Schema(description = "操作人用户ID（用于权限校验）", example = "2001", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long operatorId;
 

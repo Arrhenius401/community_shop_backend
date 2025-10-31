@@ -2,6 +2,7 @@ package com.community_shop.backend.dto.user;
 
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,7 @@ public class UserStatusUpdateDTO {
     private Long userId;
 
     /** 目标状态 */
+    @NotNull(message = "目标状态不能为空")
     @Schema(description = "目标状态（NORMAL-正常，DISABLED-禁用）", example = "DISABLED")
     private UserStatusEnum status;
 }

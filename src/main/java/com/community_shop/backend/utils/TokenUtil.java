@@ -53,6 +53,7 @@ public class TokenUtil {
                 // 负载（payload）
                 .claim("userId", userID.toString())    //自定义参数1
                 .setSubject("USER")    //主题
+                .setIssuedAt(new Date())    //签发时间
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .setId(UUID.randomUUID().toString())
                 //  签名（signature）
@@ -149,6 +150,7 @@ public class TokenUtil {
 
         try {
             // 2. 验证令牌是否过期，以及签发时间是否合理（如防止未来签发的令牌）
+            log.info("验证令牌: " + token);
             if (isTokenExpired(token) || !isTokenIssuedAtReasonable(token)) {
                 return false; // 令牌已过期
             }
@@ -170,6 +172,7 @@ public class TokenUtil {
 
         } catch (Exception e) {
             // 捕获所有JWT相关异常，任何异常都表示令牌无效
+            log.warn("令牌验证失败: " + e.getMessage());
             return false;
         }
     }

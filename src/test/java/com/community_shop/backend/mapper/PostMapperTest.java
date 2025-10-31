@@ -189,31 +189,6 @@ public class PostMapperTest {
     }
 
     /**
-     * 测试updateEssenceAndTopById：设置帖子为精华+置顶（正常场景）
-     * 适配《代码文档1》2.2.2节 基础操作与运营管理 - updateEssenceAndTopById方法
-     */
-    @Test
-    void updateEssenceAndTopById_setEssenceAndTop_returnsAffectedRows1() {
-        // 1. 准备参数（将普通帖子postId=2设置为精华+置顶，更新时间为当前时间）
-        Long postId = 2L;
-        boolean isEssence = true;
-        boolean isTop = true;
-        LocalDateTime updateTime = LocalDateTime.now();
-
-        // 2. 执行更新方法
-        int affectedRows = postMapper.updateEssenceAndTopById(postId, isEssence, isTop, updateTime);
-
-        // 3. 断言更新行数
-        assertEquals(1, affectedRows, "设置精华+置顶应影响1行数据");
-
-        // 4. 验证状态已更新
-        Post updatedPost = postMapper.selectById(postId);
-        assertTrue(updatedPost.getIsEssence(), "帖子应更新为精华帖（isEssence=true）");
-        assertTrue(updatedPost.getIsTop(), "帖子应更新为置顶帖（isTop=true）");
-        assertNotNull(updatedPost.getUpdateTime(), "更新时间应不为null");
-    }
-
-    /**
      * 测试batchUpdateStatus：批量更新帖子状态（正常场景）
      * 适配《代码文档1》2.2.2节 基础操作与运营管理 - batchUpdateStatus方法
      */

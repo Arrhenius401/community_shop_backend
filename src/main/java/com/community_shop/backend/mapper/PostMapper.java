@@ -105,7 +105,7 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param postID 帖子ID
      * @param status 帖子状态
      */
-    @Update("UPDATE post SET status = #{status} WHERE post_id = #{postID}")
+    @Update("UPDATE `post` SET `status` = #{status} WHERE post_id = #{postID}")
     int updatePostStatus(@Param("postID") Long postID, @Param("status") String status);
 
     /**
@@ -115,7 +115,7 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param isTop 是否置顶
      * @return 影响行数
      */
-    @Update("UPDATE post SET is_essence = #{isEssence}, is_top = #{isTop}, update_time = #{updateTime} WHERE post_id = #{postId}")
+    @Update("UPDATE `post` SET is_essence = #{isEssence}, is_top = #{isTop}, update_time = NOW() WHERE post_id = #{postId}")
     int updatePostEssenceAndTop(
             @Param("postId") Long postId,
             @Param("isEssence") boolean isEssence,
@@ -136,17 +136,6 @@ public interface PostMapper extends BaseMapper<Post> {
             @Param("newContent") String newContent,
             @Param("updateTime") LocalDateTime updateTime
     );
-
-    /**
-     * 更新帖子精华和置顶状态
-     *
-     * @param postId 帖子ID
-     * @param isEssence 是否精华
-     * @param isTop 是否置顶
-     * @return 影响行数
-     */
-    @Update("UPDATE post SET is_essence = #{isEssence}, is_top = #{isTop}, update_time = #{updateTime} WHERE post_id = #{postId}")
-    int updateEssenceAndTopById(Long postId, boolean isEssence, boolean isTop, LocalDateTime updateTime);
 
     /**
      * 批量更新帖子状态
@@ -176,7 +165,7 @@ public interface PostMapper extends BaseMapper<Post> {
      *
      * @return 置顶帖子数量
      */
-    @Select("SELECT COUNT(1) FROM post WHERE is_top = 1")
+    @Select("SELECT COUNT(1) FROM `post` WHERE is_top = 1")
     int countTopPosts();
 
     /**
@@ -184,6 +173,6 @@ public interface PostMapper extends BaseMapper<Post> {
      *
      * @return 精华帖子数量
      */
-    @Select("SELECT COUNT(1) FROM post WHERE is_essence = 1")
+    @Select("SELECT COUNT(1) FROM `post` WHERE is_essence = 1")
     int countEssencePosts();
 }

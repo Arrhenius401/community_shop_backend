@@ -199,8 +199,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             loginResultDTO.setTokenExpireTime(tokenExpireTime);
 
             // 6. 缓存用户信息
-            Long expiration = tokenUtil.getExpiration();
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + user.getUserId(), user, expiration, TimeUnit.MILLISECONDS);
+            UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(user);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + user.getUserId(), userDetailDTO, CACHE_TTL_USER);
             log.info("用户登录成功，用户ID：{}，登录类型：{}", user.getUserId(), loginType);
             return loginResultDTO;
         } catch (BusinessException e) {
@@ -287,19 +287,20 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             }
 
             // 2. 查询缓存
-            User user = (User) redisTemplate.opsForValue().get(CACHE_KEY_USER + userId);
-            if (Objects.nonNull(user)) {
-                return userConvert.userToUserDetailDTO(user);
+            UserDetailDTO userDetailDTO = (UserDetailDTO) redisTemplate.opsForValue().get(CACHE_KEY_USER + userId);
+            if (Objects.nonNull(userDetailDTO)) {
+                return userDetailDTO;
             }
 
             // 3. 查询数据库（匹配UserMapper.selectById）
-            user = userMapper.selectById(userId);
+            User user = userMapper.selectById(userId);
             if (user == null) {
                 throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
             }
+            userDetailDTO = userConvert.userToUserDetailDTO(user);
 
             // 4. 缓存并返回DTO
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_TTL_USER);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, userDetailDTO, CACHE_TTL_USER);
             return userConvert.userToUserDetailDTO(user);
         } catch (BusinessException e) {
             throw e;
@@ -354,7 +355,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
             // 5. 刷新缓存并返回
             User updatedUser = userMapper.selectById(userId);
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, updatedUser, CACHE_TTL_USER);
+            UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(updatedUser);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, userDetailDTO, CACHE_TTL_USER);
             return userConvert.userToUserDetailDTO(updatedUser);
         } catch (BusinessException e) {
             throw e;
@@ -452,7 +454,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
             // 5. 刷新缓存
             user.setCreditScore(newScore);
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_TTL_USER);
+            UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(user);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, userDetailDTO, CACHE_TTL_USER);
             log.info("信用分更新成功，用户ID：{}，原分数：{}，新分数：{}，原因：{}", userId, user.getCreditScore(), newScore, reason);
             return true;
         } catch (BusinessException e) {

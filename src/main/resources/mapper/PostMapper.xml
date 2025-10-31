@@ -91,7 +91,7 @@
         SELECT <include refid="Base_Column_List"/> FROM `post`
         <where>
             <!-- 帖子标题关键词搜索 -->
-            <if test="query.keyword != null and query.keyword != ''">
+            <if test="keyword != null and keyword != ''">
                 (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
 
@@ -114,13 +114,11 @@
             <if test="isEssence != null">
                 AND is_essence = #{isEssence}
             </if>
-            <!-- 分页 -->
-            LIMIT #{query.offset}, #{query.limit}
         </where>
 
         <!-- 排序：支持用户常用的排序方式 -->
         <if test="sortField != null and sortDir != null">
-            ORDER BY ${sortField} ${query.sortDir}
+            ORDER BY ${sortField} ${sortDir}
         </if>
         <if test="sortField == null">
             <!-- 默认按更新时间倒序 -->

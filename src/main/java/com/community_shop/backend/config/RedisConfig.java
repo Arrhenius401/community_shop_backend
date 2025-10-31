@@ -1,9 +1,12 @@
 package com.community_shop.backend.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,20 +22,30 @@ import java.time.format.DateTimeFormatter;
 public class RedisConfig {
 
     /**
-     * 配置全局Jackson ObjectMapper（处理Java 8时间类型）
+     * 配置 Redis 专用的Jackson ObjectMapper
+     * 用于（1）处理Java 8时间类型 （2）保留类型 信息，处理对象序列化
      * @return ObjectMapper
      */
-    @Bean
+    @Bean("redisObjectMapper") // 命名以区分全局 ObjectMapper
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule timeModule = new JavaTimeModule();
 
+        // 1. 处理Java 8时间类型（LocalDateTime)
         // 自定义LocalDateTime序列化格式（如"yyyy-MM-dd HH:mm:ss"，符合业务习惯）
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // 同时配置序列化器和反序列化器，确保格式一致
         timeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
-
+        timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
         // 注册时间模块到Jackson
         objectMapper.registerModule(timeModule);
+
+        // 2. 保留类型信息
+        objectMapper.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL  // 对非final类添加类型信息
+        );
+
         return objectMapper;
     }
 
@@ -44,7 +57,8 @@ public class RedisConfig {
      */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory factory, ObjectMapper objectMapper) {
+            RedisConnectionFactory factory,
+            @Qualifier("redisObjectMapper") ObjectMapper objectMapper) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 

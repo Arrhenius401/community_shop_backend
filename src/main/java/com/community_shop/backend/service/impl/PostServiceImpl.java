@@ -981,7 +981,9 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
 
         // 3. 校验操作者权限，要么是管理员，要么是作者
         User user = userService.getById(operatorId);
-        if (!user.isAdmin() && post.getUserId().equals(operatorId)) {
+        boolean isAdmin = user.isAdmin();
+        boolean isAuthor = post.getUserId().equals(operatorId);
+        if (!isAdmin && !isAuthor) {
             throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
 
@@ -990,21 +992,27 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
         if (post.getStatus() == PostStatusEnum.DELETED) {
             throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
         }
-        if (user.isAdmin()){
-            // 管理员不允许将帖子状态设置为草稿，隐藏
+
+        if (isAdmin && !isAuthor){
+            // 管理员身份但非作者身份.不允许将帖子状态设置为草稿，隐藏
             if (status == PostStatusEnum.DRAFT || status == PostStatusEnum.HIDDEN) {
                 throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
             }
-        } else {
-            // 非管理员不允许修改已封禁的帖子状态
+        } else if (!isAdmin && isAuthor){
+            // 作者身份但非管理员身份，不允许修改已封禁的帖子状态
             if (post.getStatus() == PostStatusEnum.BLOCKED) {
                 throw new BusinessException(ErrorCode.PERMISSION_DENIED);
             }
-            // 作者不允许将帖子状态设置为草稿或隐藏
+            // 作者身份但非管理员身份，不允许将帖子状态设置为草稿或隐藏
             if (status == PostStatusEnum.DRAFT) {
                 throw new BusinessException(ErrorCode.POST_STATUS_INVALID);
             }
             if (status == PostStatusEnum.HIDDEN) {
+                throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+            }
+        } else {
+            // 作者身份且管理员身份，不允许修改已封禁的帖子状态
+            if (post.getStatus() == PostStatusEnum.BLOCKED) {
                 throw new BusinessException(ErrorCode.PERMISSION_DENIED);
             }
         }

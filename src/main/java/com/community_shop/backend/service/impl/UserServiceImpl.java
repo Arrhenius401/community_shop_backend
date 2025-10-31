@@ -19,7 +19,6 @@ import com.community_shop.backend.utils.ThirdPartyAuthUtil;
 import com.community_shop.backend.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -49,12 +49,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     // 缓存相关常量
     private static final String CACHE_KEY_USER = "user:info:"; // 用户信息缓存Key前缀
-    private static final String CACHE_KEY_USER_LIST = "user:list:"; // 用户列表缓存Key前缀
-    private static final long CACHE_TTL_USER = 60; // 用户信息缓存有效期（分钟）
-    private static final long CACHE_TTL_USER_LIST = 30; // 用户列表缓存有效期（分钟）
-
-    @Value("${jwt.expiration}")
-    private static long TOKEN_EXPIRATION_MILLISECONDS;
+    private static final Duration CACHE_TTL_USER = Duration.ofMinutes(60); // 用户信息缓存有效期（分钟）
 
     @Autowired
     private UserMapper userMapper;
@@ -131,8 +126,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             redisTemplate.opsForValue().set(
                     CACHE_KEY_USER + user.getUserId(),
                     userDetailDTO,
-                    CACHE_TTL_USER,
-                    TimeUnit.MINUTES
+                    CACHE_TTL_USER
             );
 
             log.info("用户注册成功，用户ID：{}", user.getUserId());
@@ -164,7 +158,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 throw new BusinessException(ErrorCode.PARAM_NULL);
             }
 
-            User user = null;
+            User user;
 
             // 2. 按登录类型校验（匹配LoginDTO的loginType枚举）
             LoginTypeEnum loginType = loginDTO.getLoginType();
@@ -305,7 +299,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             }
 
             // 4. 缓存并返回DTO
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, TOKEN_EXPIRATION_MILLISECONDS, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_TTL_USER);
             return userConvert.userToUserDetailDTO(user);
         } catch (BusinessException e) {
             throw e;
@@ -332,7 +326,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             if (userId == null || profileDTO == null) {
                 throw new BusinessException(ErrorCode.PARAM_NULL);
             }
-            if (StringUtils.hasText(profileDTO.getUsername()) && (profileDTO.getUsername().length() < 1 || profileDTO.getUsername().length() > 10)) {
+            if (StringUtils.hasText(profileDTO.getUsername()) && (profileDTO.getUsername().isEmpty() || profileDTO.getUsername().length() > 10)) {
                 throw new BusinessException(ErrorCode.USERNAME_LENGTH_INVALID);
             }
             if (StringUtils.hasText(profileDTO.getAvatarUrl()) && !profileDTO.getAvatarUrl().matches("^https?://.+$")) {
@@ -360,7 +354,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
             // 5. 刷新缓存并返回
             User updatedUser = userMapper.selectById(userId);
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, updatedUser, TOKEN_EXPIRATION_MILLISECONDS, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, updatedUser, CACHE_TTL_USER);
             return userConvert.userToUserDetailDTO(updatedUser);
         } catch (BusinessException e) {
             throw e;
@@ -458,7 +452,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
             // 5. 刷新缓存
             user.setCreditScore(newScore);
-            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, TOKEN_EXPIRATION_MILLISECONDS, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(CACHE_KEY_USER + userId, user, CACHE_TTL_USER);
             log.info("信用分更新成功，用户ID：{}，原分数：{}，新分数：{}，原因：{}", userId, user.getCreditScore(), newScore, reason);
             return true;
         } catch (BusinessException e) {
@@ -516,7 +510,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
      * @param operatorId 操作者ID
      * @param userId 用户ID
      * @param role 目标角色枚举
-     * @return
+     * @return 更新结果
      */
     @Override
     public Boolean updateUserRole(Long operatorId, Long userId, UserRoleEnum role) {
@@ -535,7 +529,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
 
         log.info("更新用户角色成功，用户ID：{}，角色：{}", userId, role);
-        return rows > 0;
+        return true;
     }
 
     /**
@@ -562,7 +556,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
         log.info("更新用户状态成功，用户ID：{}，状态：{}", userId, status);
 
-        return rows > 0;
+        return true;
     }
 
     /**

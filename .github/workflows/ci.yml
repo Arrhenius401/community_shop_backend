@@ -1,12 +1,12 @@
 # 流程名称：社区交易系统CI流程（环境准备→编译→单元测试→构建Jar包）
 name: Community-Shop_System-CI-Core
 
-# 触发条件：仅提交/合并到main分支（开发分支，按你规划的分支策略）时执行
+# 触发条件：仅提交/合并到 master分支（开发分支，按项目规划的分支策略）时执行
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build-test-package:

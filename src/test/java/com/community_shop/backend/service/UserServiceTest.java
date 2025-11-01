@@ -26,6 +26,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.lang.reflect.Field;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -139,8 +140,7 @@ public class UserServiceTest {
         verify(valueOperations, times(1)).set(
                 anyString(),
                 any(),
-                anyLong(),
-                any(TimeUnit.class)
+                any(Duration.class)
         );
     }
 
@@ -216,8 +216,7 @@ public class UserServiceTest {
         verify(valueOperations, times(1)).set(
                 anyString(),
                 any(),
-                anyLong(),
-                any(TimeUnit.class)
+                any(Duration.class)
         );
     }
 

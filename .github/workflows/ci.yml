@@ -1,0 +1,87 @@
+# 流程名称：社区交易系统CI流程（环境准备→编译→单元测试→构建Jar包）
+name: Community-Shop_System-CI-Core
+
+# 触发条件：仅提交/合并到main分支（开发分支，按你规划的分支策略）时执行
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest  # 基于Ubuntu环境，适配Docker与Maven
+
+#    # 环境准备：启动Docker化MySQL、Redis（匹配文档1.3节技术栈版本）
+#    services:
+#      mysql:
+#        image: mysql:8.0  # 文档1.3节指定MySQL 8.0+
+#        env:
+#          MYSQL_ROOT_PASSWORD: root123
+#          MYSQL_DATABASE: trade_db  # 业务数据库，对应文档3.1节Entity层关联表
+#        ports:
+#          - 3306:3306
+#        options: >-
+#          --health-cmd "mysqladmin ping"
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5  # 确保MySQL启动成功（文档5.1节测试环境稳定性要求）
+#
+#      redis:
+#        image: redis:6.0  # 文档1.3节指定Redis 6.0+
+#        ports:
+#          - 6379:6379
+#        options: >-
+#          --health-cmd "redis-cli ping"
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5  # 确保Redis启动成功
+
+    steps:
+      # 步骤1：拉取GitHub仓库代码（根目录代码）
+      - name: Checkout project root code
+        uses: actions/checkout@v4
+
+      # 步骤2：配置Java环境（JDK 21+，匹配Spring Boot 3.5.0要求）
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven  # 缓存Maven依赖，减少构建时间（文档性能优化思路）
+
+      # 步骤3：代码编译（验证语法正确性，基于pom.xml依赖）
+      - name: Compile project code
+        run: mvn clean compile  # 文档1.3节Maven构建流程
+
+      # 步骤4：单元测试（仅执行Mapper+Service层，适配你已完成的测试）
+      - name: Run unit tests (Mapper + Service)
+        run: |
+          # 执行Mapper层测试（如ProductMapperTest、OrderMapperTest）
+          mvn test -Dtest=*MapperTest
+          # 执行Service层测试（如TradeServiceTest、PostServiceTest）
+          mvn test -Dtest=*ServiceTest
+        env:
+          # 测试环境配置：指定使用test环境，自动加载src/test/resources/application-test.properties
+          SPRING_PROFILES_ACTIVE: test
+          # 若application-test.properties中未配置数据库/Redis，可在此补充（优先级低于配置文件）
+          # SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/trade_db?useSSL=false&serverTimezone=UTC
+          # SPRING_DATASOURCE_USERNAME: root
+          # SPRING_DATASOURCE_PASSWORD: root123
+          # SPRING_REDIS_HOST: localhost
+          # SPRING_REDIS_PORT: 6379
+
+      # 步骤5：构建Jar包（仅测试通过后执行，生成部署用产物）
+      - name: Package Spring Boot Jar
+        run: mvn package -Dmaven.test.skip=true  # 跳过重复测试
+        if: success()  # 前序步骤全部成功才执行
+
+      # 步骤6：保存Jar包与测试报告（供后续排查问题或CD使用）
+      - name: Upload core artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: trade-core-artifacts
+          path: |
+            target/*.jar  # 构建的可执行Jar包（如target/community-trade-1.0.jar）
+            target/surefire-reports/  # Mapper/Service测试报告（失败时查看）
+        if: always()  # 无论成功/失败均保存产物

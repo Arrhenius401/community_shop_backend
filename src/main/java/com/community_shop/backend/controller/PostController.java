@@ -282,6 +282,60 @@ public class PostController {
     }
 
     /**
+     * 分页查询用户个人发布的帖子列表接口
+     * 对应Service层：PostServiceImpl.countPosts()，统计符合条件的正常状态帖子总数
+     */
+    @GetMapping("/query/list/private")
+    @Operation(
+            summary = "分页查询用户个人发布的帖子列表接口",
+            description = "分页查询用户个人发布的帖子列表，支持：1.关键词模糊匹配标题/内容；2.按发布时间/点赞数/跟帖数排序；3.分页参数（pageNum默认1，pageSize默认10）；仅返回正常状态（NORMAL）帖子，结果优先从缓存获取"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "查询成功，返回分页列表（无数据时列表为空）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（pageNum/pageSize为负数，对应错误码：SYSTEM_002）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "数据查询失败（对应错误码：SYSTEM_014）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<PageResult<PostListItemDTO>> queryPrivatePostList(
+            @Valid @ModelAttribute
+            @Parameter(description = "帖子列表查询参数，支持关键词、排序与分页")
+            PostQueryDTO postQueryDTO
+    ) {
+        Long userId = parseUserIdFromToken();
+        postQueryDTO.setUserId(userId);
+        PageResult<PostListItemDTO> postPage = postService.queryPosts(postQueryDTO);
+        return ResultVO.success(postPage);
+    }
+
+    /**
+     * 获取用户个人发布的帖子数量接口
+     * 对应Service层：PostServiceImpl.countPosts()，统计符合条件的正常状态帖子总数
+     */
+    @GetMapping("/query/count/private")
+    @Operation(
+            summary = "获取用户个人发布的帖子数量接口",
+            description = "统计符合筛选条件的帖子总数，支持的查询条件与“分页查询帖子列表”一致（关键词、状态等），统计帖子"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "统计成功（无数据时返回0）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（状态非法，对应错误码：POST_021）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "数据查询失败（对应错误码：SYSTEM_014）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Integer> queryPrivatePostCount(
+            @Parameter(description = "帖子数量查询参数，支持关键词与状态筛选")
+            PostQueryDTO postQueryDTO
+    ) {
+        Long userId = parseUserIdFromToken();
+        postQueryDTO.setUserId(userId);
+        return ResultVO.success(postService.countPosts(postQueryDTO));
+    }
+
+    /**
      * 帖子状态更新接口
      * 对应Service层：PostServiceImpl.updatePostStatus()，作者/管理员可操作，状态流转有约束
      */

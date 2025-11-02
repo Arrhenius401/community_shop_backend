@@ -103,27 +103,4 @@ public interface PostConvert {
      */
     List<PostFollowDetailDTO> postFollowListToPostFollowDetailList(List<PostFollow> postFollows);
 
-    // ------------------------------ 辅助方法 ------------------------------
-    /**
-     * JSON 字符串转 String 数组
-     */
-    default String[] jsonToArray(String json) {
-        if (json == null || json.isEmpty()) {
-            return new String[0];
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(json, String[].class);
-        } catch (JsonProcessingException e) {
-            return new String[0];
-        }
-    }
-
-    /**
-     * 获取首张图片 URL 作为封面
-     */
-    default String getFirstImage(String json) {
-        String[] urls = jsonToArray(json);
-        return urls.length > 0 ? urls[0] : "default_cover.png"; // 默认封面图
-    }
 }

@@ -394,46 +394,24 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             if (Objects.isNull(postQueryDTO)) {
                 postQueryDTO = new PostQueryDTO();
             }
-            // 分页参数默认值（pageNum=1，pageSize=10）
-            int pageNum = Objects.nonNull(postQueryDTO.getPageNum()) ? postQueryDTO.getPageNum() : 1;
-            int pageSize = Objects.nonNull(postQueryDTO.getPageSize()) ? postQueryDTO.getPageSize() : 10;
-            // 排序参数默认值（按发布时间降序）
-            PostSortFieldEnum sortField = Objects.nonNull(postQueryDTO.getSortField())
-                    ? postQueryDTO.getSortField()
-                    : PostSortFieldEnum.CREATE_TIME;
-            SortDirectionEnum sortDir = Objects.nonNull(postQueryDTO.getSortDir())
-                    ? postQueryDTO.getSortDir()
-                    : SortDirectionEnum.DESC;
-            postQueryDTO.setSortField(sortField);
-            postQueryDTO.setSortDir(sortDir);
 
-            // 2. 构建缓存Key（基于查询参数，确保不同条件缓存隔离）
-            String cacheKey = buildPostListCacheKey(postQueryDTO, pageNum, pageSize);
-            // 先查缓存
-            PageResult<PostListItemDTO> cachedPageResult = (PageResult<PostListItemDTO>) redisTemplate.opsForValue().get(cacheKey);
-            if (Objects.nonNull(cachedPageResult)) {
-                log.info("从缓存获取帖子列表成功，缓存Key：{}", cacheKey);
-                return cachedPageResult;
-            }
-
-            // 3. 分页查询数据库（只查正常状态的帖子）
+            // 2. 分页查询数据库（只查正常状态的帖子）
+            int pageNum = postQueryDTO.getPageNum();
+            int pageSize = postQueryDTO.getPageSize();
             long total = postMapper.countByQuery(postQueryDTO);
             List<Post> postList = postMapper.selectByQuery(postQueryDTO);
             Long totalPages = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
 
-            // 4. 转换为PostListItemDTO（关联发布者极简信息，处理首图）
+            // 3. 转换为PostListItemDTO（关联发布者极简信息，处理首图）
             List<PostListItemDTO> dtoList = convertToPostListItemDTO(postList);
 
-            // 5. 封装分页结果
+            // 4. 封装分页结果
             PageResult<PostListItemDTO> pageResult = new PageResult<>();
             pageResult.setList(dtoList);
             pageResult.setTotal(total);
             pageResult.setTotalPages(totalPages);
             pageResult.setPageNum(pageNum);
             pageResult.setPageSize(pageSize);
-
-            // 6. 缓存结果
-            redisTemplate.opsForValue().set(cacheKey, pageResult, CACHE_TTL_POST_LIST, TimeUnit.MINUTES);
 
             log.info("查询帖子列表成功，查询参数：{}，分页：{}页/{}条，总条数：{}，总页数：{}",
                     postQueryDTO, pageNum, pageSize, total, totalPages);
@@ -654,11 +632,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
         // 转换DTO
         return postList.stream().map(post -> {
             PostListItemDTO listDTO = postConvert.postToPostListItemDTO(post);
-//            // 处理首图（无图用默认图）
-//            List<String> imageUrls = post.getImageUrls();
-//            listDTO.setCoverImage(!CollectionUtils.isEmpty(imageUrls)
-//                    ? imageUrls.get(0)
-//                    : "/static/image/post_default.png"); // 默认首图
+
             // 封装发布者极简信息
             User publisher = publisherMap.get(post.getUserId());
             if (Objects.nonNull(publisher)) {
@@ -737,19 +711,6 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             redisTemplate.delete(cacheKeys);
             log.info("清除帖子列表缓存，缓存Key数量：{}", cacheKeys.size());
         }
-    }
-
-    /**
-     * 构建帖子列表缓存Key（基于查询参数）
-     */
-    private String buildPostListCacheKey(PostQueryDTO queryDTO, int pageNum, int pageSize) {
-        StringBuilder cacheKey = new StringBuilder(CACHE_KEY_POST_LIST);
-        cacheKey.append("keyword:").append(Objects.nonNull(queryDTO.getKeyword()) ? queryDTO.getKeyword() : "null");
-        cacheKey.append("_sortField:").append(queryDTO.getSortField().name());
-        cacheKey.append("_sortDir:").append(queryDTO.getSortDir().name());
-        cacheKey.append("_pageNum:").append(pageNum);
-        cacheKey.append("_pageSize:").append(pageSize);
-        return cacheKey.toString();
     }
 
     //========================== v1 ===================================

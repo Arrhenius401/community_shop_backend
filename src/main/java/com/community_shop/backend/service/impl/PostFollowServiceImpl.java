@@ -251,7 +251,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
      * @param postFollowQueryDTO 跟帖查询DTO
      */
     @Override
-    public PageResult<PostFollowDetailDTO> queryFollowsByPostId(PostFollowQueryDTO postFollowQueryDTO) {
+    public PageResult<PostFollowDetailDTO> queryFollows(PostFollowQueryDTO postFollowQueryDTO) {
         try {
             // 1. 参数校验
             if (postFollowQueryDTO == null) {
@@ -307,6 +307,14 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             log.error("查询帖子跟帖列表失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
+    }
+
+    /**
+     * 统计帖子下的跟帖数量
+     * @param postFollowQueryDTO 跟帖查询DTO
+     */
+    public int countFollows(PostFollowQueryDTO postFollowQueryDTO) {
+        return postFollowMapper.countByQuery(postFollowQueryDTO);
     }
 
     /**

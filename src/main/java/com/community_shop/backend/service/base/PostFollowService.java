@@ -2,13 +2,10 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
-import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.entity.PostFollow;
 import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * 跟帖模块Service接口
@@ -51,7 +48,14 @@ public interface PostFollowService extends BaseService<PostFollow>{
      * @param postFollowQueryDTO 查询参数（帖子ID、分页、状态）
      * @return 分页跟帖列表
      */
-    PageResult<PostFollowDetailDTO> queryFollowsByPostId(PostFollowQueryDTO postFollowQueryDTO);
+    PageResult<PostFollowDetailDTO> queryFollows(PostFollowQueryDTO postFollowQueryDTO);
+
+    /**
+     * 多条件查询跟帖数量
+     * @param postFollowQueryDTO 跟帖查询参数（关键词、排序、分页）
+     * @return 跟帖数量
+     */
+    int countFollows(PostFollowQueryDTO postFollowQueryDTO);
 
     /**
      * 基础删除：逻辑删除跟帖

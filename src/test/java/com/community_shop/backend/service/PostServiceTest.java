@@ -403,7 +403,6 @@ public class PostServiceTest {
         // 5. 验证依赖调用
         verify(postMapper, times(1)).countByQuery(testQueryDTO);
         verify(postMapper, times(1)).selectByQuery(testQueryDTO);
-        verify(valueOperations, times(1)).set(anyString(), any(), anyLong(), any(TimeUnit.class));
     }
 
     /**

@@ -223,9 +223,13 @@ public class UserServiceTest {
     @Test
     @MockitoSettings(strictness = Strictness.LENIENT)
     void testUpdateUserRole_Success() {
+        // 模拟被修改的用户
+        User targetUser = new User();
+        targetUser.setRole(UserRoleEnum.USER);
+
         // 模拟依赖行为
         doReturn(testUser).when(userMapper).selectById(3L); // 操作者
-        doReturn(new User()).when(userMapper).selectById(4L); // 目标用户
+        doReturn(targetUser).when(userMapper).selectById(4L); // 目标用户
         doReturn(1).when(userMapper).updateUserRole(any(UserRoleEnum.class), eq(4L));
 
         // 执行测试

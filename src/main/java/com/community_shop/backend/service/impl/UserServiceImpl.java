@@ -535,7 +535,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
 
         // 3. 验证用户存在
-         selectUserById(userId);
+        selectUserById(userId);
         int rows = userMapper.updateUserRole(role, userId);
 
         if (rows <= 0) {

@@ -1,7 +1,9 @@
 package com.community_shop.backend.exception;
 
 import com.community_shop.backend.vo.ResultVO;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -54,6 +56,13 @@ public class GlobalExceptionHandler {
     public ResultVO<?> handleNoPermissionException(NoPermissionException e) {
         log.warn("权限不足拦截：{}", e.getMessage());
         return ResultVO.fail("403", "权限不足，无法操作");
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResultVO<?> handleMethodNotSupported(HttpServletRequest request, Exception e) {
+        String requestUrl = request.getRequestURI(); // 获取请求路径
+        log.error("接口[{}]请求方法不支持，错误信息：{}", requestUrl, e.getMessage());
+        return ResultVO.fail("405", "请求方法不支持");
     }
 
     /**

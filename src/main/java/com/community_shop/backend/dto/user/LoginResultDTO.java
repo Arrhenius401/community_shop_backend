@@ -23,6 +23,10 @@ public class LoginResultDTO {
     @Schema(description = "令牌过期时间", example = "2023-12-31T23:59:59")
     private LocalDateTime tokenExpireTime;
 
+    /** 是否是管理员 */
+    @Schema(description = "是否是管理员", example = "false")
+    private Boolean isAdmin;
+
     /**
      * 用户简易信息内部类（适配登录场景精简返回）
      */

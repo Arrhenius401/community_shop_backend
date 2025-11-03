@@ -194,14 +194,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             userSimpleDTO.setUsername(user.getUsername());
             userSimpleDTO.setAvatarUrl(user.getAvatarUrl());
             userSimpleDTO.setCreditScore(user.getCreditScore());
+            userSimpleDTO.setIsAdmin(user.isAdmin());
             loginResultDTO.setUserInfo(userSimpleDTO);
             loginResultDTO.setToken(token);
             loginResultDTO.setTokenExpireTime(tokenExpireTime);
 
-            // 5. 封装角色信息
-            loginResultDTO.setIsAdmin(user.isAdmin());
-
-            // 6. 缓存用户信息
+            //. 缓存用户信息
             UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(user);
             redisTemplate.opsForValue().set(CACHE_KEY_USER + user.getUserId(), userDetailDTO, CACHE_TTL_USER);
             log.info("用户登录成功，用户ID：{}，登录类型：{}", user.getUserId(), loginType);
@@ -263,10 +261,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             userSimpleDTO.setUsername(user.getUsername());
             userSimpleDTO.setAvatarUrl(user.getAvatarUrl());
             userSimpleDTO.setCreditScore(user.getCreditScore());
+            userSimpleDTO.setIsAdmin(user.isAdmin());
             loginResultDTO.setUserInfo(userSimpleDTO);
             loginResultDTO.setToken(token);
             loginResultDTO.setTokenExpireTime(tokenExpireTime);
-            loginResultDTO.setIsAdmin(user.isAdmin());
 
             return loginResultDTO;
         } catch (BusinessException e) {

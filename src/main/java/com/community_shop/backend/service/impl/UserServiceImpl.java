@@ -198,6 +198,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             loginResultDTO.setToken(token);
             loginResultDTO.setTokenExpireTime(tokenExpireTime);
 
+            // 5. 封装角色信息
+            loginResultDTO.setIsAdmin(user.isAdmin());
+
             // 6. 缓存用户信息
             UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(user);
             redisTemplate.opsForValue().set(CACHE_KEY_USER + user.getUserId(), userDetailDTO, CACHE_TTL_USER);
@@ -263,6 +266,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             loginResultDTO.setUserInfo(userSimpleDTO);
             loginResultDTO.setToken(token);
             loginResultDTO.setTokenExpireTime(tokenExpireTime);
+            loginResultDTO.setIsAdmin(user.isAdmin());
+
             return loginResultDTO;
         } catch (BusinessException e) {
             throw e;
@@ -517,13 +522,20 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
      */
     @Override
     public Boolean updateUserRole(Long operatorId, Long userId, UserRoleEnum role) {
+        // 1. 参数校验
         if (operatorId == null || userId == null || role == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }
-        if (!verifyRole(operatorId, UserRoleEnum.ADMIN)) {
+
+        // 2. 验证权限
+        // 非管理员操，或操作对象是管理员身份，或试图操作自己角色状态时，抛出无权限异常
+        if (!verifyRole(operatorId, UserRoleEnum.ADMIN) || verifyRole(userId, UserRoleEnum.ADMIN)
+                || operatorId.equals(userId)) {
             throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
-        selectUserById(userId);
+
+        // 3. 验证用户存在
+         selectUserById(userId);
         int rows = userMapper.updateUserRole(role, userId);
 
         if (rows <= 0) {
@@ -544,12 +556,19 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
      */
     @Override
     public Boolean updateUserStatus(Long operatorId, Long userId, UserStatusEnum status) {
+        // 1. 验证参数
         if (operatorId == null || userId == null || status == null) {
             throw new BusinessException(ErrorCode.PARAM_NULL);
         }
-        if (!verifyRole(operatorId, UserRoleEnum.ADMIN)) {
+
+        // 2. 验证权限
+        // 非管理员操，或操作对象是管理员身份，或试图操作自己角色状态时，抛出无权限异常
+        if (!verifyRole(operatorId, UserRoleEnum.ADMIN) || verifyRole(userId, UserRoleEnum.ADMIN)
+                || operatorId.equals(userId)) {
             throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
+
+        // 3. 验证用户存在
         selectUserById(userId);
         int rows = userMapper.updateUserStatus(userId, status);
 

@@ -42,7 +42,7 @@ public class PostFollowController {
      * 发布跟帖接口
      * 对应Service层：PostFollowServiceImpl.publishFollow()，校验帖子存在、内容1-500字、用户存在
      */
-    @PostMapping("")
+    @PostMapping("/create")
     @LoginRequired
     @Operation(
             summary = "发布跟帖接口",
@@ -123,7 +123,7 @@ public class PostFollowController {
      * 更新跟帖状态接口
      * 对应Service层：PostFollowServiceImpl.updateFollowStatus()，仅管理员可操作，校验跟帖存在
      */
-    @PostMapping("/update/status")
+    @PatchMapping("/update/status")
     @AdminRequired
     @Operation(
             summary = "更新跟帖状态接口（管理员专属）",
@@ -158,7 +158,7 @@ public class PostFollowController {
      * 分页查询跟帖列表接口
      * 对应Service层：PostFollowServiceImpl.queryFollowsByPostId()，校验帖子存在、支持状态筛选与分页
      */
-    @GetMapping("/")
+    @GetMapping("/query/list")
     @Operation(
             summary = "分页查询跟帖列表接口",
             description = "查询指定帖子的跟帖列表，业务规则：1.关联帖子需存在；2.默认查询正常状态（NORMAL）跟帖；3.分页参数默认pageNum=1、pageSize=10；4.默认按发布时间降序排序"
@@ -182,8 +182,40 @@ public class PostFollowController {
             PostFollowQueryDTO postFollowQueryDTO
     ) {
         postFollowQueryDTO.setPostId(postId);
-        PageResult<PostFollowDetailDTO> followPage = postFollowService.queryFollowsByPostId(postFollowQueryDTO);
+        PageResult<PostFollowDetailDTO> followPage = postFollowService.queryFollows(postFollowQueryDTO);
         return ResultVO.success(followPage);
+    }
+
+    /**
+     * 查询跟帖数量接口
+     * 对应Service层：PostFollowServiceImpl.countFollows()，统计符合条件的正常状态跟帖总数
+     */
+    @GetMapping("/query/count")
+    @Operation(
+            summary = "查询跟帖数量接口",
+            description = "查询指定帖子的正常状态跟帖数量，业务规则：1.关联帖子需存在；2.默认查询正常状态（NORMAL）跟帖"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "查询成功，返回跟帖数量",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（帖子ID为空=POST_004）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "404", description = "帖子不存在（对应错误码：POST_001）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "数据查询失败（对应错误码：SYSTEM_014）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Integer> queryFollowCount(
+            @PathVariable
+            @Parameter(description = "关联帖子ID", required = true, example = "2001")
+            Long postId,
+            @Valid @ModelAttribute
+            @Parameter(description = "跟帖查询参数，支持状态筛选、分页与排序")
+            PostFollowQueryDTO postFollowQueryDTO
+    ) {
+        postFollowQueryDTO.setPostId(postId);
+        int followCount = postFollowService.countFollows(postFollowQueryDTO);
+        return ResultVO.success(followCount);
     }
 
     /**

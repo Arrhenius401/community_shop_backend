@@ -30,5 +30,5 @@ public class PostFollowQueryDTO extends PageParam {
 
     /** 排序方向（asc-升序；desc-降序，默认降序） */
     @Schema(description = "排序方向", example = "DESC")
-    private SortDirectionEnum sortDir = SortDirectionEnum.DESC;
+    private SortDirectionEnum sortDir = SortDirectionEnum.ASC;
 }

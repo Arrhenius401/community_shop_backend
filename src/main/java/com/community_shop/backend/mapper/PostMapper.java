@@ -148,6 +148,15 @@ public interface PostMapper extends BaseMapper<Post> {
             @Param("status") PostStatusEnum status
     );
 
+    /**
+     * 批量更新帖子更新时间
+     * @param postId 帖子ID列表
+     * @return 影响行数
+     */
+    @Update("UPDATE `post` SET update_time = NOW() WHERE post_id = #{postId}")
+    int refreshUpdateTime(
+            @Param("postId") Long postId
+    );
 
     // ==================== 统计功能 ====================
 

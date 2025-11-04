@@ -44,14 +44,14 @@
     <select id="selectEssencePosts" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         WHERE is_essence = 1 AND `status` = 'NORMAL'
-        ORDER BY create_time DESC
+        ORDER BY update_time DESC
         LIMIT #{offset}, #{limit}
     </select>
 
     <select id="selectTopPosts" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         WHERE `is_top` = 1 AND `status` = 'NORMAL'
-        ORDER BY `create_time` DESC
+        ORDER BY update_time DESC
         LIMIT #{limit}
     </select>
 
@@ -133,11 +133,11 @@
 
     <!-- ==================== 互动数据更新 ==================== -->
     <update id="updateLikeCount">
-        UPDATE `post` SET like_count = #{count} WHERE post_id = #{postId}
+        UPDATE `post` SET like_count = #{count}, update_time = NOW() WHERE post_id = #{postId}
     </update>
 
     <update id="updatePostFollowCount">
-        UPDATE `post` SET post_follow_count = #{count} WHERE post_id = #{postId}
+        UPDATE `post` SET post_follow_count = #{count}, update_time = NOW() WHERE post_id = #{postId}
     </update>
 
 
@@ -153,7 +153,8 @@
 
     <update id="batchUpdateStatus">
         UPDATE `post`
-        SET status = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+        SET `status` = #{status.code,jdbcType=VARCHAR}, <!-- 简化：无需显式指定typeHandler -->
+            update_time = NOW()
         WHERE post_id IN
         <foreach collection="postIds" item="postId" open="(" separator="," close=")">
             #{postId}

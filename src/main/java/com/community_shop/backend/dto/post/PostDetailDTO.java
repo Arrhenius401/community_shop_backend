@@ -61,6 +61,10 @@ public class PostDetailDTO extends Post {
     @Schema(description = "发布时间", example = "2023-10-01T14:30:00")
     private LocalDateTime createTime;
 
+    /** 帖子修改时间 */
+    @Schema(description = "帖子修改时间", example = "2023-10-01T14:30:00")
+    private LocalDateTime updateTime;
+
     /** 帖子状态 */
     @Schema(description = "帖子状态")
     private PostStatusEnum status;

@@ -481,12 +481,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         if (userQueryDTO == null) {
             userQueryDTO = new UserQueryDTO();
         }
+
+        // 2. 查询总数和列表（匹配UserMapper.countByAllParam和selectByAllParam）
         int pageNum = userQueryDTO.getPageNum() == null ? 1 : userQueryDTO.getPageNum();
         int pageSize = userQueryDTO.getPageSize() == null ? 10 : userQueryDTO.getPageSize();
         int offset = (pageNum - 1) * pageSize;
-
-        // 2. 查询总数和列表（匹配UserMapper.countByAllParam和selectByAllParam）
         userQueryDTO.setOffset(offset);
+
         long total = userMapper.countByQuery(userQueryDTO);
         List<User> userList = userMapper.selectByQuery(userQueryDTO);
 

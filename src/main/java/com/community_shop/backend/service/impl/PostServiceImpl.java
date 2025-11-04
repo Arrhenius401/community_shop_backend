@@ -606,11 +606,12 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
 
     /**
      * 判断是否为新用户（注册时间≤7天）
+     * 豁免管理员
      */
     private boolean isNewUser(User user) {
         LocalDateTime registerTime = user.getCreateTime();
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        return registerTime.isAfter(sevenDaysAgo);
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(3);
+        return registerTime.isAfter(sevenDaysAgo) && !userService.verifyRole(user.getUserId(), UserRoleEnum.ADMIN);
     }
 
     /**

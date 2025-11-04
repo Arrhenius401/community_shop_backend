@@ -100,14 +100,17 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             postFollow.setUpdateTime(LocalDateTime.now());
             postFollow.setStatus(PostFollowStatusEnum.NORMAL); // 初始状态为正常
 
-            // 5. 插入跟帖记录
+            // 5. 刷新帖子更新时间
+            postService.refreshUpdateTime(postId);
+
+            // 6. 插入跟帖记录
             int insertRows = postFollowMapper.insert(postFollow);
             if (insertRows <= 0) {
                 log.error("发布跟帖失败，插入记录异常，帖子ID：{}，用户ID：{}", postId, userId);
                 throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
             }
 
-            // 6. 转换为DTO并补充跟帖人信息
+            // 7. 转换为DTO并补充跟帖人信息
             PostFollowDetailDTO detailDTO = convertUtils.postFollowToPostFollowDetailDTO(postFollow);
             User follower = userService.getById(postFollow.getUserId());
             if (follower != null) {
@@ -174,7 +177,10 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
             }
 
-            // 5. 转换DTO并补充信息
+            // 5. 刷新帖子更新时间
+            postService.refreshUpdateTime(postFollow.getPostId());
+
+            // 6. 转换DTO并补充信息
             PostFollowDetailDTO detailDTO = convertUtils.postFollowToPostFollowDetailDTO(postFollow);
             User follower = userService.getById(userId);
             if (follower != null) {
@@ -265,6 +271,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             int pageNum = postFollowQueryDTO.getPageNum() <= 0 ? 1 : postFollowQueryDTO.getPageNum();
             int pageSize = postFollowQueryDTO.getPageSize() <= 0 ? 10 : postFollowQueryDTO.getPageSize();
             int offset = (pageNum - 1) * pageSize;
+            postFollowQueryDTO.setOffset(offset);
 
             // 2. 校验帖子存在性
             if (postService.getById(postId) == null) {
@@ -313,9 +320,9 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
      * 统计帖子下的跟帖数量
      * @param postFollowQueryDTO 跟帖查询DTO
      */
-    public int countFollows(PostFollowQueryDTO postFollowQueryDTO) {
+     public int countFollows(PostFollowQueryDTO postFollowQueryDTO) {
         return postFollowMapper.countByQuery(postFollowQueryDTO);
-    }
+     }
 
     /**
      * 基础删除：逻辑删除跟帖

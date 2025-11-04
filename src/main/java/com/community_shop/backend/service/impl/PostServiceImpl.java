@@ -382,6 +382,17 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
     }
 
     /**
+     * 刷新帖子更新时间
+     *
+     * @param postId 帖子ID
+     * @return 更新行数
+     */
+    @Override
+    public Integer refreshUpdateTime(Long postId) {
+        return postMapper.refreshUpdateTime(postId);
+    }
+
+    /**
      * 多条件查询帖子列表
      *
      * @param postQueryDTO 查询参数（关键词、排序、分页）
@@ -398,6 +409,9 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             // 2. 分页查询数据库（只查正常状态的帖子）
             int pageNum = postQueryDTO.getPageNum();
             int pageSize = postQueryDTO.getPageSize();
+            int offset = (pageNum - 1) * pageSize;
+            postQueryDTO.setOffset(offset);
+
             long total = postMapper.countByQuery(postQueryDTO);
             List<Post> postList = postMapper.selectByQuery(postQueryDTO);
             Long totalPages = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;

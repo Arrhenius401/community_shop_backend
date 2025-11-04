@@ -56,6 +56,14 @@ public interface PostService extends BaseService<Post> {
     Boolean setEssenceOrTop(Long userId, PostEssenceTopDTO postEssenceTopDTO);
 
     /**
+     * 刷新帖子更新时间（业务方法）
+     * 逻辑：调用PostMapper.updatePostUpdateTime刷新帖子更新时间
+     * @param postId 帖子ID
+     * @return 刷新成功返回true，失败返回false
+     */
+    Integer refreshUpdateTime(Long postId);
+
+    /**
      * 多条件查询帖子列表
      * @param postQueryDTO 查询参数（关键词、排序、分页）
      * @return 分页帖子列表（轻量展示）

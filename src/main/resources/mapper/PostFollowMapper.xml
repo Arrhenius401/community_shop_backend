@@ -16,21 +16,21 @@
 
     <!-- 基础字段SQL片段 -->
     <sql id="Base_Column_List">
-        post_follow_id, post_id, user_id, parent_id, content, status, create_time, update_time
+        post_follow_id, post_id, user_id, parent_id, content, `status`, create_time, update_time
     </sql>
 
     <!-- ==================== 关联查询 ==================== -->
     <select id="selectByPostId" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         WHERE post_id = #{postId} AND status = 'NORMAL'
-        ORDER BY create_time DESC
+        ORDER BY create_time ASC
         LIMIT #{offset}, #{limit}
     </select>
 
     <select id="selectByUserId" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         WHERE user_id = #{userId} AND status = 'NORMAL'
-        ORDER BY create_time DESC
+        ORDER BY create_time ASC
     </select>
 
     <select id="selectByParentId" resultMap="BaseResultMap">
@@ -75,7 +75,7 @@
         </if>
         <if test="query.sortField == null">
             <!-- 默认按更新时间倒序 -->
-            ORDER BY create_time DESC
+            ORDER BY create_time ASC
         </if>
 
         <!-- 分页参数 -->

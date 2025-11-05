@@ -223,6 +223,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 健康检查依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

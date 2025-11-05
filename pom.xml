@@ -8,9 +8,9 @@
         <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>xyz.graygoo401</groupId>
     <artifactId>Community_Shop_Backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Community_Shop_Backend</name>
     <description>Community_Shop_Backend</description>
     <url/>

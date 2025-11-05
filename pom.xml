@@ -31,6 +31,48 @@
         <mockito.version>4.11.0</mockito.version>
     </properties>
 
+    <repositories>
+        <!-- 阿里云公共仓库 -->
+        <repository>
+            <id>aliyun-public</id>
+            <name>Aliyun Public Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- 阿里云 Spring 仓库（若使用 Spring 相关依赖） -->
+        <repository>
+            <id>aliyun-spring</id>
+            <name>Aliyun Spring Repository</name>
+            <url>https://maven.aliyun.com/repository/spring</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <!-- 插件仓库也需要配置，否则 Maven 插件可能仍从国外下载 -->
+        <pluginRepository>
+            <id>aliyun-plugin</id>
+            <name>Aliyun Plugin Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencies>
 
         <dependency>

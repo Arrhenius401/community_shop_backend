@@ -16,17 +16,17 @@ import java.util.List;
 public class UserProfileUpdateDTO {
 
     /** 昵称（1-10位） */
-    @Size(min = 1, max = 10, message = "昵称长度需1-10位")
-    @Schema(description = "用户昵称，长度1-10位", example = "张三")
+    @Size(min = 1, max = 30, message = "昵称长度需1-30位")
+    @Schema(description = "用户昵称，长度1-30位", example = "张三")
     private String username;
 
-    /** 头像URL（非空，需符合URL格式） */
+    /** 头像URL（需符合URL格式） */
     @Pattern(regexp = "^https?://.+$", message = "头像URL格式错误")
     @Schema(description = "用户头像URL，需符合HTTP/HTTPS协议格式", example = "https://example.com/avatar.jpg")
     private String avatarUrl;
 
-    /** 个性签名（1-50字） */
-    @Schema(description = "用户个性签名，长度1-50字", example = "热爱生活，积极向上")
+    /** 个性签名（0-50字） */
+    @Schema(description = "用户个性签名，长度0-50字", example = "热爱生活，积极向上")
     private String bio;
 
     /** 兴趣标签列表（不超过200字） */

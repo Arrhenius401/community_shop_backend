@@ -330,12 +330,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             if (userId == null || profileDTO == null) {
                 throw new BusinessException(ErrorCode.PARAM_NULL);
             }
-            if (StringUtils.hasText(profileDTO.getUsername()) && (profileDTO.getUsername().isEmpty() || profileDTO.getUsername().length() > 10)) {
-                throw new BusinessException(ErrorCode.USERNAME_LENGTH_INVALID);
-            }
-            if (StringUtils.hasText(profileDTO.getAvatarUrl()) && !profileDTO.getAvatarUrl().matches("^https?://.+$")) {
-                throw new BusinessException(ErrorCode.AVATAR_URL_FORMAT_INVALID);
-            }
 
             // 2. 校验用户存在
             User existingUser = userMapper.selectById(userId);
@@ -349,6 +343,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             updateUser.setUsername(profileDTO.getUsername());
             updateUser.setAvatarUrl(profileDTO.getAvatarUrl());
             updateUser.setBio(profileDTO.getBio());
+            updateUser.setGender(profileDTO.getGender());
 
             // 4. 执行更新（匹配UserMapper.updateById）
             int updateRows = userMapper.updateById(updateUser);

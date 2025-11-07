@@ -29,6 +29,9 @@ public class CorsConfig implements WebMvcConfigurer {
         config.addAllowedOriginPattern("http://localhost");
         config.addAllowedOriginPattern("https://localhost:*");
         config.addAllowedOriginPattern("https://localhost");
+        //添加生产环境
+        config.addAllowedOrigin("http://graygoo401.xyz");
+        config.addAllowedOrigin("https://graygoo401.xyz");
 
         //2,允许任何请求头
         config.addAllowedHeader("*");

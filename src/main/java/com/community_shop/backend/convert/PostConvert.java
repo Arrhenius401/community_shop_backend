@@ -16,7 +16,7 @@ import java.util.List;
  * Post 模块对象转换器
  * 处理 Post、PostFollow 实体与 DTO 之间的映射
  */
-@Mapper(componentModel = "spring", uses = ObjectMapper.class)
+@Mapper(componentModel = "spring")
 public interface PostConvert {
 
     // 单例实例（非 Spring 环境使用）

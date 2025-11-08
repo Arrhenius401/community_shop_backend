@@ -1,5 +1,6 @@
 package com.community_shop.backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    @Value("${private-domain-name}")
+    private String PRIVATE_DOMAIN_NAME;
+
     /**
      * 创建CORS过滤器
      * @return CORS过滤器
@@ -30,8 +34,8 @@ public class CorsConfig implements WebMvcConfigurer {
         config.addAllowedOriginPattern("https://localhost:*");
         config.addAllowedOriginPattern("https://localhost");
         //添加生产环境
-        config.addAllowedOrigin("http://graygoo401.xyz");
-        config.addAllowedOrigin("https://graygoo401.xyz");
+        config.addAllowedOrigin("http://" + PRIVATE_DOMAIN_NAME);
+        config.addAllowedOrigin("https://" + PRIVATE_DOMAIN_NAME);
 
         //2,允许任何请求头
         config.addAllowedHeader("*");

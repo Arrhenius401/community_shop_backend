@@ -21,7 +21,7 @@ import java.util.Random;
  * 用于处理用户头像、帖子图片、商品图片等文件的上传
  */
 @Component
-public class OssUtil {
+public class AliyunOssUtil {
     // 阿里云OSS配置参数（从配置文件读取）
     @Value("${aliyun.oss.endpoint}")
     private String endpoint;

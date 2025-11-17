@@ -10,10 +10,9 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.mapper.ProductMapper;
-import com.community_shop.backend.service.base.EvaluationService;
 import com.community_shop.backend.service.base.ProductService;
 import com.community_shop.backend.service.base.UserService;
-import com.community_shop.backend.utils.OssUtil;
+import com.community_shop.backend.utils.AliyunOssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -65,7 +64,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
     private ProductConvert productConvert;
 
     @Autowired
-    private OssUtil ossUtil; // OSS文件上传工具类
+    private AliyunOssUtil ossUtil; // OSS文件上传工具类
 
 
 

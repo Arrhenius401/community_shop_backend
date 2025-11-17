@@ -14,11 +14,10 @@ import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
 import com.community_shop.backend.mapper.PostMapper;
-import com.community_shop.backend.service.base.PostService;
 import com.community_shop.backend.service.base.UserPostLikeService;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.impl.PostServiceImpl;
-import com.community_shop.backend.utils.OssUtil;
+import com.community_shop.backend.utils.AliyunOssUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +57,7 @@ public class PostServiceTest {
     @Mock
     private PostConvert postConvert;
     @Mock
-    private OssUtil ossUtil;
+    private AliyunOssUtil ossUtil;
     @Mock
     private ValueOperations<String, Object> valueOperations;
 

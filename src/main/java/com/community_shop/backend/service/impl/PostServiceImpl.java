@@ -7,15 +7,13 @@ import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
-import com.community_shop.backend.enums.SortEnum.PostSortFieldEnum;
-import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
 import com.community_shop.backend.mapper.PostMapper;
 import com.community_shop.backend.service.base.*;
-import com.community_shop.backend.utils.OssUtil;
+import com.community_shop.backend.utils.AliyunOssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -79,7 +77,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
     private PostConvert postConvert;
 
     @Autowired
-    private OssUtil ossUtil;
+    private AliyunOssUtil ossUtil;
 
     /**
      * 发布帖子

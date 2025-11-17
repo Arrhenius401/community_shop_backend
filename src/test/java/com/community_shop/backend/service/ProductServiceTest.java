@@ -13,7 +13,7 @@ import com.community_shop.backend.entity.User;
 import com.community_shop.backend.mapper.ProductMapper;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.impl.ProductServiceImpl;
-import com.community_shop.backend.utils.OssUtil;
+import com.community_shop.backend.utils.AliyunOssUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +53,7 @@ public class ProductServiceTest {
     @Mock
     private ProductConvert productConvert;
     @Mock
-    private OssUtil ossUtil;
+    private AliyunOssUtil ossUtil;
     @Mock
     private ValueOperations<String, Object> valueOperations;
 

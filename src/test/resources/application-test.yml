@@ -1,0 +1,40 @@
+# 测试环境端口（与开发环境区分开）
+server:
+  port: 8091
+
+# 测试环境数据库（H2内存数据库）
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password:
+
+  # 测试环境SQL脚本（初始化表结构和测试数据）
+  sql:
+    init:
+      schema-locations:
+        - classpath:script/schema-common.sql
+        - classpath:script/product/schema-product.sql
+        - classpath:script/order/schema-order.sql
+        - classpath:script/post/schema-post.sql
+        - classpath:script/message/schema-message.sql
+      data-locations:
+        - classpath:script/data-common.sql
+        - classpath:script/product/data-product.sql
+        - classpath:script/order/data-order.sql
+        - classpath:script/post/data-post.sql
+        - classpath:script/message/data-message.sql
+      mode: always
+
+  # H2控制台配置（测试环境专用）
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# 测试环境MyBatis差异化配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

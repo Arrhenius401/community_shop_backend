@@ -1,0 +1,27 @@
+# 应用程序名称
+spring:
+  application:
+    name: Community_Shop_Backend
+  # 使用的环境（dev, test, prod)
+  profiles:
+    active: dev
+  # 全局框架配置
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+# MyBatis 全局配置
+mybatis-plus:
+  type-aliases-package: com.dd.ai_medical_triage.entity
+  type-handlers-package: com.dd.ai_medical_triage.handler
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+
+# 默认端口
+server:
+  port: 8090
+
+# 私有域名
+private-domain-name: graygoo401.xyz
+

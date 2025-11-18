@@ -1,35 +1,37 @@
 package com.community_shop.backend.utils;
 
-import com.aliyun.dysmsapi20170525.Client;
-import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
-import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
+import com.aliyun.dypnsapi20170525.Client;
+import com.aliyun.dypnsapi20170525.models.SendSmsVerifyCodeRequest;
+import com.aliyun.dypnsapi20170525.models.SendSmsVerifyCodeResponse;
 import com.aliyun.tea.TeaException;
 import com.aliyun.teaopenapi.models.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * 阿里云短信服务工具类（注：是需要企业资质的短信服务）
+ * 阿里云号码认证服务工具类（注：是需无企业资质的号码认证服务）
  */
 @Component
-public class AliyunSmsSendUtil {
+public class AliyunPnsSendUtil {
 
     // 从配置文件注入参数
-    @Value("${aliyun.sms.access-key}")
+    @Value("${aliyun.pns.access-key}")
     private String accessKey;
-    @Value("${aliyun.sms.secret-key}")
+    @Value("${aliyun.pns.secret-key}")
     private String secretKey;
-    @Value("${aliyun.sms.sign-name}")
+    @Value("${aliyun.pns.sign-name}")
     private String signName;
-    @Value("${aliyun.sms.template-code}")
+    @Value("${aliyun.pns.template-code}")
     private String templateCode;
-    @Value("${aliyun.sms.endpoint}")
+    @Value("${aliyun.pns.endpoint}")
     private String endpoint;
 
-    /**
-     * 初始化短信服务客户端（处理签名、HTTP连接）
-     */
-    private Client createSmsClient() throws Exception {
+    // 验证码发送时间间隔（单位：秒）
+    private static final Long INTERVAL = 60L;
+    private static final int CACHE_TTL_CODE = 5;
+
+    // 初始化客户端（单例，避免重复创建连接）
+    public Client createPnsClient() throws Exception {
         Config config = new Config()
                 // 身份认证：AccessKey ID/Secret
                 .setAccessKeyId(accessKey)
@@ -46,21 +48,22 @@ public class AliyunSmsSendUtil {
      * @return 阿里云返回的请求ID（用于问题排查）
      * @throws Exception 发送失败时抛出异常
      */
-    public String sendSmsCode(String phone, String code) throws Exception {
-        Client client = createSmsClient();
-        // 组装短信请求参数：模板变量需与模板中的变量名一致（如模板用${code}，这里key就为"code"）
-        SendSmsRequest sendSmsRequest = new SendSmsRequest()
-                .setPhoneNumbers(phone) // 接收手机号（支持多个，用逗号分隔）
-                .setSignName(signName) // 短信签名（无需加【】）
-                .setTemplateCode(templateCode) // 验证码模板ID
-                .setTemplateParam("{\"code\":\"" + code + "\"}"); // 模板变量（JSON格式）
-
+    public String senPnsCode(String phone, String code) throws Exception {
+        Client client = createPnsClient();
+        // 构建发送请求（验证码长度6位，与场景ID关联）
+        SendSmsVerifyCodeRequest request = new SendSmsVerifyCodeRequest()
+                .setPhoneNumber(phone)
+                .setSignName(signName)
+                .setTemplateCode(templateCode)
+                .setTemplateParam("{\"code\":\"" + code + "\",\"min\":\"" + CACHE_TTL_CODE + "\"}")
+                .setCodeLength(6L)
+                .setInterval(INTERVAL);
         try {
             // 调用SDK发送短信
-            SendSmsResponse response = client.sendSms(sendSmsRequest);
+            SendSmsVerifyCodeResponse response = client.sendSmsVerifyCode(request);
             // 校验短信发送状态（"OK"表示发送成功，其他为失败）
             if (!"OK".equals(response.getBody().getCode())) {
-                throw new RuntimeException("短信发送失败：" + response.getBody().getMessage());
+                throw new RuntimeException("发送失败：" + response.getBody().getMessage());
             }
             return response.getBody().getRequestId(); // 返回请求ID，便于日志排查
         } catch (TeaException e) {

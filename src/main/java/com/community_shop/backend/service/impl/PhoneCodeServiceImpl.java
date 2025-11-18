@@ -3,20 +3,22 @@ package com.community_shop.backend.service.impl;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.service.base.VerificationCodeService;
-import com.community_shop.backend.utils.AliyunSmsSendUtil;
+import com.community_shop.backend.utils.AliyunPnsSendUtil;
 import com.community_shop.backend.utils.CodeCacheUtil;
 import com.community_shop.backend.utils.CodeGenerateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * 手机号验证码服务实现类
  */
+@Slf4j
 @Service
 public class PhoneCodeServiceImpl implements VerificationCodeService {
 
     @Autowired
-    private AliyunSmsSendUtil smsSendUtil;
+    private AliyunPnsSendUtil pnsSendUtil;
 
     @Autowired
     private CodeCacheUtil codeCacheUtil;
@@ -33,11 +35,11 @@ public class PhoneCodeServiceImpl implements VerificationCodeService {
     public String sendCode(String phone) {
         String code = codeGenerateUtil.generate6DigitCode();
         try {
-            String result = smsSendUtil.sendSmsCode(phone, code);
+            String result = pnsSendUtil.senPnsCode(phone, code);
             codeCacheUtil.cachePhoneCode(phone, code);
             return result;
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.VERIFY_CODE_SEND_FAILED);
+            throw new BusinessException(ErrorCode.VERIFY_CODE_SEND_FAILED, e.getMessage());
         }
     }
 
@@ -60,6 +62,7 @@ public class PhoneCodeServiceImpl implements VerificationCodeService {
             codeCacheUtil.deleteCachedPhoneCode(phone);
             return true;
         } catch (Exception e) {
+            log.warn("验证手机验证码失败：{}", e.getMessage());
             return false;
         }
     }

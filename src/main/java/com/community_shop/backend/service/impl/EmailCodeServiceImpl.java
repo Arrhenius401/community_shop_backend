@@ -6,12 +6,14 @@ import com.community_shop.backend.service.base.VerificationCodeService;
 import com.community_shop.backend.utils.CodeCacheUtil;
 import com.community_shop.backend.utils.CodeGenerateUtil;
 import com.community_shop.backend.utils.EmailSendUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * 邮箱验证码服务实现类
  */
+@Slf4j
 @Service
 public class EmailCodeServiceImpl implements VerificationCodeService {
 
@@ -37,7 +39,7 @@ public class EmailCodeServiceImpl implements VerificationCodeService {
             codeCacheUtil.cacheEmailCode(email, code);
             return code;
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.VERIFY_CODE_SEND_FAILED);
+            throw new BusinessException(ErrorCode.VERIFY_CODE_SEND_FAILED, e.getMessage());
         }
     }
 
@@ -60,6 +62,7 @@ public class EmailCodeServiceImpl implements VerificationCodeService {
             codeCacheUtil.deleteCachedEmailCode(email);
             return true;
         } catch (Exception e) {
+            log.warn(e.getMessage());
             return false;
         }
     }

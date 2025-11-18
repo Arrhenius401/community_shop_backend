@@ -74,4 +74,13 @@ public class GlobalExceptionHandler {
         log.error("系统异常：", e); // 打印完整堆栈便于排查
         return ResultVO.fail("500", "系统繁忙，请稍后再试");
     }
+
+    // 处理短信发送异常（如余额不足、模板错误）
+    @ExceptionHandler(RuntimeException.class)
+    public ResultVO<?> handleRuntimeException(RuntimeException e) {
+        if (e.getMessage().contains("阿里云短信服务异常") || e.getMessage().contains("短信发送失败")) {
+            return ResultVO.fail("500", "短信服务暂时不可用，请稍后重试");
+        }
+        return ResultVO.fail("500", "系统异常，请联系管理员");
+    }
 }

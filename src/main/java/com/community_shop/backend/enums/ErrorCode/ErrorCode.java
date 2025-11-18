@@ -190,14 +190,13 @@ public enum ErrorCode {
     LOG_TARGET_TYPE_INVALID("LOG_005", 400, "日志目标类型参数错误"),
     LOG_ACTION_TYPE_INVALID("LOG_006", 400, "日志操作类型参数错误"),
 
-    // 邮件模块
-    MAIL_SEND_FAILS("MAIL_001", 500, "邮件发送失败"),
-    MAIL_REDIS_BREAK("MAIL_002", 500, "Redis异常"),
-    MAIL_SEND_FAILS_TOO_MANY_TIMES("MAIL_003", 500, "邮件发送失败次数过多"),
-    MAIL_VERIFICATION_CODE_EXPIRED("MAIL_004", 400, "邮件验证码已过期"),
-    MAIL_VERIFICATION_CODE_INVALID("MAIL_005", 400, "邮件验证码无效"),
-    MAIL_VERIFICATION_CODE_NOT_EXISTS("MAIL_006", 404, "邮件验证码不存在"),
-    MAIL_VERIFICATION_CODE_NOT_MATCH("MAIL_007", 400, "邮件验证码不匹配");
+    // 验证码模块
+    VERIFY_CODE_SEND_FAILED("VERIFY_001", 500, "验证码发送失败"),
+    VERIFY_CODE_VALIDATE_FAILED("VERIFY_002", 400, "验证码验证失败"),
+    VERIFY_CODE_NOT_EXISTS("VERIFY_003", 404, "验证码不存在"),
+    VERIFY_CODE_EXPIRED("VERIFY_004", 400, "验证码已过期"),
+    VERIFY_CODE_NOT_MATCH("VERIFY_005", 400, "验证码不匹配");
+
 
     // HTTP状态码
     // 200：成功操作

@@ -208,11 +208,18 @@
             <version>3.15.1</version> <!-- 稳定版本，可根据最新版本调整 -->
         </dependency>
 
-        <!-- 阿里云短信SDK -->
+        <!-- 阿里云短信服务SDK -->
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dysmsapi20170525</artifactId>
             <version>2.0.24</version> <!-- 使用Maven仓库最新版本 -->
+        </dependency>
+
+        <!-- 阿里云号码认证服务SDK -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dypnsapi20170525</artifactId>
+            <version>2.0.0</version> <!-- 建议使用 Maven 仓库最新版本，如 1.1.1 或更高 -->
         </dependency>
 
         <!-- MapStruct -->
@@ -297,15 +304,15 @@
         </dependency>
 
         <!-- RabbitMQ -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-amqp</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.amqp</groupId>-->
+<!--            <artifactId>spring-rabbit-test</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
 

@@ -35,13 +35,19 @@ public interface UserConvert {
     UserListItemDTO userToUserListItemDTO(User user);
 
     /**
+     * User 实体 -> LoginResultDTO.UserSimpleDTO（登录结果中的用户信息）
+     * 映射说明：仅返回部分字段，忽略部分字段
+     */
+    LoginResultDTO.UserSimpleDTO userToLoginResultUserSimpleDTO(User user);
+
+    /**
      * RegisterDTO（注册请求）-> User 实体
      * 映射说明：
      * 1. 注册时默认初始化信用分 100、状态为激活、角色为普通用户
      * 2. 忽略实体中自动生成的字段（userId、createTime 等）
      */
     @Mappings({
-            @Mapping(target = "userId", ignore = true), // 主键自增，忽略
+            @Mapping(target = "userId", ignore = true), // 主键自增，忽略，避免显式地赋值为 null
             @Mapping(target = "creditScore", constant = "100"), // 初始信用分 100
             @Mapping(target = "createTime", ignore = true), // 注册时间由系统生成
             @Mapping(target = "activityTime", ignore = true), // 活跃时间由系统更新
@@ -49,6 +55,30 @@ public interface UserConvert {
             @Mapping(target = "role", expression = "java(com.community_shop.backend.enums.CodeEnum.UserRoleEnum.USER)") // 默认普通用户
     })
     User registerDtoToUser(RegisterDTO registerDTO);
+
+    /**
+     * RegisterEmailDTO（邮箱注册请求）-> User 实体
+     * 映射说明：
+     * 1. 注册时默认初始化信用分 100、状态为激活、角色为普通用户
+     * 2. 忽略实体中自动生成的字段（userId、createTime 等）
+     */
+    @Mappings({
+            @Mapping(target = "userId", ignore = true),
+            @Mapping(target = "phoneNumber", ignore = true)
+    })
+    User registerEmailDtoToUser(RegisterEmailDTO registerEmailDTO);
+
+    /**
+     * RegisterPhoneDTO（手机注册请求）-> User 实体
+     * 映射说明：
+     * 1. 注册时默认初始化信用分 100、状态为激活、角色为普通用户
+     * 2. 忽略实体中自动生成的字段（userId、createTime 等）
+     */
+    @Mappings({
+            @Mapping(target = "userId", ignore = true),
+            @Mapping(target = "email", ignore = true)
+    })
+    User registerPhoneDtoToUser(RegisterPhoneDTO registerPhoneDTO);
 
     /**
      * UserProfileUpdateDTO（资料更新请求）-> User 实体

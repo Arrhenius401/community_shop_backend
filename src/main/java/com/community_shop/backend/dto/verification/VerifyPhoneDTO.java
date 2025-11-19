@@ -11,6 +11,10 @@ import lombok.Data;
 @Schema(description = "验证手机请求数据模型")
 public class VerifyPhoneDTO {
 
+    /** 用户ID */
+    @Schema(description = "用户ID", example = "1")
+    private Long userId;
+
     /** 手机号 */
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
     @Schema(description = "手机号", example = "17268287727")

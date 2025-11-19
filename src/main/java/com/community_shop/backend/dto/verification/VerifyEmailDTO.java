@@ -11,6 +11,10 @@ import lombok.Data;
 @Schema(description = "验证邮箱请求数据模型")
 public class VerifyEmailDTO {
 
+    /** 用户ID */
+    @Schema(description = "用户ID", example = "1")
+    private Long userId;
+
     /** 邮箱（标准格式，登录/找回密码场景） */
     @Pattern(regexp = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", message = "邮箱格式错误")
     @Schema(description = "邮箱", example = "1825270596@qq.com")

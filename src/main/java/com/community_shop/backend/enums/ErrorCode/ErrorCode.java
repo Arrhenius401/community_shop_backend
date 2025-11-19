@@ -48,7 +48,6 @@ public enum ErrorCode {
     PASSWORD_FORMAT_INVALID("USER_027", 400, "密码格式错误"),
     USERNAME_LENGTH_INVALID("USER_028", 400, "用户名长度错误"),
     AVATAR_URL_FORMAT_INVALID("USER_029", 400, "头像URL格式错误"),
-    VERIFY_CODE_INVALID("USER_030", 400, "验证码错误"),
 
 
     USER_NOT_EXISTS("USER_051", 404, "用户不存在"),
@@ -191,12 +190,15 @@ public enum ErrorCode {
     LOG_ACTION_TYPE_INVALID("LOG_006", 400, "日志操作类型参数错误"),
 
     // 验证码模块
-    VERIFY_CODE_SEND_FAILED("VERIFY_001", 500, "验证码发送失败"),
-    VERIFY_CODE_VALIDATE_FAILED("VERIFY_002", 400, "验证码验证失败"),
-    VERIFY_CODE_NOT_EXISTS("VERIFY_003", 404, "验证码不存在"),
-    VERIFY_CODE_EXPIRED("VERIFY_004", 400, "验证码已过期"),
-    VERIFY_CODE_NOT_MATCH("VERIFY_005", 400, "验证码不匹配");
+    VERIFY_CODE_INVALID("VERIFY_001", 400, "验证码服务出错"),
+    VERIFY_CODE_SEND_FAILED("VERIFY_002", 500, "验证码发送失败"),
+    VERIFY_CODE_VALIDATE_FAILED("VERIFY_003", 400, "验证码验证失败"),
+    VERIFY_CODE_NOT_EXISTS("VERIFY_004", 404, "验证码不存在"),
+    VERIFY_CODE_EXPIRED("VERIFY_005", 400, "验证码已过期"),
+    VERIFY_CODE_NOT_MATCH("VERIFY_006", 400, "验证码不匹配"),
 
+    EMAIL_NOT_BELONG_TO_USER("VERIFY_051", 400, "邮箱不属于当前用户"),
+    PHONE_NOT_BELONG_TO_USER("VERIFY_052", 400, "手机号不属于当前用户");
 
     // HTTP状态码
     // 200：成功操作

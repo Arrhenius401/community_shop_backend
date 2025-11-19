@@ -12,6 +12,11 @@ import lombok.Data;
 @Schema(description = "密码修改请求数据模型")
 public class PasswordUpdateDTO {
 
+    /** 用户ID */
+    @NotBlank(message = "用户ID不能为空")
+    @Schema(description = "用户ID", example = "1")
+    private Long userId;
+
     /** 原密码（校验身份） */
     @NotBlank(message = "原密码不能为空")
     @Schema(description = "用户原密码，用于身份校验", example = "OldPass123")

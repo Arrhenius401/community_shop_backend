@@ -299,6 +299,7 @@ public class UserServiceTest {
         when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
         when(emailCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
         when(userMapper.updatePassword(anyLong(), anyString())).thenReturn(1);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
         Boolean result = userService.updatePasswordByEmail(dto);
         assertTrue(result);
@@ -328,6 +329,7 @@ public class UserServiceTest {
         when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
         when(phoneCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
         when(userMapper.updatePassword(anyLong(), anyString())).thenReturn(1);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
         Boolean result = userService.updatePasswordByPhone(dto);
         assertTrue(result);

@@ -3,6 +3,8 @@ package com.community_shop.backend.controller;
 import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
+import com.community_shop.backend.dto.verification.VerifyEmailDTO;
+import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;
@@ -66,6 +68,186 @@ public class UserController {
             @Parameter(description = "注册参数，含用户名、手机号/邮箱、密码、验证码", required = true)
             RegisterDTO registerDTO) {
         Boolean res = userService.register(registerDTO);
+        return ResultVO.success(res);
+    }
+
+    /**
+     * 邮箱注册接口
+     * 对应Service层：UserServiceImpl.registerByEmail()，校验邮箱唯一性、密码格式、验证码有效性
+     */
+    @PostMapping("/register/email")
+    @Operation(
+            summary = "邮箱注册接口",
+            description = "通过邮箱注册新用户，业务规则：1.用户名1-20位字符；2.手机号需符合11位数字格式；3.邮箱需符合标准格式；4.密码需含字母+数字（6-20位）；5.验证码需为6位数字"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "注册成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如手机号格式非法、密码不符合规则、验证码无效）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "409", description = "用户名/手机号/邮箱已被注册（对应错误码：USER_001/USER_002/USER_003）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "系统异常（如数据插入失败，对应错误码：SYSTEM_013）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> registerByEmail(
+            @Valid @RequestBody
+            @Parameter(description = "注册参数，含用户名、邮箱、密码、验证码", required = true)
+            RegisterEmailDTO registerDTO) {
+        Boolean res = userService.registerByEmail(registerDTO);
+        return ResultVO.success(res);
+    }
+
+    /**
+     * 手机号注册接口
+     * 对应Service层：UserServiceImpl.registerByPhone()，校验手机号唯一性、密码格式、验证码有效性
+     */
+    @PostMapping("/register/phone")
+    @Operation(
+            summary = "手机号注册接口",
+            description = "通过手机号注册新用户，业务规则：1.用户名1-20位字符；2.手机号需符合11位数字格式；3.邮箱需符合标准格式；4.密码需含字母+数字（6-20位）；5.验证码需为6位数字"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "注册成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如手机号格式非法、密码不符合规则、验证码无效）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "409", description = "用户名/手机号/邮箱已被注册（对应错误码：USER_001/USER_002/USER_003）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "系统异常（如数据插入失败，对应错误码：SYSTEM_013）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> registerByPhone(
+            @Valid @RequestBody
+            @Parameter(description = "注册参数，含用户名、手机号、密码、验证码", required = true)
+            RegisterPhoneDTO registerDTO) {
+        Boolean res = userService.registerByPhone(registerDTO);
+        return ResultVO.success(res);
+    }
+
+    /**
+     * 邮箱绑定接口
+     * 对应Service层：UserServiceImpl.bindEmail()，校验邮箱唯一性、验证码有效性
+     */
+    @PostMapping("/bind/email")
+    @LoginRequired
+    @Operation(
+            summary = "邮箱绑定接口",
+            description = "绑定邮箱，业务规则：1.邮箱需符合标准格式；2.验证码需为6位数字"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "绑定成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如邮箱格式非法、验证码无效）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "401", description = "未登录（对应错误码：SYSTEM_021）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "409", description = "邮箱已被绑定（对应错误码：USER_004）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "系统异常（如数据插入失败，对应错误码：SYSTEM_013）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> bindEmail(
+            @Valid @RequestBody
+            @Parameter(description = "绑定参数，含邮箱、验证码", required = true)
+            VerifyEmailDTO bindDTO) {
+        bindDTO.setUserId(parseUserIdFromToken());
+        Boolean res = userService.bindEmail(bindDTO);
+        return ResultVO.success(res);
+    }
+
+    /**
+     * 手机号绑定接口
+     * 对应Service层：UserServiceImpl.bindPhone()，校验手机号唯一性、验证码有效性
+     */
+    @PostMapping("/bind/phone")
+    @LoginRequired
+    @Operation(
+            summary = "手机号绑定接口",
+            description = "绑定手机号，业务规则：1.手机号需符合11位数字格式；2.验证码需为6位数字"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "绑定成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如手机号格式非法、验证码无效）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "401", description = "未登录（对应错误码：SYSTEM_021）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "409", description = "手机号已被绑定（对应错误码：USER_004）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "系统异常（如数据插入失败，对应错误码：SYSTEM_013）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> bindPhone(
+            @Valid @RequestBody
+            @Parameter(description = "绑定参数，含手机号、验证码", required = true)
+            VerifyPhoneDTO bindDTO) {
+        bindDTO.setUserId(parseUserIdFromToken());
+        Boolean res = userService.bindPhone(bindDTO);
+        return ResultVO.success(res);
+    }
+
+    /**
+     * 通过邮箱修改密码接口
+     * 对应Service层：UserServiceImpl.updatePasswordByEmail()，校验邮箱、验证码有效性
+     */
+    @PostMapping("/update/password/email")
+    @LoginRequired
+    @Operation(
+            summary = "邮箱修改密码接口",
+            description = "修改邮箱绑定的密码，业务规则：1.邮箱需符合标准格式；2.验证码需为6位数字；3.新密码需含字母+数字（6-20位）"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "修改成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如邮箱格式非法、验证码无效、新密码不符合规则）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "401", description = "未登录（对应错误码：SYSTEM_021）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "系统异常（如数据插入失败，对应错误码：SYSTEM_013）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> updatePasswordByEmail(
+            @Valid @RequestBody
+            @Parameter(description = "修改密码参数，含邮箱、验证码、新密码", required = true)
+            VerifyEmailDTO verifyDTO,
+            @Parameter(description = "新密码", required = true)
+            @RequestParam
+            String newPassword) {
+        verifyDTO.setUserId(parseUserIdFromToken());
+        Boolean res = userService.updatePasswordByEmail(verifyDTO, newPassword);
+        return ResultVO.success(res);
+    }
+
+    /**
+     * 通过手机号修改密码接口
+     * 对应Service层：UserServiceImpl.updatePasswordByPhone()，校验手机号、验证码有效性
+     */
+    @PostMapping("/update/password/phone")
+    @LoginRequired
+    @Operation(
+            summary = "手机号修改密码接口",
+            description = "修改手机号绑定的密码，业务规则：1.手机号需符合11位数字格式；2.验证码需为6位数字；3.新密码需含字母+数字（6-20位）"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "修改成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如手机号格式非法、验证码无效、新密码不符合规则）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "401", description = "未登录（对应错误码：SYSTEM_021）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "系统异常（如数据插入失败，对应错误码：SYSTEM_013）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> updatePasswordByPhone(
+            @Valid @RequestBody
+            @Parameter(description = "修改密码参数，含手机号、验证码、新密码", required = true)
+            VerifyPhoneDTO verifyDTO,
+            @Parameter(description = "新密码", required = true)
+            @RequestParam
+            String newPassword) {
+        verifyDTO.setUserId(parseUserIdFromToken());
+        Boolean res = userService.updatePasswordByPhone(verifyDTO, newPassword);
         return ResultVO.success(res);
     }
 
@@ -317,9 +499,38 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ResultVO.class)))
     })
     public ResultVO<Boolean> checkIsLogin() {
-        Long currentUserId = parseUserIdFromToken();
+        parseUserIdFromToken();
         return ResultVO.success(true);
     }
+
+    @PutMapping("/update/password")
+    @LoginRequired
+    @Operation(
+            summary = "更新用户密码接口",
+            description = "仅登录用户可操作，支持更新密码，业务规则：1.自身不可更新密码；2.密码长度在6-16位之间；3.密码需包含大小写字母、数字、特殊字符中的两种以上；4.目标用户需存在",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "更新成功",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "400", description = "参数错误（如密码长度不符合要求、目标用户ID为空，对应错误码：SYSTEM_003/USER_022）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "401", description = "未登录（对应错误码：SYSTEM_021）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "404", description = "目标用户不存在（对应错误码：USER_051）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class))),
+            @ApiResponse(responseCode = "500", description = "数据更新失败（对应错误码：SYSTEM_011）",
+                    content = @Content(schema = @Schema(implementation = ResultVO.class)))
+    })
+    public ResultVO<Boolean> updatePassword(
+            @Validated @RequestBody
+            @Parameter(description = "用户密码更新参数，包括新旧密码和用户ID", required = true)
+            PasswordUpdateDTO updateDTO){
+        updateDTO.setUserId(parseUserIdFromToken());
+        Boolean res = userService.updatePassword(updateDTO);
+        return ResultVO.success(res);
+    }
+
 
     /**
      * 更新用户状态接口

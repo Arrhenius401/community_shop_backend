@@ -27,8 +27,4 @@ public class PasswordUpdateDTO {
     @Schema(description = "新密码，需包含字母和数字，长度6-20位", example = "NewPass456")
     private String newPassword;
 
-    /** 确认新密码（需与新密码一致） */
-    @NotBlank(message = "确认密码不能为空")
-    @Schema(description = "确认新密码，需与新密码完全一致", example = "NewPass456")
-    private String confirmPassword;
 }

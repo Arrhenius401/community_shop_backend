@@ -192,7 +192,7 @@ public enum ErrorCode {
     // 验证码模块
     VERIFY_CODE_INVALID("VERIFY_001", 400, "验证码服务出错"),
     VERIFY_CODE_SEND_FAILED("VERIFY_002", 500, "验证码发送失败"),
-    VERIFY_CODE_VALIDATE_FAILED("VERIFY_003", 400, "验证码验证失败"),
+    VERIFY_CODE_VERIFY_FAILED("VERIFY_003", 400, "验证码验证失败"),
     VERIFY_CODE_NOT_EXISTS("VERIFY_004", 404, "验证码不存在"),
     VERIFY_CODE_EXPIRED("VERIFY_005", 400, "验证码已过期"),
     VERIFY_CODE_NOT_MATCH("VERIFY_006", 400, "验证码不匹配"),

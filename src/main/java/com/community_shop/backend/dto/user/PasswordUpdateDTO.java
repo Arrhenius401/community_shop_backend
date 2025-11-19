@@ -2,6 +2,7 @@ package com.community_shop.backend.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import lombok.Data;
 public class PasswordUpdateDTO {
 
     /** 用户ID */
-    @NotBlank(message = "用户ID不能为空")
+    @NotNull(message = "用户ID不能为空")
     @Schema(description = "用户ID", example = "1")
     private Long userId;
 

@@ -2,6 +2,8 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
+import com.community_shop.backend.dto.verification.VerifyEmailDTO;
+import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.entity.User;
@@ -23,6 +25,50 @@ public interface UserService extends BaseService<User>{
      * @return true成功/false失败）
      */
     Boolean register(RegisterDTO registerDTO);
+
+    /**
+     * 用户邮箱注册（含验证码校验）
+     * @param registerEmailDTO 注册请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean registerByEmail(RegisterEmailDTO registerEmailDTO);
+
+    /**
+     * 用户手机号注册（含验证码校验）
+     * @param registerPhoneDTO 注册请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean registerByPhone(RegisterPhoneDTO registerPhoneDTO);
+
+    /**
+     * 绑定邮箱（含验证码校验）
+     * @param verifyDTO 绑定邮箱请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean bindEmail(VerifyEmailDTO verifyDTO);
+
+    /**
+     * 绑定手机号（含验证码校验）
+     * @param verifyDTO 绑定手机号请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean bindPhone(VerifyPhoneDTO verifyDTO);
+
+    /**
+     * 忘记密码后重置密码（手机号）
+     * @param verifyDTO 忘记密码请求参数DTO
+     * @param newPassword 新密码
+     * @return true成功/false失败）
+     */
+    Boolean updatePasswordByEmail(VerifyEmailDTO verifyDTO, String newPassword);
+
+    /**
+     * 忘记密码后重置密码（邮箱）
+     * @param verifyDTO 忘记密码请求参数DTO
+     * @param newPassword 新密码
+     * @return true成功/false失败）
+     */
+    Boolean updatePasswordByPhone(VerifyPhoneDTO verifyDTO, String newPassword);
 
     /**
      * 用户登录（支持账号密码/手机号验证码登录）

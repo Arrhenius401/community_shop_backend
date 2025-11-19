@@ -3,6 +3,8 @@ package com.community_shop.backend.service.impl;
 import com.community_shop.backend.convert.UserConvert;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
+import com.community_shop.backend.dto.verification.VerifyEmailDTO;
+import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
 import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
@@ -58,6 +60,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     private UserThirdPartyService userThirdPartyService;
 
     @Autowired
+    private EmailCodeServiceImpl emailCodeService;
+
+    @Autowired
+    private PhoneCodeServiceImpl phoneCodeService;
+
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
@@ -78,19 +86,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 用户注册
-     *
      * @param registerDTO 注册信息
      * @return 注册结果
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean register(RegisterDTO registerDTO) {
-
         try {
-            // 1. 参数校验（匹配RegisterDTO校验规则）
-            validateRegisterParam(registerDTO);
-
-            // 2. 校验手机号/邮箱唯一性
+            // 1. 校验手机号/邮箱唯一性
             if (StringUtils.hasText(registerDTO.getPhoneNumber())
                     && userMapper.selectByPhone(registerDTO.getPhoneNumber()) != null) {
                 throw new BusinessException(ErrorCode.PHONE_EXISTS);
@@ -100,50 +103,221 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 throw new BusinessException(ErrorCode.EMAIL_EXISTS);
             }
 
-            // 3. 校验验证码（匹配文档“注册校验”要求）
+            // 2. 校验验证码（匹配文档“注册校验”要求）
             if (!StringUtils.hasText(registerDTO.getVerifyCode())
                     || !registerDTO.getVerifyCode().matches("^\\d{6}$")) {
                 throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
             }
 
-            // 4. 构建User实体（密码加密+初始化基础数据）
+            // 3. 构建User实体（密码加密+初始化基础数据）
             User user = userConvert.registerDtoToUser(registerDTO);
-            user.setPassword(passwordEncoder.encode(registerDTO.getPassword())); // 密码加密存储（文档要求）
-            user.setStatus(UserStatusEnum.NORMAL);
-            user.setRole(UserRoleEnum.USER);
-            user.setCreateTime(LocalDateTime.now());
-            user.setActivityTime(LocalDateTime.now());
+            insertRegisterUserToDb(user, registerDTO.getPassword());
 
-            // 5. 插入数据库（匹配UserMapper.insert方法）
-            int insertRows = userMapper.insert(user);
-            if (insertRows <= 0) {
-                log.error("用户注册失败，注册信息：{}", registerDTO);
-                throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
-            }
-
-            // 5. 缓存用户信息
-            UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(user);
-            redisTemplate.opsForValue().set(
-                    CACHE_KEY_USER + user.getUserId(),
-                    userDetailDTO,
-                    CACHE_TTL_USER
-            );
-
-            log.info("用户注册成功，用户ID：{}", user.getUserId());
             return true;
-
         } catch (BusinessException e) {
           throw e;
         } catch (Exception e) {
             log.error("用户注册失败", e);
             throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
         }
-
     }
 
     /**
+     * 用户邮箱注册
+     * @param registerDTO 注册信息
+     * @return 注册结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean registerByEmail(RegisterEmailDTO registerDTO) {
+        try {
+            // 1. 校验邮箱唯一性
+            if (StringUtils.hasText(registerDTO.getEmail())
+                    && userMapper.selectByEmail(registerDTO.getEmail()) != null) {
+                throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+            }
+
+            // 3. 校验验证码（匹配文档“注册校验”要求）
+            if (!emailCodeService.verifyCode(registerDTO.getEmail(), registerDTO.getVerifyCode())) {
+                throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
+            }
+
+            // 4. 构建User实体（密码加密+初始化基础数据）
+            User user = userConvert.registerEmailDtoToUser(registerDTO);
+            insertRegisterUserToDb(user, registerDTO.getPassword());
+
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户注册失败", e);
+            throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
+        }
+    }
+
+    /**
+     * 用户手机注册
+     * @param registerDTO 注册信息
+     * @return 注册结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean registerByPhone (RegisterPhoneDTO registerDTO) {
+        try {
+            // 1. 校验手机号码唯一性
+            if (StringUtils.hasText(registerDTO.getPhoneNumber())
+                    && userMapper.selectByPhone(registerDTO.getPhoneNumber()) != null) {
+                throw new BusinessException(ErrorCode.PHONE_EXISTS);
+            }
+
+            // 3. 校验验证码（匹配文档“注册校验”要求）
+            if (!phoneCodeService.verifyCode(registerDTO.getPhoneNumber(), registerDTO.getVerifyCode())) {
+                throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
+            }
+
+            // 4. 构建User实体（密码加密+初始化基础数据）
+            User user = userConvert.registerPhoneDtoToUser(registerDTO);
+            insertRegisterUserToDb(user, registerDTO.getPassword());
+
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户注册失败", e);
+            throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
+        }
+    }
+
+    /**
+     * 绑定邮箱
+     * @param verifyDTO 验证信息
+     * @return 绑定结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean bindEmail (VerifyEmailDTO verifyDTO) {
+        try {
+            // 1. 校验邮箱是否唯一
+            if (userMapper.selectByEmail(verifyDTO.getEmail()) != null) {
+                throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+            }
+
+            // 2. 校验验证码
+            if (!emailCodeService.verifyCode(verifyDTO.getEmail(), verifyDTO.getVerifyCode())) {
+                throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
+            }
+
+            // 3. 更新数据库中邮箱
+            int updateRows = userMapper.updateEmail(verifyDTO.getUserId(), verifyDTO.getEmail());
+            if (updateRows <= 0) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+            }
+
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户绑定邮箱失败", e);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean bindPhone (VerifyPhoneDTO verifyDTO) {
+        try {
+            // 1. 校验手机号是否唯一
+            if (userMapper.selectByPhone(verifyDTO.getPhoneNumber()) != null) {
+                throw new BusinessException(ErrorCode.PHONE_EXISTS);
+            }
+
+            // 2. 校验验证码
+            if (!phoneCodeService.verifyCode(verifyDTO.getPhoneNumber(), verifyDTO.getVerifyCode())) {
+                throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
+            }
+
+            // 3. 更新数据库中邮箱
+            int updateRows = userMapper.updatePhoneNumber(verifyDTO.getUserId(), verifyDTO.getPhoneNumber());
+            if (updateRows <= 0) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+            }
+
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户绑定手机号失败", e);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+    }
+
+    /**
+     * 忘记密码后重置密码（邮箱）
+     * @param verifyDTO 验证信息
+     * @param newPassword 新密码
+     * @return 重置结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updatePasswordByEmail (VerifyEmailDTO verifyDTO, String newPassword) {
+        try {
+            // 1. 校验邮箱是否从属于当前用户
+            if (!userMapper.selectByEmail(verifyDTO.getEmail()).getUserId().equals(verifyDTO.getUserId())) {
+                throw new BusinessException(ErrorCode.EMAIL_NOT_BELONG_TO_USER);
+            }
+
+            // 2. 校验验证码
+            if (!emailCodeService.verifyCode(verifyDTO.getEmail(), verifyDTO.getVerifyCode())) {
+                throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
+            }
+
+            // 3. 更新数据库中邮箱
+            int updateRows = userMapper.updatePassword(verifyDTO.getUserId(), newPassword);
+            if (updateRows <= 0) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+            }
+
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户通过邮箱重置密码失败", e);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updatePasswordByPhone (VerifyPhoneDTO verifyDTO, String newPassword) {
+        try {
+            // 1. 校验手机号是否从属于当前用户
+            if (!userMapper.selectByPhone(verifyDTO.getPhoneNumber()).getUserId().equals(verifyDTO.getUserId())) {
+                throw new BusinessException(ErrorCode.PHONE_NOT_BELONG_TO_USER);
+            }
+
+            // 2. 校验验证码
+            if (!phoneCodeService.verifyCode(verifyDTO.getPhoneNumber(), verifyDTO.getVerifyCode())) {
+                throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
+            }
+
+            // 3. 更新数据库中邮箱
+            int updateRows = userMapper.updatePassword(verifyDTO.getUserId(), newPassword);
+            if (updateRows <= 0) {
+                throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+            }
+
+            return true;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("用户通过手机号重置密码失败", e);
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+    }
+
+
+    /**
      * 用户登录
-     *
      * @param loginDTO 登录信息
      * @return 登录结果
      */
@@ -158,9 +332,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 throw new BusinessException(ErrorCode.PARAM_NULL);
             }
 
-            User user;
-
             // 2. 按登录类型校验（匹配LoginDTO的loginType枚举）
+            User user;
             LoginTypeEnum loginType = loginDTO.getLoginType();
             switch (loginType) {
                 case LoginTypeEnum.EMAIL:
@@ -172,12 +345,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                     // 手机号登录（匹配UserMapper.selectByPhone）
                     user = userMapper.selectByPhone(loginDTO.getLoginId());
                     validatePassword(user, loginDTO.getCredential());
-
-//                    // 验证码校验
-//                    if (!StringUtils.hasText(loginDTO.getVerifyCode())
-//                            || !loginDTO.getVerifyCode().matches("^\\d{6}$")) {
-//                        throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
-//                    }
                     break;
                 default:
                     throw new BusinessException(ErrorCode.PARAM_ERROR);
@@ -189,11 +356,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
             // 4. 封装登录结果
             LoginResultDTO loginResultDTO = new LoginResultDTO();
-            LoginResultDTO.UserSimpleDTO userSimpleDTO = new LoginResultDTO.UserSimpleDTO();
-            userSimpleDTO.setUserId(user.getUserId());
-            userSimpleDTO.setUsername(user.getUsername());
-            userSimpleDTO.setAvatarUrl(user.getAvatarUrl());
-            userSimpleDTO.setCreditScore(user.getCreditScore());
+            LoginResultDTO.UserSimpleDTO userSimpleDTO = userConvert.userToLoginResultUserSimpleDTO(user);
             userSimpleDTO.setIsAdmin(user.isAdmin());
             loginResultDTO.setUserInfo(userSimpleDTO);
             loginResultDTO.setToken(token);
@@ -216,7 +379,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 第三方登录
-     *
      * @param thirdPartyLoginDTO 第三方登录信息
      * @return 登录结果
      */
@@ -277,7 +439,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 获取用户详情
-     *
      * @param userId 用户ID
      * @return 用户详情
      */
@@ -311,13 +472,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             log.error("查询用户信息失败", e);
             throw new BusinessException(ErrorCode.DATA_QUERY_FAILED);
         }
-
-
     }
 
     /**
      * 更新用户信息
-     *
      * @param userId      用户ID
      * @param profileDTO  用户信息
      * @return 更新后的用户信息
@@ -366,7 +524,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 修改密码
-     *
      * @param passwordDTO 密码修改信息
      * @return 修改结果
      */
@@ -374,39 +531,26 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     @Transactional(rollbackFor = Exception.class)
     public Boolean updatePassword(PasswordUpdateDTO passwordDTO) {
         try {
-            // 1. 参数校验（匹配PasswordUpdateDTO规则）
-            if (passwordDTO == null || !StringUtils.hasText(passwordDTO.getOldPassword())
-                    || !StringUtils.hasText(passwordDTO.getNewPassword())
-                    || !StringUtils.hasText(passwordDTO.getConfirmPassword())) {
-                throw new BusinessException(ErrorCode.PARAM_NULL);
-            }
-            if (!passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
-                throw new BusinessException(ErrorCode.PASSWORD_CONFIRM_NOT_MATCH);
-            }
-            if (!passwordDTO.getNewPassword().matches("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$")) {
-                throw new BusinessException(ErrorCode.PASSWORD_FORMAT_INVALID);
-            }
-
-            // 2. 此处简化用户ID获取（实际从Token解析）
-            Long userId = 1L;
+            // 1. 检验用户存在
+            Long userId = passwordDTO.getUserId();
             User user = userMapper.selectById(userId);
             if (user == null) {
                 throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
             }
 
-            // 3. 校验原密码
+            // 2. 校验原密码
             if (!passwordEncoder.matches(passwordDTO.getOldPassword(), user.getPassword())) {
                 throw new BusinessException(ErrorCode.OLD_PASSWORD_ERROR);
             }
 
-            // 4. 更新密码（匹配UserMapper.updatePassword）
+            // 3. 更新密码（匹配UserMapper.updatePassword）
             String encryptedNewPassword = passwordEncoder.encode(passwordDTO.getNewPassword());
             int updateRows = userMapper.updatePassword(userId, encryptedNewPassword);
             if (updateRows <= 0) {
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
             }
 
-            // 5. 清除缓存
+            // 4. 清除缓存
             redisTemplate.delete(CACHE_KEY_USER + userId);
             log.info("密码更新成功，用户ID：{}", userId);
             return true;
@@ -420,7 +564,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 更新信用分
-     *
      * @param userId      用户ID
      * @param scoreChange 信用分变化量
      * @param reason      信用分变化原因
@@ -466,7 +609,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 查询用户列表
-     *
      * @param userQueryDTO 查询条件
      * @return 用户列表
      */
@@ -508,7 +650,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 更新用户角色
-     *
      * @param operatorId 操作者ID
      * @param userId 用户ID
      * @param role 目标角色枚举
@@ -543,7 +684,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 更新用户状态
-     *
      * @param operatorId 操作者ID
      * @param userId 用户ID
      * @param status 目标状态枚举
@@ -578,7 +718,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     /**
      * 新增：密码校验方法（使用Spring Security的匹配器）
      * 用于登录时验证密码正确性
-     *
      * @param userId 用户ID
      * @param rawPassword 原始密码
      */
@@ -608,24 +747,30 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
 
     // ---------------------- 私有辅助方法（匹配文档转换规则） ----------------------
-    /**
-     * 校验注册参数（严格匹配RegisterDTO校验规则）
-     */
-    private void validateRegisterParam(RegisterDTO registerDTO) {
-        if (!StringUtils.hasText(registerDTO.getUsername()) || registerDTO.getUsername().length() > 20) {
-            throw new BusinessException(ErrorCode.USERNAME_FORMAT_INVALID);
+    private void insertRegisterUserToDb (User user, String password) {
+        user.setPassword(passwordEncoder.encode(password)); // 密码加密存储（文档要求）
+        user.setStatus(UserStatusEnum.NORMAL);
+        user.setRole(UserRoleEnum.USER);
+        user.setCreditScore(INIT_CREDIT_SCORE);
+        user.setCreateTime(LocalDateTime.now());
+        user.setActivityTime(LocalDateTime.now());
+
+        // 5. 插入数据库（匹配UserMapper.insert方法）
+        int insertRows = userMapper.insert(user);
+        if (insertRows <= 0) {
+            log.error("用户注册失败，注册信息：{}", user);
+            throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
         }
-        if (StringUtils.hasText(registerDTO.getPhoneNumber())
-                && !registerDTO.getPhoneNumber().matches("^1[3-9]\\d{9}$")) {
-            throw new BusinessException(ErrorCode.PHONE_FORMAT_INVALID);
-        }
-        if (StringUtils.hasText(registerDTO.getEmail())
-                && !registerDTO.getEmail().matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$")) {
-            throw new BusinessException(ErrorCode.EMAIL_FORMAT_INVALID);
-        }
-        if (!registerDTO.getPassword().matches("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$")) {
-            throw new BusinessException(ErrorCode.PASSWORD_FORMAT_INVALID);
-        }
+
+        // 5. 缓存用户信息
+        UserDetailDTO userDetailDTO = userConvert.userToUserDetailDTO(user);
+        redisTemplate.opsForValue().set(
+                CACHE_KEY_USER + user.getUserId(),
+                userDetailDTO,
+                CACHE_TTL_USER
+        );
+
+        log.info("用户注册成功，用户ID：{}", user.getUserId());
     }
 
     /**

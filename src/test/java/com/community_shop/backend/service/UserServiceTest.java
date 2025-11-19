@@ -1,9 +1,9 @@
 package com.community_shop.backend.service;
 
 import com.community_shop.backend.convert.UserConvert;
-import com.community_shop.backend.dto.user.LoginDTO;
-import com.community_shop.backend.dto.user.LoginResultDTO;
-import com.community_shop.backend.dto.user.RegisterDTO;
+import com.community_shop.backend.dto.user.*;
+import com.community_shop.backend.dto.verification.VerifyEmailDTO;
+import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
 import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
@@ -11,6 +11,8 @@ import com.community_shop.backend.enums.SimpleEnum.LoginTypeEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.mapper.UserMapper;
 import com.community_shop.backend.mapper.UserThirdPartyMapper;
+import com.community_shop.backend.service.impl.EmailCodeServiceImpl;
+import com.community_shop.backend.service.impl.PhoneCodeServiceImpl;
 import com.community_shop.backend.service.impl.UserServiceImpl;
 import com.community_shop.backend.utils.TokenUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +56,12 @@ public class UserServiceTest {
 
     @Mock
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private EmailCodeServiceImpl emailCodeService;
+
+    @Mock
+    private PhoneCodeServiceImpl phoneCodeService;
 
     @Mock
     private ValueOperations<String, Object> valueOperations;
@@ -156,12 +164,202 @@ public class UserServiceTest {
     }
 
     @Test
+    void testRegisterByEmail_Success() {
+        // 初始化测试数据
+        RegisterEmailDTO dto = new RegisterEmailDTO();
+        dto.setEmail("new@example.com");
+        dto.setPassword("Password123");
+        dto.setVerifyCode("123456");
+
+        // 模拟依赖行为
+        when(userMapper.selectByEmail(anyString())).thenReturn(null);
+        when(emailCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
+        when(userConvert.registerEmailDtoToUser(any(RegisterEmailDTO.class))).thenAnswer(invocation -> {
+            RegisterEmailDTO param = invocation.getArgument(0);
+            User user = new User();
+            user.setEmail(param.getEmail());
+            user.setUsername(param.getEmail().split("@")[0]);
+            return user;
+        });
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(userMapper.insert(any(User.class))).thenReturn(1);
+
+        // 执行测试
+        Boolean result = userService.registerByEmail(dto);
+
+        // 验证结果
+        assertTrue(result);
+        verify(userMapper, times(1)).insert(any(User.class));
+        verify(redisTemplate, times(1)).opsForValue();
+    }
+
+    @Test
+    void testRegisterByEmail_EmailExists() {
+        RegisterEmailDTO dto = new RegisterEmailDTO();
+        dto.setEmail("existing@example.com");
+
+        when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
+
+        assertThrows(BusinessException.class, () -> userService.registerByEmail(dto));
+    }
+
+    @Test
+    void testRegisterByEmail_VerifyCodeError() {
+        RegisterEmailDTO dto = new RegisterEmailDTO();
+        dto.setEmail("new@example.com");
+        dto.setVerifyCode("wrong");
+
+        when(userMapper.selectByEmail(anyString())).thenReturn(null);
+        when(emailCodeService.verifyCode(anyString(), anyString())).thenReturn(false);
+
+        assertThrows(BusinessException.class, () -> userService.registerByEmail(dto));
+    }
+
+    @Test
+    void testRegisterByPhone_Success() {
+        RegisterPhoneDTO dto = new RegisterPhoneDTO();
+        dto.setPhoneNumber("13900139000");
+        dto.setPassword("Password123");
+        dto.setVerifyCode("123456");
+
+        when(userMapper.selectByPhone(anyString())).thenReturn(null);
+        when(phoneCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
+        when(userConvert.registerPhoneDtoToUser(any(RegisterPhoneDTO.class))).thenAnswer(invocation -> {
+            RegisterPhoneDTO param = invocation.getArgument(0);
+            User user = new User();
+            user.setPhoneNumber(param.getPhoneNumber());
+            user.setUsername("user_" + param.getPhoneNumber().substring(7));
+            return user;
+        });
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(userMapper.insert(any(User.class))).thenReturn(1);
+
+        Boolean result = userService.registerByPhone(dto);
+        assertTrue(result);
+    }
+
+    @Test
+    void testRegisterByPhone_PhoneExists() {
+        RegisterPhoneDTO dto = new RegisterPhoneDTO();
+        dto.setPhoneNumber("13800138000");
+
+        when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
+
+        assertThrows(BusinessException.class, () -> userService.registerByPhone(dto));
+    }
+
+    @Test
+    void testBindEmail_Success() {
+        VerifyEmailDTO dto = new VerifyEmailDTO();
+        dto.setUserId(1L);
+        dto.setEmail("bind@example.com");
+        dto.setVerifyCode("123456");
+
+        when(userMapper.selectByEmail(anyString())).thenReturn(null);
+        when(emailCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
+        when(userMapper.updateEmail(anyLong(), anyString())).thenReturn(1);
+
+        Boolean result = userService.bindEmail(dto);
+        assertTrue(result);
+    }
+
+    @Test
+    void testBindEmail_EmailExists() {
+        VerifyEmailDTO dto = new VerifyEmailDTO();
+        dto.setEmail("existing@example.com");
+
+        when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
+
+        assertThrows(BusinessException.class, () -> userService.bindEmail(dto));
+    }
+
+    @Test
+    void testBindPhone_Success() {
+        VerifyPhoneDTO dto = new VerifyPhoneDTO();
+        dto.setUserId(1L);
+        dto.setPhoneNumber("13900139000");
+        dto.setVerifyCode("123456");
+
+        when(userMapper.selectByPhone(anyString())).thenReturn(null);
+        when(phoneCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
+        when(userMapper.updatePhoneNumber(anyLong(), anyString())).thenReturn(1);
+
+        Boolean result = userService.bindPhone(dto);
+        assertTrue(result);
+    }
+
+    @Test
+    void testUpdatePasswordByEmail_Success() {
+        VerifyEmailDTO dto = new VerifyEmailDTO();
+        dto.setUserId(1L);
+        dto.setEmail("test@example.com");
+        dto.setVerifyCode("123456");
+        String newPassword = "NewPassword123";
+
+        when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
+        when(emailCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
+        when(userMapper.updatePassword(anyLong(), anyString())).thenReturn(1);
+
+        Boolean result = userService.updatePasswordByEmail(dto, newPassword);
+        assertTrue(result);
+    }
+
+    @Test
+    void testUpdatePasswordByEmail_NotBelong() {
+        VerifyEmailDTO dto = new VerifyEmailDTO();
+        dto.setUserId(2L); // 与测试用户ID不一致
+        dto.setEmail("test@example.com");
+
+        when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
+
+        assertThrows(BusinessException.class, () ->
+                userService.updatePasswordByEmail(dto, "newPass"));
+    }
+
+    @Test
+    void testUpdatePasswordByPhone_Success() {
+        VerifyPhoneDTO dto = new VerifyPhoneDTO();
+        dto.setUserId(1L);
+        dto.setPhoneNumber("13800138000");
+        dto.setVerifyCode("123456");
+        String newPassword = "NewPassword123";
+
+        when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
+        when(phoneCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
+        when(userMapper.updatePassword(anyLong(), anyString())).thenReturn(1);
+
+        Boolean result = userService.updatePasswordByPhone(dto, newPassword);
+        assertTrue(result);
+    }
+
+    @Test
+    void testUpdatePasswordByPhone_NotBelong() {
+        VerifyPhoneDTO dto = new VerifyPhoneDTO();
+        dto.setUserId(2L); // 与测试用户ID不一致
+        dto.setPhoneNumber("13800138000");
+
+        when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
+
+        assertThrows(BusinessException.class, () ->
+                userService.updatePasswordByPhone(dto, "newPass"));
+    }
+
+    @Test
     void testLogin_Success() {
         // 模拟依赖行为
         doReturn(testUser).when(userMapper).selectByEmail(anyString());
         doReturn( true).when(passwordEncoder).matches(anyString(), anyString());
         doReturn("testToken").when(tokenUtil).generateToken(anyLong());
         doReturn(LocalDateTime.now().plusHours(1)).when(tokenUtil).getExpirationTimeFromToken(anyString());
+        when(userConvert.userToLoginResultUserSimpleDTO(any(User.class))).thenAnswer(invocation -> {
+            LoginResultDTO.UserSimpleDTO user = new LoginResultDTO.UserSimpleDTO();
+            user.setUserId(testUser.getUserId());
+            user.setUsername(testUser.getUsername());
+            user.setAvatarUrl(testUser.getAvatarUrl());
+            user.setCreditScore(testUser.getCreditScore());
+            user.setIsAdmin(testUser.isAdmin());
+            return user;
+        });
 
         // 执行测试
         LoginResultDTO result = userService.login(testLoginDTO);

@@ -61,15 +61,6 @@ public interface UserMapper extends BaseMapper<User> {
      */
     int updateCreditScore(@Param("userId") Long userId, @Param("score") Integer score);
 
-
-    /**
-     * 更新用户粉丝数
-     * @param userId 用户ID
-     * @param count 调整后的粉丝数（可增可减）
-     * @return 影响行数
-     */
-    int updateFollowerCount(@Param("userId") Long userId, @Param("count") int count);
-
     /**
      * 更新用户密码
      * @param userId 用户ID
@@ -78,6 +69,24 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Update("UPDATE `user` SET password = #{newPassword} WHERE user_id = #{userId}")
     int updatePassword(@Param("userId") Long userId, @Param("newPassword") String newPassword);
+
+    /**
+     * 绑定邮箱
+     * @param userId 用户ID
+     * @param email 邮箱
+     * @return 影响行数
+     */
+    @Update("UPDATE `user` SET email = #{email} WHERE user_id = #{userId}")
+    int updateEmail(@Param("userId") Long userId, @Param("email") String email);
+
+    /**
+     * 绑定手机号
+     * @param userId 用户ID
+     * @param phoneNumber 手机号
+     * @return 影响行数
+     */
+    @Update("UPDATE `user` SET phone_number = #{phoneNumber} WHERE user_id = #{userId}")
+    int updatePhoneNumber(@Param("userId") Long userId, @Param("phoneNumber") String phoneNumber);
 
     /**
      * 更新用户状态

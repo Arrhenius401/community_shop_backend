@@ -61,9 +61,10 @@ public class PhoneCodeServiceImpl implements VerificationCodeService {
             }
             codeCacheUtil.deleteCachedPhoneCode(phone);
             return true;
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            log.warn("验证手机验证码失败：{}", e.getMessage());
-            return false;
+            throw new BusinessException(ErrorCode.VERIFY_CODE_VERIFY_FAILED, e.getMessage());
         }
     }
 

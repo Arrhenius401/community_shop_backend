@@ -57,18 +57,16 @@ public interface UserService extends BaseService<User>{
     /**
      * 忘记密码后重置密码（手机号）
      * @param verifyDTO 忘记密码请求参数DTO
-     * @param newPassword 新密码
      * @return true成功/false失败）
      */
-    Boolean updatePasswordByEmail(VerifyEmailDTO verifyDTO, String newPassword);
+    Boolean updatePasswordByEmail(PasswordUpdateEmailDTO verifyDTO);
 
     /**
      * 忘记密码后重置密码（邮箱）
      * @param verifyDTO 忘记密码请求参数DTO
-     * @param newPassword 新密码
      * @return true成功/false失败）
      */
-    Boolean updatePasswordByPhone(VerifyPhoneDTO verifyDTO, String newPassword);
+    Boolean updatePasswordByPhone(PasswordUpdatePhoneDTO verifyDTO);
 
     /**
      * 用户登录（支持账号密码/手机号验证码登录）

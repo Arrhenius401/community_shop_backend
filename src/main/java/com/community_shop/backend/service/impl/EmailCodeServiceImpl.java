@@ -61,9 +61,10 @@ public class EmailCodeServiceImpl implements VerificationCodeService {
             }
             codeCacheUtil.deleteCachedEmailCode(email);
             return true;
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            log.warn(e.getMessage());
-            return false;
+            throw new BusinessException(ErrorCode.VERIFY_CODE_VERIFY_FAILED, e.getMessage());
         }
     }
 

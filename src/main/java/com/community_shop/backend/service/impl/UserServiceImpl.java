@@ -254,12 +254,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     /**
      * 忘记密码后重置密码（邮箱）
      * @param verifyDTO 验证信息
-     * @param newPassword 新密码
      * @return 重置结果
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updatePasswordByEmail (VerifyEmailDTO verifyDTO, String newPassword) {
+    public Boolean updatePasswordByEmail (PasswordUpdateEmailDTO verifyDTO) {
         try {
             // 1. 校验邮箱是否从属于当前用户
             if (!userMapper.selectByEmail(verifyDTO.getEmail()).getUserId().equals(verifyDTO.getUserId())) {
@@ -271,8 +270,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
             }
 
-            // 3. 更新数据库中邮箱
-            int updateRows = userMapper.updatePassword(verifyDTO.getUserId(), newPassword);
+            // 3. 密码加密
+            String password = passwordEncoder.encode(verifyDTO.getNewPassword());
+
+            // 4. 更新数据库中邮箱
+            int updateRows = userMapper.updatePassword(verifyDTO.getUserId(), password);
             if (updateRows <= 0) {
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
             }
@@ -286,9 +288,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
     }
 
+    /**
+     * 忘记密码后重置密码（手机号）
+     * @param verifyDTO 验证信息
+     * @return 重置结果
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updatePasswordByPhone (VerifyPhoneDTO verifyDTO, String newPassword) {
+    public Boolean updatePasswordByPhone (PasswordUpdatePhoneDTO verifyDTO) {
         try {
             // 1. 校验手机号是否从属于当前用户
             if (!userMapper.selectByPhone(verifyDTO.getPhoneNumber()).getUserId().equals(verifyDTO.getUserId())) {
@@ -300,8 +307,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 throw new BusinessException(ErrorCode.VERIFY_CODE_INVALID);
             }
 
-            // 3. 更新数据库中邮箱
-            int updateRows = userMapper.updatePassword(verifyDTO.getUserId(), newPassword);
+            // 3. 密码加密
+            String password = passwordEncoder.encode(verifyDTO.getNewPassword());
+
+            // 4. 更新数据库中邮箱
+            int updateRows = userMapper.updatePassword(verifyDTO.getUserId(), password);
             if (updateRows <= 0) {
                 throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
             }

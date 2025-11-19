@@ -210,12 +210,9 @@ public class UserController {
     public ResultVO<Boolean> updatePasswordByEmail(
             @Valid @RequestBody
             @Parameter(description = "修改密码参数，含邮箱、验证码、新密码", required = true)
-            VerifyEmailDTO verifyDTO,
-            @Parameter(description = "新密码", required = true)
-            @RequestParam
-            String newPassword) {
+            PasswordUpdateEmailDTO verifyDTO) {
         verifyDTO.setUserId(parseUserIdFromToken());
-        Boolean res = userService.updatePasswordByEmail(verifyDTO, newPassword);
+        Boolean res = userService.updatePasswordByEmail(verifyDTO);
         return ResultVO.success(res);
     }
 
@@ -242,12 +239,9 @@ public class UserController {
     public ResultVO<Boolean> updatePasswordByPhone(
             @Valid @RequestBody
             @Parameter(description = "修改密码参数，含手机号、验证码、新密码", required = true)
-            VerifyPhoneDTO verifyDTO,
-            @Parameter(description = "新密码", required = true)
-            @RequestParam
-            String newPassword) {
+            PasswordUpdatePhoneDTO verifyDTO) {
         verifyDTO.setUserId(parseUserIdFromToken());
-        Boolean res = userService.updatePasswordByPhone(verifyDTO, newPassword);
+        Boolean res = userService.updatePasswordByPhone(verifyDTO);
         return ResultVO.success(res);
     }
 

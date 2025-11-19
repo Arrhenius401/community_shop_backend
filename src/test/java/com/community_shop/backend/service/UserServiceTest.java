@@ -290,58 +290,60 @@ public class UserServiceTest {
 
     @Test
     void testUpdatePasswordByEmail_Success() {
-        VerifyEmailDTO dto = new VerifyEmailDTO();
+        PasswordUpdateEmailDTO dto = new PasswordUpdateEmailDTO();
         dto.setUserId(1L);
         dto.setEmail("test@example.com");
         dto.setVerifyCode("123456");
-        String newPassword = "NewPassword123";
+        dto.setNewPassword("NewPassword123");
 
         when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
         when(emailCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
         when(userMapper.updatePassword(anyLong(), anyString())).thenReturn(1);
 
-        Boolean result = userService.updatePasswordByEmail(dto, newPassword);
+        Boolean result = userService.updatePasswordByEmail(dto);
         assertTrue(result);
     }
 
     @Test
     void testUpdatePasswordByEmail_NotBelong() {
-        VerifyEmailDTO dto = new VerifyEmailDTO();
+        PasswordUpdateEmailDTO dto = new PasswordUpdateEmailDTO();
         dto.setUserId(2L); // 与测试用户ID不一致
         dto.setEmail("test@example.com");
+        dto.setNewPassword("NewPassword123");
 
         when(userMapper.selectByEmail(anyString())).thenReturn(testUser);
 
         assertThrows(BusinessException.class, () ->
-                userService.updatePasswordByEmail(dto, "newPass"));
+                userService.updatePasswordByEmail(dto));
     }
 
     @Test
     void testUpdatePasswordByPhone_Success() {
-        VerifyPhoneDTO dto = new VerifyPhoneDTO();
+        PasswordUpdatePhoneDTO dto = new PasswordUpdatePhoneDTO();
         dto.setUserId(1L);
         dto.setPhoneNumber("13800138000");
         dto.setVerifyCode("123456");
-        String newPassword = "NewPassword123";
+        dto.setNewPassword("NewPassword123");
 
         when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
         when(phoneCodeService.verifyCode(anyString(), anyString())).thenReturn(true);
         when(userMapper.updatePassword(anyLong(), anyString())).thenReturn(1);
 
-        Boolean result = userService.updatePasswordByPhone(dto, newPassword);
+        Boolean result = userService.updatePasswordByPhone(dto);
         assertTrue(result);
     }
 
     @Test
     void testUpdatePasswordByPhone_NotBelong() {
-        VerifyPhoneDTO dto = new VerifyPhoneDTO();
+        PasswordUpdatePhoneDTO dto = new PasswordUpdatePhoneDTO();
         dto.setUserId(2L); // 与测试用户ID不一致
         dto.setPhoneNumber("13800138000");
+        dto.setNewPassword("NewPassword123");
 
         when(userMapper.selectByPhone(anyString())).thenReturn(testUser);
 
         assertThrows(BusinessException.class, () ->
-                userService.updatePasswordByPhone(dto, "newPass"));
+                userService.updatePasswordByPhone(dto));
     }
 
     @Test

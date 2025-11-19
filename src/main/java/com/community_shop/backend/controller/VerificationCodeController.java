@@ -1,5 +1,6 @@
 package com.community_shop.backend.controller;
 
+import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.dto.verification.VerifyEmailDTO;
 import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
 import com.community_shop.backend.service.impl.EmailCodeServiceImpl;
@@ -53,13 +54,13 @@ public class VerificationCodeController {
             @ApiResponse(responseCode = "500", description = "发送失败（邮件服务异常）",
                     content = @Content(schema = @Schema(implementation = ResultVO.class)))
     })
-    public ResultVO<String> sendEmailCode(
+    public ResultVO<?> sendEmailCode(
             @Parameter(description = "目标邮箱地址，需符合标准格式", required = true, example = "1825270596@qq.com")
             @RequestParam
             @Pattern(regexp = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", message = "邮箱格式错误")
             String email) {
-        String code = emailCodeService.sendCode(email);
-        return ResultVO.success(code);
+        emailCodeService.sendCode(email);
+        return ResultVO.success();
     }
 
     /**
@@ -82,14 +83,14 @@ public class VerificationCodeController {
             @ApiResponse(responseCode = "500", description = "发送失败（短信服务异常）",
                     content = @Content(schema = @Schema(implementation = ResultVO.class)))
     })
-    public ResultVO<String> sendPhoneCode(
+    public ResultVO<?> sendPhoneCode(
             @Parameter(description = "目标手机号，需为11位数字", required = true, example = "17268287727")
             @RequestParam
             @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误，需为11位有效数字")
             String phone
     ) {
-        String code = phoneCodeService.sendCode(phone);
-        return ResultVO.success(code);
+        phoneCodeService.sendCode(phone);
+        return ResultVO.success();
     }
 
     /**
@@ -98,6 +99,7 @@ public class VerificationCodeController {
      * @return 验证结果
      */
     @PostMapping("/email/verify")
+    @LoginRequired
     @Operation(
             summary = "验证邮箱验证码接口",
             description = "校验邮箱与验证码的匹配性，业务规则：1.验证成功后立即失效该验证码；2.验证码需在有效期内；3.邮箱需与发送时一致"
@@ -126,6 +128,7 @@ public class VerificationCodeController {
      * @return 验证结果
      */
     @PostMapping("/phone/verify")
+    @LoginRequired
     @Operation(
             summary = "验证手机验证码接口",
             description = "校验手机号与验证码的匹配性，业务规则：1.验证成功后立即失效该验证码；2.验证码需在有效期内；3.手机号需与发送时一致"

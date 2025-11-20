@@ -16,6 +16,7 @@ spring:
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
+  # 邮件配置
   mail:
     host: smtp.qq.com  # SMTP服务器地址（QQ邮箱：smtp.qq.com；网易163：smtp.163.com）
     port: 465          # SSL加密端口（非SSL端口25，推荐用465更安全）

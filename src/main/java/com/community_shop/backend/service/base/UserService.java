@@ -147,7 +147,7 @@ public interface UserService extends BaseService<User>{
 
     /**
      * 验证密码（业务方法）
-     * @param userId
+     * @param userId 用户ID
      * @param rawPassword 明文密码
      * @return 验证结果（true/false）
      */
@@ -155,8 +155,8 @@ public interface UserService extends BaseService<User>{
 
     /**
      * 验证用户角色（业务方法）
-     * @param userId
-     * @param role
+     * @param userId 用户ID
+     * @param role 目标角色枚举
      * @return 验证结果（true/false）
      */
     Boolean verifyRole(Long userId, UserRoleEnum role);

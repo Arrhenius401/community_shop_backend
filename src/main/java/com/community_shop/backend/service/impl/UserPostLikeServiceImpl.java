@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 用户点赞服务实现类
+ */
 @Slf4j
 @Service
 public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper, UserPostLike> implements UserPostLikeService {

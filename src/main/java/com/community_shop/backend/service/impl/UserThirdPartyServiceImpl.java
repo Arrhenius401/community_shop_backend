@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * 第三方账号Service实现类
- * 匹配《代码文档2 Service层设计.docx》的实现规范（事务控制、Mapper依赖、业务逻辑）
  */
 @Service
 public class UserThirdPartyServiceImpl implements UserThirdPartyService {

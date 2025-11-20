@@ -35,7 +35,9 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-// "object == null" 与 “Objects.isNull(object)” 等价
+/**
+ * 用户模块 Service实现类
+ */
 @Slf4j
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements UserService {

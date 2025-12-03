@@ -1,5 +1,8 @@
-package com.community_shop.backend.exception;
+package com.community_shop.backend.exception.handler;
 
+import com.community_shop.backend.exception.BusinessException;
+import com.community_shop.backend.exception.NoPermissionException;
+import com.community_shop.backend.exception.UnLoginException;
 import com.community_shop.backend.vo.ResultVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

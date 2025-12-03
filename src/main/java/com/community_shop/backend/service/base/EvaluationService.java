@@ -46,7 +46,6 @@ public interface EvaluationService {
      * @param userId 操作用户ID（需与评价userId一致）
      * @param evaluationUpdateDTO 评价更新参数（评价ID、新内容）
      * @return 成功返回true，失败抛出异常或返回false
-     * @see EvaluationMapper#updateById(Evaluation)
      */
     Boolean updateEvaluationContent(Long userId, EvaluationUpdateDTO evaluationUpdateDTO);
 
@@ -56,7 +55,6 @@ public interface EvaluationService {
      * @param evalId 待删除评价ID
      * @param operatorId 操作用户ID（评价者或管理员）
      * @return 成功返回true，失败抛出异常或返回false
-     * @see EvaluationMapper#deleteById(Long)
      */
     Boolean deleteEvaluationById(Long evalId, Long operatorId);
 

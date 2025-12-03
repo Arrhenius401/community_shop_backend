@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.community_shop.backend.mapper.UserPostLikeMapper">
+<mapper namespace="com.community_shop.backend.dao.mapper.UserPostLikeMapper">
 
     <!-- 结果集映射：匹配UserPostLike实体与user_post_like表字段 -->
     <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.UserPostLike">

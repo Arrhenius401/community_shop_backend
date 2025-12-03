@@ -9,7 +9,7 @@ import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.mapper.ProductMapper;
+import com.community_shop.backend.dao.mapper.ProductMapper;
 import com.community_shop.backend.service.base.ProductService;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.utils.AliyunOssUtil;

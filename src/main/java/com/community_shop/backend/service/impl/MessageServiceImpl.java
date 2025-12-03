@@ -9,7 +9,7 @@ import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
-import com.community_shop.backend.mapper.MessageMapper;
+import com.community_shop.backend.dao.mapper.MessageMapper;
 import com.community_shop.backend.service.base.MessageService;
 import com.community_shop.backend.service.base.UserService;
 import jakarta.annotation.Resource;

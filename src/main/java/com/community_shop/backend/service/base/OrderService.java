@@ -1,15 +1,12 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.dao.mapper.OrderMapper;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.order.*;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 交易流程Service接口，实现《文档》中订单创建、支付、售后等核心功能
@@ -105,7 +102,7 @@ public interface OrderService extends BaseService<Order> {
      * @param status 目标状态（需符合状态流转规则）
      * @param operatorId 操作用户ID（买家/卖家/管理员）
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.OrderMapper#updateStatus(Long, OrderStatusEnum)
+     * @see OrderMapper#updateStatus(Long, OrderStatusEnum)
      * @see 《文档2_系统设计.docx》订单状态流转规则
      */
     Boolean updateOrderStatus(Long orderId, OrderStatusEnum status, Long operatorId);

@@ -12,9 +12,9 @@ import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
-import com.community_shop.backend.mapper.UserMapper;
+import com.community_shop.backend.dao.mapper.UserMapper;
 import com.community_shop.backend.enums.ErrorCode.ErrorCode;
-import com.community_shop.backend.mapper.UserThirdPartyMapper;
+import com.community_shop.backend.dao.mapper.UserThirdPartyMapper;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;
 import com.community_shop.backend.utils.ThirdPartyAuthUtil;
@@ -32,7 +32,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**

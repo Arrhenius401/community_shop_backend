@@ -1,5 +1,7 @@
 package com.community_shop.backend.service.base;
 
+import com.community_shop.backend.dao.mapper.PostMapper;
+import com.community_shop.backend.dao.mapper.UserPostLikeMapper;
 import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
@@ -102,7 +104,7 @@ public interface PostService extends BaseService<Post> {
      * @param operatorId 操作用户ID（作者或管理员）
      * @param postId 待删除帖子ID
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.UserPostLikeMapper#batchDeleteByPostId(Long)
+     * @see UserPostLikeMapper#batchDeleteByPostId(Long)
      */
     Boolean deletePostById(Long operatorId, Long postId);
 
@@ -111,7 +113,7 @@ public interface PostService extends BaseService<Post> {
      * 核心逻辑：调用PostMapper.selectHotPosts获取最热帖子列表
      * @param limit 获取数量
      * @return 最热帖子列表
-     * @see com.community_shop.backend.mapper.PostMapper#selectHotPosts(int)
+     * @see PostMapper#selectHotPosts(int)
      */
     List<PostDetailDTO> selectHotPosts(Integer limit);
 
@@ -119,7 +121,7 @@ public interface PostService extends BaseService<Post> {
      * 获取帖子列表（业务方法）
      * 核心逻辑：调用PostMapper.selectTopPosts获取置顶帖子列表
      * @return 置顶帖子列表
-     * @see com.community_shop.backend.mapper.PostMapper#selectEssencePosts(int, int)
+     * @see PostMapper#selectEssencePosts(int, int)
      */
     PageResult<PostDetailDTO> selectEssencePosts(PageParam pageParam);
 
@@ -127,7 +129,7 @@ public interface PostService extends BaseService<Post> {
      * 获取帖子列表（业务方法）
      * 核心逻辑：调用PostMapper.selectTopPosts获取置顶帖子列表
      * @return 置顶帖子列表
-     * @see com.community_shop.backend.mapper.PostMapper#selectTopPosts(int)
+     * @see PostMapper#selectTopPosts(int)
      */
     List<PostDetailDTO> selectTopPosts();
 

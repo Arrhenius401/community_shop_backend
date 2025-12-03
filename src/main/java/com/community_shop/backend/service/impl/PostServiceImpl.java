@@ -11,7 +11,7 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
-import com.community_shop.backend.mapper.PostMapper;
+import com.community_shop.backend.dao.mapper.PostMapper;
 import com.community_shop.backend.service.base.*;
 import com.community_shop.backend.utils.AliyunOssUtil;
 import lombok.extern.slf4j.Slf4j;

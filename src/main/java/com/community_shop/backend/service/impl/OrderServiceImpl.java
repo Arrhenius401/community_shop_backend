@@ -17,7 +17,7 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.mapper.OrderMapper;
+import com.community_shop.backend.dao.mapper.OrderMapper;
 import com.community_shop.backend.service.base.MessageService;
 import com.community_shop.backend.service.base.OrderService;
 import com.community_shop.backend.service.base.ProductService;

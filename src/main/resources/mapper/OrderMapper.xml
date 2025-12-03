@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.community_shop.backend.mapper.OrderMapper">
+<mapper namespace="com.community_shop.backend.dao.mapper.OrderMapper">
 
     <!-- 结果集映射：严格匹配order表字段与Order实体 -->
     <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.Order">

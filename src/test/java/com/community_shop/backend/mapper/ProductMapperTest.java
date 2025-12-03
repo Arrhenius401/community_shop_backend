@@ -1,6 +1,7 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import com.community_shop.backend.dao.mapper.ProductMapper;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
 import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

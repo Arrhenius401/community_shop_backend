@@ -1,7 +1,7 @@
 package com.community_shop.backend.mapper;
 
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import com.community_shop.backend.dao.mapper.UserMapper;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;

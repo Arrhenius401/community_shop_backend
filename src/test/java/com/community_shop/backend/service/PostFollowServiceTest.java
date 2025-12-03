@@ -1,18 +1,14 @@
 package com.community_shop.backend.service;
 
 import com.community_shop.backend.convert.PostConvert;
-import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
 import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.ErrorCode.ErrorCode;
-import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.PostFollow;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.mapper.PostFollowMapper;
-import com.community_shop.backend.service.base.PostFollowService;
+import com.community_shop.backend.dao.mapper.PostFollowMapper;
 import com.community_shop.backend.service.base.PostService;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.impl.PostFollowServiceImpl;
@@ -29,8 +25,6 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;

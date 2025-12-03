@@ -11,7 +11,7 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Evaluation;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.mapper.EvaluationMapper;
+import com.community_shop.backend.dao.mapper.EvaluationMapper;
 import com.community_shop.backend.service.base.EvaluationService;
 import com.community_shop.backend.service.base.OrderService;
 import com.community_shop.backend.service.base.ProductService;

@@ -1,7 +1,7 @@
 package com.community_shop.backend.utils;
 
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.mapper.UserMapper;
+import com.community_shop.backend.dao.mapper.UserMapper;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

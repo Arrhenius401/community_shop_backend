@@ -10,7 +10,7 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.PostFollow;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.mapper.PostFollowMapper;
+import com.community_shop.backend.dao.mapper.PostFollowMapper;
 import com.community_shop.backend.service.base.PostFollowService;
 import com.community_shop.backend.service.base.PostService;
 import com.community_shop.backend.service.base.UserService;

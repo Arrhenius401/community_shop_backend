@@ -1,13 +1,11 @@
 package com.community_shop.backend.service.base;
 
-import com.community_shop.backend.dto.PageParam;
+import com.community_shop.backend.dao.mapper.EvaluationMapper;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.evaluation.*;
 import com.community_shop.backend.entity.Evaluation;
 import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 /**
  * 信用与评价Service接口，实现《文档》中评价提交、好评率统计、评价举报等核心功能
@@ -48,7 +46,7 @@ public interface EvaluationService {
      * @param userId 操作用户ID（需与评价userId一致）
      * @param evaluationUpdateDTO 评价更新参数（评价ID、新内容）
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.EvaluationMapper#updateById(Evaluation)
+     * @see EvaluationMapper#updateById(Evaluation)
      */
     Boolean updateEvaluationContent(Long userId, EvaluationUpdateDTO evaluationUpdateDTO);
 
@@ -58,7 +56,7 @@ public interface EvaluationService {
      * @param evalId 待删除评价ID
      * @param operatorId 操作用户ID（评价者或管理员）
      * @return 成功返回true，失败抛出异常或返回false
-     * @see com.community_shop.backend.mapper.EvaluationMapper#deleteById(Long)
+     * @see EvaluationMapper#deleteById(Long)
      */
     Boolean deleteEvaluationById(Long evalId, Long operatorId);
 
@@ -67,8 +65,8 @@ public interface EvaluationService {
      * 核心逻辑：调用EvaluationMapper统计平均评分、好评/中评/差评数，计算好评率
      * @param sellerId 卖家ID
      * @return 评分详情（平均评分、好评率、各星级数量）
-     * @see com.community_shop.backend.mapper.EvaluationMapper#selectSellerAverageScore(Long)
-     * @see com.community_shop.backend.mapper.EvaluationMapper#countSellerScoreLevel(Long, Integer, Integer) 
+     * @see EvaluationMapper#selectSellerAverageScore(Long)
+     * @see EvaluationMapper#countSellerScoreLevel(Long, Integer, Integer)
      */
     SellerScoreDTO calculateSellerScore(Long sellerId);
 
@@ -76,8 +74,8 @@ public interface EvaluationService {
      * 统计商品评分（业务方法）
      * 核心逻辑：调用EvaluationMapper统计商品评分
      * @param productId 商品ID
-     * @see com.community_shop.backend.mapper.EvaluationMapper#selectSellerAverageScore(Long)
-     * @see com.community_shop.backend.mapper.EvaluationMapper#countProductScoreLevel(Long, Integer, Integer)
+     * @see EvaluationMapper#selectSellerAverageScore(Long)
+     * @see EvaluationMapper#countProductScoreLevel(Long, Integer, Integer)
      */
     ProductScoreDTO calculateProductScore(Long productId);
 

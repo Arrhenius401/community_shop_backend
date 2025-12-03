@@ -1,4 +1,4 @@
-package com.community_shop.backend.mapper;
+package com.community_shop.backend.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;

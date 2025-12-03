@@ -1,6 +1,7 @@
 package com.community_shop.backend.mapper;
 
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import com.community_shop.backend.dao.mapper.OrderMapper;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
 import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;

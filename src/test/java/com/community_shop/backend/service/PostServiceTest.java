@@ -13,7 +13,7 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
-import com.community_shop.backend.mapper.PostMapper;
+import com.community_shop.backend.dao.mapper.PostMapper;
 import com.community_shop.backend.service.base.UserPostLikeService;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.impl.PostServiceImpl;
@@ -32,7 +32,6 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

@@ -2,6 +2,9 @@ package com.community_shop.backend.enums.ErrorCode;
 
 import lombok.Getter;
 
+/**
+ * 错误码枚举类
+ */
 @Getter
 public enum ErrorCode {
     // 通用错误
@@ -198,7 +201,17 @@ public enum ErrorCode {
     VERIFY_CODE_NOT_MATCH("VERIFY_006", 400, "验证码不匹配"),
 
     EMAIL_NOT_BELONG_TO_USER("VERIFY_051", 400, "邮箱不属于当前用户"),
-    PHONE_NOT_BELONG_TO_USER("VERIFY_052", 400, "手机号不属于当前用户");
+    PHONE_NOT_BELONG_TO_USER("VERIFY_052", 400, "手机号不属于当前用户"),
+
+    // AI 模块
+    AI_SERVICE_FAILS("AI_001", 500, "AI服务不可用"),
+    AI_PARSE_FAILS("AI_002", 500, "AI服务前置解析失败"),
+    AI_CLEAR_CONTENT_FAILS("AI_003", 500, "AI清理上下文"),
+
+    AI_CHAT_SESSION_NOT_EXISTS("AI_101", 404, "会话不存在"),
+    AI_CHAT_SESSION_FIRST_PROMPT_NULL("AI_CHAT_SESSION_102", 400, "会话首次消息为空"),
+
+    AI_CHAT_MESSAGE_NOT_EXISTS("CHAT_MESSAGE_201", 404, "聊天消息不存在");
 
     // HTTP状态码
     // 200：成功操作

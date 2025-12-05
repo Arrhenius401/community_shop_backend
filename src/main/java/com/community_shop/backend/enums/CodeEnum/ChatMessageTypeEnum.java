@@ -14,12 +14,12 @@ public enum ChatMessageTypeEnum {
 
     // 对应数据库的字符串值（如 "user"）
     @EnumValue
-    private final String value;
+    private final String code;
     // 关联 Spring AI 的 MessageType
     private final MessageType aiMessageType;
 
     ChatMessageTypeEnum(MessageType aiMessageType) {
-        this.value = aiMessageType.getValue();
+        this.code = aiMessageType.getValue();
         this.aiMessageType = aiMessageType;
     }
 
@@ -28,7 +28,7 @@ public enum ChatMessageTypeEnum {
      */
     public static ChatMessageTypeEnum fromValue(String value) {
         for (ChatMessageTypeEnum type : values()) {
-            if (type.value.equals(value)) {
+            if (type.code.equals(value)) {
                 return type;
             }
         }

@@ -216,11 +216,12 @@
         </dependency>
 
         <!-- 阿里云OSS SDK -->
-        <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.15.1</version> <!-- 稳定版本，可根据最新版本调整 -->
-        </dependency>
+        <!-- 移除该依赖，使用 MinIO 实现大对象（图片等）存储 -->
+<!--        <dependency>-->
+<!--            <groupId>com.aliyun.oss</groupId>-->
+<!--            <artifactId>aliyun-sdk-oss</artifactId>-->
+<!--            <version>3.15.1</version> &lt;!&ndash; 稳定版本，可根据最新版本调整 &ndash;&gt;-->
+<!--        </dependency>-->
 
         <!-- 阿里云短信服务SDK -->
         <dependency>
@@ -234,6 +235,25 @@
             <groupId>com.aliyun</groupId>
             <artifactId>dypnsapi20170525</artifactId>
             <version>2.0.0</version> <!-- 建议使用 Maven 仓库最新版本，如 1.1.1 或更高 -->
+        </dependency>
+
+        <!-- 添加 MinIO 依赖 -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- MinIO 依赖的 HTTP 客户端（如果项目没有的话） -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.11.0</version> <!-- 使用最新稳定版 -->
         </dependency>
 
         <!-- MapStruct -->

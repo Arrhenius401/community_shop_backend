@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ public enum UserStatusEnum {
     INACTIVE("INACTIVE", "未激活"), // 新注册用户未完成手机号/邮箱验证，仅可登录，不可发帖/交易
     DELETED("DELETED", "删除");    //逻辑删除状态
 
+    @EnumValue
     private final String code; // 用于数据库存储（varchar类型）
     @Getter
     private final String desc; // 用于前端展示、权限校验说明

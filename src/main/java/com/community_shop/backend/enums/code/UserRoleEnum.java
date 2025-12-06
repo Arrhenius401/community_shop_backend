@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ public enum UserRoleEnum {
     ADMIN("ADMIN", "管理员");
 
     // 角色标识（存储到数据库）
+    @EnumValue
     private final String code;
     // 角色描述（用于前端展示和日志记录）
     @Getter

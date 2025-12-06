@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public enum PostFollowStatusEnum {
     BLOCKED("BLOCKED", "封禁"),
     DELETED("DELETED", "已删除"); // 逻辑删除状态
 
+    @EnumValue
     private final String code; // 核心标识，用于MySQL varchar字段存储
     @Getter
     private final String desc; // 辅助说明，用于前端展示（如“该评论已被举报待审核”）、开发调试

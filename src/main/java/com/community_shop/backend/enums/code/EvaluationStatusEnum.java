@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public enum EvaluationStatusEnum {
     BLOCKED("BLOCKED", "封禁"),
     DELETED("DELETED", "已删除"); // 逻辑删除状态
 
+    @EnumValue
     private final String code; // 用于数据库存储（varchar类型）
     @Getter
     private final String desc; // 用于前端展示、日志打印等

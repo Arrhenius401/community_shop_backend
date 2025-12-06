@@ -1,4 +1,4 @@
-package com.community_shop.backend.handler;
+package com.community_shop.backend.enums.handler;
 
 import com.community_shop.backend.enums.code.OrderStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;

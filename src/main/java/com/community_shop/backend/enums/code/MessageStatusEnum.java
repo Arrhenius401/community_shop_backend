@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public enum MessageStatusEnum {
     // 已删除状态：用户删除了该消息（逻辑删除标记）
     DELETED("DELETED", "已删除");
 
+    @EnumValue
     private final String code;
     @Getter
     private final String desc;

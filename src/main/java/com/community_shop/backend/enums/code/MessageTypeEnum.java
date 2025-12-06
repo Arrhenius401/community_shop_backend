@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -9,6 +10,7 @@ public enum MessageTypeEnum {
     ORDER("ORDER", "订单消息"),
     PRIVATE("PRIVATE", "私信消息");
 
+    @EnumValue
     private final String code;
     @Getter
     private final String desc;

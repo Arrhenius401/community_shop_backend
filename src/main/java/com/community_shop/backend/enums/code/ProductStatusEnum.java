@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public enum ProductStatusEnum {
     BLOCKED("BLOCKED", "封禁"),   // 卖家违规，被封禁
     DELETED("DELETED", "已删除"); // 卖家删除商品（逻辑删除，保留交易关联数据）
 
+    @EnumValue
     private final String code; // 用于数据库存储（varchar类型）
     @Getter
     private final String desc; // 用于前端展示、商品列表筛选

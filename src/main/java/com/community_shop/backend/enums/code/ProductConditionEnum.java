@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public enum ProductConditionEnum {
     SEVENTY_PERCENT_NEW("SEVENTY_PERCENT_NEW", "7成新"),     // 明显磨损，功能正常
     USED("USED", "闲置");                  // 长期使用，无核心故障
 
+    @EnumValue
     private final String code;
     @Getter
     private final String desc;

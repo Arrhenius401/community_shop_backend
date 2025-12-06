@@ -1,5 +1,6 @@
 package com.community_shop.backend.enums.code;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -16,6 +17,7 @@ public enum OrderStatusEnum {
     RETURNED("RETURNED", "已退货"),
     ARBITRATION("ARBITRATION", "平台仲裁中"); // 卖家超时未响应售后时的状态
 
+    @EnumValue
     private final String code;
     @Getter
     private final String desc;

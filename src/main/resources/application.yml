@@ -42,8 +42,8 @@ spring:
 
 # MyBatis 全局配置
 mybatis-plus:
-  type-aliases-package: com.dd.ai_medical_triage.entity
-  type-handlers-package: com.dd.ai_medical_triage.handler
+  type-aliases-package: com.community_shop.backend.entity
+  type-handlers-package: com.community_shop.backend.enums.handler
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: true

@@ -7,6 +7,7 @@ private-domain-name: graygoo401.xyz
 
 # 应用程序名称
 spring:
+  # 应用配置
   application:
     name: Community_Shop_Backend
   # 使用的环境（dev, test, prod)
@@ -29,6 +30,15 @@ spring:
             enable: true  # 开启SSL加密
             required: true # 强制使用SSL
         debug: false   # 关闭调试模式（生产环境设为false，避免日志打印邮件内容）
+  # AI配置
+  ai:
+    openai:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      chat:
+        options:
+          model: "qwen3-max"  # 默认模型
+          temperature: 0.7    # 生成文本的随机性控制
+          max-tokens: 500
 
 # MyBatis 全局配置
 mybatis-plus:

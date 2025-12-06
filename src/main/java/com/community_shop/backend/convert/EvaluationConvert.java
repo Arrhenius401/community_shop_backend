@@ -64,7 +64,6 @@ public interface EvaluationConvert {
     @Mappings({
             @Mapping(target = "evalId", ignore = true),
             @Mapping(target = "evaluateeId", ignore = true), // 需通过 orderId 查询订单获取卖家 ID
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum.NORMAL)"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true)
     })

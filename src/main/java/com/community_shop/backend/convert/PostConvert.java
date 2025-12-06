@@ -64,7 +64,6 @@ public interface PostConvert {
             @Mapping(target = "isTop", constant = "false"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.PostStatusEnum.NORMAL)"),
     })
     Post postPublishDtoToPost(PostPublishDTO dto);
 
@@ -77,7 +76,6 @@ public interface PostConvert {
             @Mapping(target = "likeCount", constant = "0"),
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum.NORMAL)")
     })
     PostFollow postFollowPublishDtoToPostFollow(PostFollowPublishDTO dto);
 

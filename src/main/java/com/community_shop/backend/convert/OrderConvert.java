@@ -51,7 +51,6 @@ public interface OrderConvert {
             @Mapping(target = "payTime", ignore = true),
             @Mapping(target = "shipTime", ignore = true),
             @Mapping(target = "receiveTime", ignore = true),
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.OrderStatusEnum.PENDING_PAYMENT)"),
             @Mapping(target = "buyerRemark", defaultValue = "") // 默认空备注
     })
     Order orderCreateDtoToOrder(OrderCreateDTO dto);

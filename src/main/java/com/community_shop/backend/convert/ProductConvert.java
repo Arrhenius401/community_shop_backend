@@ -45,7 +45,6 @@ public interface ProductConvert {
             @Mapping(target = "productId", ignore = true), // 主键自增
             @Mapping(target = "viewCount", constant = "0"), // 初始浏览量 0
             @Mapping(target = "createTime", ignore = true), // 发布时间由系统生成
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.ProductStatusEnum.ON_SALE)"), // 默认在售
     })
     Product productPublishDtoToProduct(ProductPublishDTO dto);
 

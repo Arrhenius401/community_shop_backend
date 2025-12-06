@@ -51,8 +51,6 @@ public interface UserConvert {
             @Mapping(target = "creditScore", constant = "100"), // 初始信用分 100
             @Mapping(target = "createTime", ignore = true), // 注册时间由系统生成
             @Mapping(target = "activityTime", ignore = true), // 活跃时间由系统更新
-            @Mapping(target = "status", expression = "java(com.community_shop.backend.enums.CodeEnum.UserStatusEnum.NORMAL)"), // 默认激活
-            @Mapping(target = "role", expression = "java(com.community_shop.backend.enums.CodeEnum.UserRoleEnum.USER)") // 默认普通用户
     })
     User registerDtoToUser(RegisterDTO registerDTO);
 

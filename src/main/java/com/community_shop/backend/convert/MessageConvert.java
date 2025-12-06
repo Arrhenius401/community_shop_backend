@@ -64,8 +64,6 @@ public interface MessageConvert {
             @Mapping(target = "isDeleted", constant = "false"), // 初始未删除
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            // 系统消息特殊处理：senderId=0，receiverId=-1
-            @Mapping(target = "receiverId", expression = "java(dto.getType() == com.community_shop.backend.enums.CodeEnum.MessageTypeEnum.SYSTEM ? (long)-1 : dto.getReceiverId())")
     })
     Message messageSendDtoToMessage(MessageSendDTO dto);
 
@@ -75,8 +73,6 @@ public interface MessageConvert {
      */
     @Mappings({
             @Mapping(target = "msgId", source = "messageId"),
-            @Mapping(target = "isRead", expression = "java(dto.getTargetStatus() == com.community_shop.backend.enums.CodeEnum.MessageStatusEnum.READ)"),
-            @Mapping(target = "isDeleted", expression = "java(dto.getTargetStatus() == com.community_shop.backend.enums.CodeEnum.MessageStatusEnum.DELETED)"),
             @Mapping(target = "updateTime", ignore = true), // 由业务逻辑更新时间
     })
     Message messageStatusUpdateDtoToMessage(MessageStatusUpdateDTO dto);

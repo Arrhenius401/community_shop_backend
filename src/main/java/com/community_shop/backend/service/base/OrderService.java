@@ -3,7 +3,7 @@ package com.community_shop.backend.service.base;
 import com.community_shop.backend.dao.mapper.OrderMapper;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.order.*;
-import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
+import com.community_shop.backend.enums.code.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.exception.BusinessException;
 import org.springframework.stereotype.Service;

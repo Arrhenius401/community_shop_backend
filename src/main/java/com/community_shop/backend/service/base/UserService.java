@@ -4,8 +4,8 @@ import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.dto.verification.VerifyEmailDTO;
 import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
+import com.community_shop.backend.enums.code.UserStatusEnum;
 import com.community_shop.backend.entity.User;
 import org.springframework.stereotype.Service;
 

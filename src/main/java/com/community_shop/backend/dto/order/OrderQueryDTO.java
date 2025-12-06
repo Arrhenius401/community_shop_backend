@@ -1,10 +1,10 @@
 package com.community_shop.backend.dto.order;
 
 import com.community_shop.backend.dto.PageParam;
-import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
-import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
-import com.community_shop.backend.enums.SortEnum.OrderSortFieldEnum;
-import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
+import com.community_shop.backend.enums.code.OrderStatusEnum;
+import com.community_shop.backend.enums.simple.PayTypeEnum;
+import com.community_shop.backend.enums.sort.OrderSortFieldEnum;
+import com.community_shop.backend.enums.sort.SortDirectionEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

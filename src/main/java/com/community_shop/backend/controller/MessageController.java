@@ -4,7 +4,7 @@ import com.community_shop.backend.annotation.AdminRequired;
 import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.message.*;
-import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
+import com.community_shop.backend.enums.code.MessageTypeEnum;
 import com.community_shop.backend.service.base.MessageService;
 import com.community_shop.backend.utils.RequestParseUtil;
 import com.community_shop.backend.vo.ResultVO;

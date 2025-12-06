@@ -1,6 +1,6 @@
 package com.community_shop.backend.vo;
 
-import com.community_shop.backend.enums.ErrorCode.ErrorCode;
+import com.community_shop.backend.enums.error.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

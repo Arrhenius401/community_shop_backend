@@ -1,6 +1,6 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.enums.ErrorCode.ErrorCode;
+import com.community_shop.backend.enums.error.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.service.base.VerificationCodeService;
 import com.community_shop.backend.utils.AliyunPnsSendUtil;

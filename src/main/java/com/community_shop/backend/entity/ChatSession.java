@@ -2,7 +2,7 @@ package com.community_shop.backend.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.community_shop.backend.enums.SimpleEnum.ChatSessionStatusEnum;
+import com.community_shop.backend.enums.simple.ChatSessionStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

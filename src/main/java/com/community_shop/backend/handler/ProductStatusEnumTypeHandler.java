@@ -1,6 +1,6 @@
 package com.community_shop.backend.handler;
 
-import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.code.ProductStatusEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;

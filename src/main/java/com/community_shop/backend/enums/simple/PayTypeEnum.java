@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.SimpleEnum;
+package com.community_shop.backend.enums.simple;
 
 
 public enum PayTypeEnum {

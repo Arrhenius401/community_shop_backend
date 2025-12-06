@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.evaluation;
 
-import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
+import com.community_shop.backend.enums.code.EvaluationStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

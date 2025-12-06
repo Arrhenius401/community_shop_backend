@@ -2,9 +2,9 @@ package com.community_shop.backend.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.dto.order.OrderQueryDTO;
-import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
+import com.community_shop.backend.enums.code.OrderStatusEnum;
 import com.community_shop.backend.entity.Order;
-import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
+import com.community_shop.backend.enums.simple.PayTypeEnum;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;

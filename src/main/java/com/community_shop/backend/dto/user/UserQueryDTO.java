@@ -1,16 +1,13 @@
 package com.community_shop.backend.dto.user;
 
 import com.community_shop.backend.dto.PageParam;
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
-import com.community_shop.backend.enums.FilterFieldEnum.UserFilterFieldEnum;
-import com.community_shop.backend.enums.SortEnum.ProductSortFieldEnum;
-import com.community_shop.backend.enums.SortEnum.SortDirectionEnum;
-import com.community_shop.backend.enums.SortEnum.UserSortFieldEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
+import com.community_shop.backend.enums.code.UserStatusEnum;
+import com.community_shop.backend.enums.filter.UserFilterFieldEnum;
+import com.community_shop.backend.enums.sort.SortDirectionEnum;
+import com.community_shop.backend.enums.sort.UserSortFieldEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * 用户列表查询DTO（适配Mapper层多条件查询接口）

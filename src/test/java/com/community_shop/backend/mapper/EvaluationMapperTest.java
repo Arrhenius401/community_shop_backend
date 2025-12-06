@@ -3,7 +3,7 @@ package com.community_shop.backend.mapper;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import com.community_shop.backend.dao.mapper.EvaluationMapper;
 import com.community_shop.backend.entity.Evaluation;
-import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
+import com.community_shop.backend.enums.code.EvaluationStatusEnum;
 import com.community_shop.backend.dto.evaluation.EvaluationQueryDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

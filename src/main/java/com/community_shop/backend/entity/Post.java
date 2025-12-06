@@ -3,7 +3,7 @@ package com.community_shop.backend.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
+import com.community_shop.backend.enums.code.PostStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;

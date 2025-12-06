@@ -2,7 +2,7 @@ package com.community_shop.backend.convert;
 
 import com.community_shop.backend.dto.message.*;
 import com.community_shop.backend.entity.Message;
-import com.community_shop.backend.enums.CodeEnum.MessageStatusEnum;
+import com.community_shop.backend.enums.code.MessageStatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mapstruct.Mapper;

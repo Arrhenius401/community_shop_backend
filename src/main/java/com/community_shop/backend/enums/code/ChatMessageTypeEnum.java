@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.CodeEnum;
+package com.community_shop.backend.enums.code;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import org.springframework.ai.chat.messages.MessageType;

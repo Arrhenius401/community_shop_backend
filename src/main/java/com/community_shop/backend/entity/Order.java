@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.dto.order.OrderCreateDTO;
-import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
-import com.community_shop.backend.enums.SimpleEnum.PayTypeEnum;
+import com.community_shop.backend.enums.code.OrderStatusEnum;
+import com.community_shop.backend.enums.simple.PayTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

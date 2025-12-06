@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.user;
 
-import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.simple.ThirdPartyTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

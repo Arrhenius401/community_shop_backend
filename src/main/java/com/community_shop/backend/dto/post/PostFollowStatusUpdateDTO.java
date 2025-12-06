@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.post;
 
-import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
+import com.community_shop.backend.enums.code.PostFollowStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

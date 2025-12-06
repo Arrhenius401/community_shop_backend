@@ -1,7 +1,7 @@
 package com.community_shop.backend.dto.product;
 
-import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
-import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.code.ProductConditionEnum;
+import com.community_shop.backend.enums.code.ProductStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;

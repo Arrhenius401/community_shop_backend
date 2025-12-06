@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.dto.message.MessageQueryDTO;
 import com.community_shop.backend.dto.message.PrivateMessageQueryDTO;
 import com.community_shop.backend.entity.Message;
-import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
+import com.community_shop.backend.enums.code.MessageTypeEnum;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

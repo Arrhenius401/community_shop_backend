@@ -1,6 +1,6 @@
 package com.community_shop.backend.utils;
 
-import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.simple.ThirdPartyTypeEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

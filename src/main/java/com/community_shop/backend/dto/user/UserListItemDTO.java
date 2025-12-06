@@ -1,7 +1,7 @@
 package com.community_shop.backend.dto.user;
 
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
+import com.community_shop.backend.enums.code.UserStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

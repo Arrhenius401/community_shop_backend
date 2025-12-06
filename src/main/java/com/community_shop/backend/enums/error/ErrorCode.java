@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.ErrorCode;
+package com.community_shop.backend.enums.error;
 
 import lombok.Getter;
 
@@ -52,10 +52,8 @@ public enum ErrorCode {
     USERNAME_LENGTH_INVALID("USER_028", 400, "用户名长度错误"),
     AVATAR_URL_FORMAT_INVALID("USER_029", 400, "头像URL格式错误"),
 
-
     USER_NOT_EXISTS("USER_051", 404, "用户不存在"),
     PASSWORD_ERROR("USER_052", 401, "密码错误"),
-
 
     CREDIT_TOO_LOW("USER_081", 400, "用户积分不足"),
 
@@ -120,8 +118,6 @@ public enum ErrorCode {
     PRODUCT_STOCK_INSUFFICIENT("PRODUCT_092", 400, "商品库存不足"),
     ORDER_AMOUNT_ABNORMAL("ORDER_021", 400, "订单金额异常"),
 
-
-
     // 订单模块
     ORDER_NOT_EXISTS("ORDER_001", 404, "订单不存在"),
     ORDER_ID_NULL("ORDER_002", 400, "订单ID为空"),
@@ -136,7 +132,6 @@ public enum ErrorCode {
 
     ORDER_NOT_COMPLETED("ORDER_005", 400, "订单未完成"),
 
-
     // 评价模块
     EVALUATION_NOT_EXISTS("EVAL_001", 404, "评价不存在"),
     EVALUATION_ID_NULL("EVAL_002", 400, "评价ID为空"),
@@ -146,7 +141,6 @@ public enum ErrorCode {
 
     EVALUATION_REPORT_REASON_NULL("EVAL_006", 400, "评价举报理由为空"),
 
-
     EVALUATION_SCORE_INVALID("EVAL_021", 400, "评价分数参数错误"),
     EVALUATION_CONTENT_INVALID("EVAL_022", 400, "评价内容参数错误"),
     EVALUATION_IMAGE_URL_INVALID("EVAL_023", 400, "评价图片URL参数错误"),
@@ -155,10 +149,8 @@ public enum ErrorCode {
 
     EVALUATION_REPORT_REASON_TOO_LONG("EVAL_041", 400, "评价举报理由过长"),
 
-
     ORDER_ALREADY_EVALUATED("EVAL_091", 400, "订单已评价"),
     SELLER_NOT_EXISTS("MSG_002", 404, "卖家不存在"),
-
 
     // 消息模块
     MESSAGE_NOT_EXISTS("MSG_001", 404, "消息不存在"),
@@ -168,14 +160,12 @@ public enum ErrorCode {
     MESSAGE_SENDER_NULL("MSG_005", 400, "消息发送者为空"),
     MESSAGE_TYPE_NULL("MSG_006", 400, "消息类型为空"),
 
-
     MESSAGE_TYPE_INVALID("MSG_005", 400, "消息类型参数错误"),
     MESSAGE_STATUS_INVALID("MSG_006", 400, "消息状态参数错误"),
     MESSAGE_CONTENT_INVALID("MSG_007", 400, "消息内容参数错误"),
 
     RECEIVER_NOT_EXISTS("MSG_011", 404, "接收者不存在"),
     SENDER_NOT_EXISTS("MSG_012", 404, "发送者不存在"),
-
 
     MESSAGE_STATUS_TRANSITION_INVALID("MSG_004", 400, "消息状态转换错误"),
 
@@ -211,7 +201,12 @@ public enum ErrorCode {
     AI_CHAT_SESSION_NOT_EXISTS("AI_101", 404, "会话不存在"),
     AI_CHAT_SESSION_FIRST_PROMPT_NULL("AI_CHAT_SESSION_102", 400, "会话首次消息为空"),
 
-    AI_CHAT_MESSAGE_NOT_EXISTS("CHAT_MESSAGE_201", 404, "聊天消息不存在");
+    AI_CHAT_MESSAGE_NOT_EXISTS("CHAT_MESSAGE_201", 404, "聊天消息不存在"),
+
+    // 大文件存储和传输模块
+    FILE_NOT_EXISTS("FILE_001", 404, "文件不存在"),
+
+    FILE_UPLOAD_FAILS("FILE_002", 500, "文件上传失败");
 
     // HTTP状态码
     // 200：成功操作

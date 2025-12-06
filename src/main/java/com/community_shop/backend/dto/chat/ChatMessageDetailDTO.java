@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.chat;
 
-import com.community_shop.backend.enums.CodeEnum.ChatMessageTypeEnum;
+import com.community_shop.backend.enums.code.ChatMessageTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

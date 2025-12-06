@@ -1,7 +1,7 @@
 package com.community_shop.backend.dto.chat;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.community_shop.backend.enums.SimpleEnum.ChatSessionStatusEnum;
+import com.community_shop.backend.enums.simple.ChatSessionStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

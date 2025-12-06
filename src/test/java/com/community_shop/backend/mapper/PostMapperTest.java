@@ -3,7 +3,7 @@ package com.community_shop.backend.mapper;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import com.community_shop.backend.dao.mapper.PostMapper;
 import com.community_shop.backend.entity.Post;
-import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
+import com.community_shop.backend.enums.code.PostStatusEnum;
 import com.community_shop.backend.dto.post.PostQueryDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

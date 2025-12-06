@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.SortEnum;
+package com.community_shop.backend.enums.sort;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;

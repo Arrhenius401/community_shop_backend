@@ -1,6 +1,6 @@
 package com.community_shop.backend.handler;
 
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;

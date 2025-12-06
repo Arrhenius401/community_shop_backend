@@ -3,7 +3,7 @@ package com.community_shop.backend.mapper;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import com.community_shop.backend.dao.mapper.MessageMapper;
 import com.community_shop.backend.entity.Message;
-import com.community_shop.backend.enums.CodeEnum.MessageTypeEnum;
+import com.community_shop.backend.enums.code.MessageTypeEnum;
 import com.community_shop.backend.dto.message.MessageQueryDTO;
 import com.community_shop.backend.dto.message.PrivateMessageQueryDTO;
 import org.junit.jupiter.api.BeforeEach;

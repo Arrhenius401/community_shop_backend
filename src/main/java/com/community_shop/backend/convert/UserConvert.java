@@ -5,7 +5,7 @@ import com.community_shop.backend.dto.post.PostDetailDTO;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
-import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.simple.ThirdPartyTypeEnum;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

@@ -1,7 +1,7 @@
 package com.community_shop.backend.convert;
 
 import com.community_shop.backend.entity.ChatMessage;
-import com.community_shop.backend.enums.CodeEnum.ChatMessageTypeEnum;
+import com.community_shop.backend.enums.code.ChatMessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.*;
 

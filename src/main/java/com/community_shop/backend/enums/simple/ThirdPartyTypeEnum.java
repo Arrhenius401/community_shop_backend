@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.SimpleEnum;
+package com.community_shop.backend.enums.simple;
 
 /**
  * 第三方登录类型枚举（文档1第三方注册需求）

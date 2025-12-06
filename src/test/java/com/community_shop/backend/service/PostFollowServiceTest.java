@@ -2,9 +2,9 @@ package com.community_shop.backend.service;
 
 import com.community_shop.backend.convert.PostConvert;
 import com.community_shop.backend.dto.post.*;
-import com.community_shop.backend.enums.CodeEnum.PostFollowStatusEnum;
-import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.code.PostFollowStatusEnum;
+import com.community_shop.backend.enums.code.PostStatusEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.PostFollow;
 import com.community_shop.backend.entity.User;

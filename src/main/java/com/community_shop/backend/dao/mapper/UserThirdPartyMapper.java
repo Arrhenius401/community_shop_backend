@@ -1,7 +1,7 @@
 package com.community_shop.backend.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
+import com.community_shop.backend.enums.simple.ThirdPartyTypeEnum;
 import com.community_shop.backend.entity.UserThirdParty;
 import org.apache.ibatis.annotations.*;
 

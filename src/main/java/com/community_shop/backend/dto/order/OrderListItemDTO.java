@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.order;
 
-import com.community_shop.backend.enums.CodeEnum.OrderStatusEnum;
+import com.community_shop.backend.enums.code.OrderStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

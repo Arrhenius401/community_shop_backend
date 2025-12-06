@@ -4,17 +4,15 @@ package com.community_shop.backend.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.community_shop.backend.enums.SimpleEnum.GenderEnum;
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
-import com.community_shop.backend.enums.CodeEnum.UserStatusEnum;
+import com.community_shop.backend.enums.simple.GenderEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
+import com.community_shop.backend.enums.code.UserStatusEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
 
 
 /**

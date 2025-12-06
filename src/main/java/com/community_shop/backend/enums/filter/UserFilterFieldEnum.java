@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.FilterFieldEnum;
+package com.community_shop.backend.enums.filter;
 
 public enum UserFilterFieldEnum {
     USERNAME,

@@ -3,8 +3,8 @@ package com.community_shop.backend.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
-import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.code.ProductConditionEnum;
+import com.community_shop.backend.enums.code.ProductStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

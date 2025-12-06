@@ -6,7 +6,7 @@ import com.community_shop.backend.dto.PageParam;
 import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.entity.Post;
-import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
+import com.community_shop.backend.enums.code.PostStatusEnum;
 import com.community_shop.backend.exception.BusinessException;
 
 import java.util.List;

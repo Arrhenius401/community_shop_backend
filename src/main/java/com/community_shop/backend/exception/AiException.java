@@ -1,6 +1,6 @@
 package com.community_shop.backend.exception;
 
-import com.community_shop.backend.enums.ErrorCode.ErrorCode;
+import com.community_shop.backend.enums.error.ErrorCode;
 
 /**
  * AI服务异常

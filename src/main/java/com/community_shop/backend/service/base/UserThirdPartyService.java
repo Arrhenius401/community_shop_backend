@@ -2,12 +2,8 @@ package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.user.ThirdPartyBindDTO;
 import com.community_shop.backend.dto.user.ThirdPartyBindingListDTO;
-import com.community_shop.backend.enums.SimpleEnum.ThirdPartyTypeEnum;
-import com.community_shop.backend.entity.User;
-import com.community_shop.backend.entity.UserThirdParty;
+import com.community_shop.backend.enums.simple.ThirdPartyTypeEnum;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 第三方账号Service接口

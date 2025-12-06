@@ -3,7 +3,7 @@ package com.community_shop.backend.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.dto.post.PostQueryDTO;
 import com.community_shop.backend.entity.Post;
-import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
+import com.community_shop.backend.enums.code.PostStatusEnum;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;

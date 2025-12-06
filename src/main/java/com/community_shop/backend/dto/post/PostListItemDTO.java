@@ -1,6 +1,6 @@
 package com.community_shop.backend.dto.post;
 
-import com.community_shop.backend.enums.CodeEnum.PostStatusEnum;
+import com.community_shop.backend.enums.code.PostStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

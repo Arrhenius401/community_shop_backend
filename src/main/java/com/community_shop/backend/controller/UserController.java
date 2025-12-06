@@ -5,7 +5,7 @@ import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.user.*;
 import com.community_shop.backend.dto.verification.VerifyEmailDTO;
 import com.community_shop.backend.dto.verification.VerifyPhoneDTO;
-import com.community_shop.backend.enums.CodeEnum.UserRoleEnum;
+import com.community_shop.backend.enums.code.UserRoleEnum;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;
 import com.community_shop.backend.utils.RequestParseUtil;

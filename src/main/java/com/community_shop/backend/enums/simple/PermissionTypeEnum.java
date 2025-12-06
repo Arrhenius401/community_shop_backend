@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.SimpleEnum;
+package com.community_shop.backend.enums.simple;
 
 /**
  * 权限类型枚举（商品 / 帖子发布）

@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.dto.product.ProductQueryDTO;
 import com.community_shop.backend.dto.product.SellerProductQueryDTO;
 import com.community_shop.backend.entity.Product;
-import com.community_shop.backend.enums.CodeEnum.ProductConditionEnum;
-import com.community_shop.backend.enums.CodeEnum.ProductStatusEnum;
+import com.community_shop.backend.enums.code.ProductStatusEnum;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

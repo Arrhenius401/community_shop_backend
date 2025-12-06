@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.dto.evaluation.EvaluationCreateDTO;
-import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
+import com.community_shop.backend.enums.code.EvaluationStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

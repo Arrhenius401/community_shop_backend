@@ -3,7 +3,6 @@ package com.community_shop.backend.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.community_shop.backend.dto.evaluation.EvaluationQueryDTO;
 import com.community_shop.backend.entity.Evaluation;
-import com.community_shop.backend.enums.CodeEnum.EvaluationStatusEnum;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

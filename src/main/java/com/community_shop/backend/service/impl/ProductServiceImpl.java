@@ -12,7 +12,6 @@ import com.community_shop.backend.entity.User;
 import com.community_shop.backend.dao.mapper.ProductMapper;
 import com.community_shop.backend.service.base.ProductService;
 import com.community_shop.backend.service.base.UserService;
-import com.community_shop.backend.utils.AliyunOssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -62,10 +61,6 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
 
     @Autowired
     private ProductConvert productConvert;
-
-    @Autowired
-    private AliyunOssUtil ossUtil; // OSS文件上传工具类
-
 
 
     /**

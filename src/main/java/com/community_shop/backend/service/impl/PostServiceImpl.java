@@ -13,7 +13,6 @@ import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
 import com.community_shop.backend.dao.mapper.PostMapper;
 import com.community_shop.backend.service.base.*;
-import com.community_shop.backend.utils.AliyunOssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -75,9 +74,6 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
 
     @Autowired
     private PostConvert postConvert;
-
-    @Autowired
-    private AliyunOssUtil ossUtil;
 
     /**
      * 发布帖子

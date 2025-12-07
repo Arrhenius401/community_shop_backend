@@ -1,9 +1,6 @@
 package com.community_shop.backend.exception.handler;
 
-import com.community_shop.backend.exception.AiException;
-import com.community_shop.backend.exception.BusinessException;
-import com.community_shop.backend.exception.NoPermissionException;
-import com.community_shop.backend.exception.UnLoginException;
+import com.community_shop.backend.exception.*;
 import com.community_shop.backend.vo.ResultVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +65,11 @@ public class GlobalExceptionHandler {
      */
     public ResultVO<?> handleAiException(AiException e) {
         log.warn("AI 服务异常：{}", e.getMessage());
+        return ResultVO.fail("500", e.getMessage());
+    }
+
+    public ResultVO<?> handleOssException(OssException e) {
+        log.warn("OSS 服务异常：{}", e.getMessage());
         return ResultVO.fail("500", e.getMessage());
     }
 

@@ -15,6 +15,10 @@ public class AiException extends BusinessException {
         super(ErrorCode.AI_SERVICE_FAILS, message);
     }
 
+    public AiException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
+
     public AiException() {
         super(ErrorCode.AI_SERVICE_FAILS);
     }

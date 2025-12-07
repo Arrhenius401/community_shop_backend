@@ -106,7 +106,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             throw e;
         } catch (Exception e) {
             log.error("商品发布异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -202,7 +202,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             throw e;
         } catch (Exception e) {
             log.error("商品更新异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -261,7 +261,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             throw e;
         } catch (Exception e) {
             log.error("库存更新异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -319,7 +319,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             throw e;
         } catch (Exception e) {
             log.error("商品状态更新异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 

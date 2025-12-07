@@ -175,7 +175,7 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             throw e;
         } catch (Exception e) {
             log.error("取消帖子点赞异常，用户ID：{}，帖子ID：{}", userId, postId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -253,7 +253,7 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             throw e;
         } catch (Exception e) {
             log.error("统计用户点赞总数异常，用户ID：{}", userId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -341,7 +341,7 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             throw e;
         } catch (Exception e) {
             log.error("批量删除帖子点赞记录异常，帖子ID：{}", postId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 

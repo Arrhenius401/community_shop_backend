@@ -138,7 +138,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
             throw e;
         } catch (Exception e) {
             log.error("提交评价异常，买家ID：{}，评价参数：{}", userId, evalCreateDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -183,7 +183,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
             throw e;
         } catch (Exception e) {
             log.error("查询订单评价异常，订单ID：{}", orderId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -276,7 +276,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -534,7 +534,7 @@ public class EvaluationServiceImpl extends BaseServiceImpl<EvaluationMapper, Eva
 //            throw e;
 //        } catch (Exception e) {
 //            log.error("举报评价异常，举报人ID：{}，评价ID：{}，举报原因：{}", userId, evalId, reason, e);
-//            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+//            throw new BusinessException(ErrorCode.FAILURE);
 //        }
 //    }
 

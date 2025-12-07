@@ -177,7 +177,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             throw e;
         } catch (Exception e) {
             log.error("创建订单异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "订单创建异常，请联系客服");
+            throw new BusinessException(ErrorCode.FAILURE, "订单创建异常，请联系客服");
         }
     }
 
@@ -252,7 +252,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             throw e;
         } catch (Exception e) {
             log.error("取消订单异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "取消订单异常，请联系客服");
+            throw new BusinessException(ErrorCode.FAILURE, "取消订单异常，请联系客服");
         }
     }
 
@@ -398,7 +398,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             throw e;
         } catch (Exception e) {
             log.error("订单发货异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "发货操作异常，请联系客服");
+            throw new BusinessException(ErrorCode.FAILURE, "发货操作异常，请联系客服");
         }
     }
 
@@ -465,7 +465,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             throw e;
         } catch (Exception e) {
             log.error("订单确认收货异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "确认收货操作异常，请联系客服");
+            throw new BusinessException(ErrorCode.FAILURE, "确认收货操作异常，请联系客服");
         }
     }
 
@@ -721,7 +721,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             throw e;
         } catch (Exception e) {
             log.error("自动关闭超时订单批量处理异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "自动关闭订单异常，请联系运维");
+            throw new BusinessException(ErrorCode.FAILURE, "自动关闭订单异常，请联系运维");
         }
     }
 
@@ -769,7 +769,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             throw e;
         } catch (Exception e) {
             log.error("更新订单状态系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 

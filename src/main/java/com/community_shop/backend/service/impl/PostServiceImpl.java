@@ -128,7 +128,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("发布帖子异常，发布参数：{}，用户ID：{}", postPublishDTO, userId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -203,7 +203,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("编辑帖子异常，帖子ID：{}，更新参数：{}，操作用户ID：{}", postId, postUpdateDTO, userId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -300,7 +300,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("帖子点赞状态更新异常，参数：{}", postLikeDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -371,7 +371,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("设置帖子精华/置顶异常，参数：{}", postEssenceTopDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -428,7 +428,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("查询帖子列表异常，参数：{}", postQueryDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -504,7 +504,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("批量删除帖子异常，帖子ID列表：{}，管理员ID：{}", postIds, adminId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -770,7 +770,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("查询帖子详情系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -818,7 +818,7 @@ public class PostServiceImpl extends BaseServiceImpl<PostMapper, Post> implement
             throw e;
         } catch (Exception e) {
             log.error("删除帖子系统异常", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 

@@ -102,7 +102,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw e;
         } catch (Exception e) {
             log.error("发送业务消息异常，消息参数：{}", messageSendDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -152,7 +152,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw e;
         } catch (Exception e) {
             log.error("获取消息详情异常，用户ID：{}，消息ID：{}", userId, msgId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -207,7 +207,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw e;
         } catch (Exception e) {
             log.error("更新消息状态异常，参数：{}", statusUpdateDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -261,7 +261,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw e;
         } catch (Exception e) {
             log.error("查询用户消息列表异常，参数：{}", messageQueryDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -301,7 +301,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw e;
         } catch (Exception e) {
             log.error("查询用户私信异常，参数：{}", queryDTO, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -368,7 +368,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw e;
         } catch (Exception e) {
             log.error("获取用户最近未读预览异常，用户ID：{}", userId, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 

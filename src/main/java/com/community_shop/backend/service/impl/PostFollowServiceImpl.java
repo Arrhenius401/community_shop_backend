@@ -128,7 +128,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             throw e;
         } catch (Exception e) {
             log.error("发布跟帖失败", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -198,7 +198,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             throw e;
         } catch (Exception e) {
             log.error("编辑跟帖失败", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -248,7 +248,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             throw e;
         } catch (Exception e) {
             log.error("更新跟帖状态失败", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -312,7 +312,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             throw e;
         } catch (Exception e) {
             log.error("查询帖子跟帖列表失败", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 
@@ -408,7 +408,7 @@ public class PostFollowServiceImpl extends BaseServiceImpl<PostFollowMapper, Pos
             throw e;
         } catch (Exception e) {
             log.error("批量删除帖子跟帖失败", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(ErrorCode.FAILURE);
         }
     }
 

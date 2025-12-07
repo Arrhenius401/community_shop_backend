@@ -10,6 +10,7 @@ public enum ErrorCode {
     // 通用错误
     SUCCESS("SYSTEM_000", 200, "操作成功"),
     FAILURE("SYSTEM_001", 500, "操作失败"),
+
     PARAM_ERROR("SYSTEM_002", 400, "参数错误"),
     PARAM_NULL("SYSTEM_003", 400, "参数为空"),
     NOT_FOUND("SYSTEM_004", 404, "资源不存在"),
@@ -24,8 +25,6 @@ public enum ErrorCode {
     PERMISSION_DENIED("SYSTEM_022", 403, "无权限"),
 
     OPERATION_REPEAT("SYSTEM_051", 409, "操作重复"),
-
-    SYSTEM_ERROR("SYSTEM_100", 500, "系统错误"),
 
     // 业务错误 - 用户模块
     USER_EXISTS("USER_001", 409, "用户已存在"),
@@ -203,10 +202,17 @@ public enum ErrorCode {
 
     AI_CHAT_MESSAGE_NOT_EXISTS("CHAT_MESSAGE_201", 404, "聊天消息不存在"),
 
-    // 大文件存储和传输模块
-    FILE_NOT_EXISTS("FILE_001", 404, "文件不存在"),
+    // 对象存储服务模块
+    OSS_SERVICE_FAILS("OSS_001", 500, "OSS服务不可用"),
 
-    FILE_UPLOAD_FAILS("FILE_002", 500, "文件上传失败");
+    OSS_FILE_NOT_EXISTS("OSS_101", 404, "文件不存在"),
+
+    OSS_PICTURE_NOT_EXISTS("OSS_102", 404, "图片不存在"),
+    OSS_PICTURE_FORMAT_INVALID("OSS_103", 400, "图片格式错误"),
+    OSS_PICTURE_SIZE_INVALID("OSS_104", 400, "图片大小错误"),
+
+    OSS_PICTURE_URL_GENERATE_FAILS("OSS_105", 500, "图片访问链接生成失败"),;
+
 
     // HTTP状态码
     // 200：成功操作

@@ -10,7 +10,7 @@ import com.community_shop.backend.dto.chat.ChatSessionListItem;
 import com.community_shop.backend.dto.chat.ChatSessionQueryDTO;
 import com.community_shop.backend.entity.ChatSession;
 import com.community_shop.backend.entity.User;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.enums.simple.ChatSessionStatusEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.service.base.ChatMessageService;

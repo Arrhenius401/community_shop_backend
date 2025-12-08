@@ -1,6 +1,6 @@
 package com.community_shop.backend.exception;
 
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 
 /**
  * OSS 对象存储服务异常类

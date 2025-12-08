@@ -1,6 +1,6 @@
 package com.community_shop.backend.exception;
 
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 
 /**
  * 权限不足异常（管理员接口校验失败时抛出）

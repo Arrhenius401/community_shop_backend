@@ -6,7 +6,7 @@ import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.post.*;
 import com.community_shop.backend.enums.code.PostStatusEnum;
 import com.community_shop.backend.enums.code.UserRoleEnum;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;

@@ -1,6 +1,6 @@
 package com.community_shop.backend.exception;
 
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 
 public class UnLoginException extends BusinessException {
     public UnLoginException(String message) {

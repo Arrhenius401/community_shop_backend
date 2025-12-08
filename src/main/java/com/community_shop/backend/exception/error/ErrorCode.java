@@ -1,4 +1,4 @@
-package com.community_shop.backend.enums.error;
+package com.community_shop.backend.exception.error;
 
 import lombok.Getter;
 

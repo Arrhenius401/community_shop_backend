@@ -13,7 +13,7 @@ import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserThirdParty;
 import com.community_shop.backend.dao.mapper.UserMapper;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.dao.mapper.UserThirdPartyMapper;
 import com.community_shop.backend.service.base.UserService;
 import com.community_shop.backend.service.base.UserThirdPartyService;

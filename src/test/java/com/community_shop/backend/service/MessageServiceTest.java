@@ -5,7 +5,7 @@ import com.community_shop.backend.dto.PageResult;
 import com.community_shop.backend.dto.message.*;
 import com.community_shop.backend.enums.code.MessageStatusEnum;
 import com.community_shop.backend.enums.code.MessageTypeEnum;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Message;
 import com.community_shop.backend.entity.User;

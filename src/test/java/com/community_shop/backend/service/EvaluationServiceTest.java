@@ -7,7 +7,7 @@ import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.enums.code.EvaluationStatusEnum;
 import com.community_shop.backend.enums.code.OrderStatusEnum;
 import com.community_shop.backend.enums.code.UserRoleEnum;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.enums.sort.EvaluationSortFieldEnum;
 import com.community_shop.backend.enums.sort.SortDirectionEnum;
 import com.community_shop.backend.exception.BusinessException;

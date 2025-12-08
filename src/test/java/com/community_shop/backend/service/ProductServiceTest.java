@@ -6,7 +6,7 @@ import com.community_shop.backend.dto.product.*;
 import com.community_shop.backend.enums.code.ProductConditionEnum;
 import com.community_shop.backend.enums.code.ProductStatusEnum;
 import com.community_shop.backend.enums.code.UserRoleEnum;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Product;
 import com.community_shop.backend.entity.User;

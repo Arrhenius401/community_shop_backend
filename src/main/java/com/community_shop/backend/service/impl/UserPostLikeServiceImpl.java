@@ -4,7 +4,7 @@ import com.community_shop.backend.entity.Post;
 import com.community_shop.backend.entity.User;
 import com.community_shop.backend.entity.UserPostLike;
 import com.community_shop.backend.enums.code.PostStatusEnum;
-import com.community_shop.backend.enums.error.ErrorCode;
+import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.dao.mapper.UserPostLikeMapper;
 import com.community_shop.backend.service.base.PostService;

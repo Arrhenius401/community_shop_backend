@@ -206,9 +206,12 @@ public enum ErrorCode {
     OSS_SERVICE_FAILS("OSS_001", 500, "OSS服务不可用"),
 
     OSS_FILE_NOT_EXISTS("OSS_101", 404, "文件不存在"),
+    OSS_FILE_FORMAT_INVALID("OSS_102", 400, "文件格式不符合规范"),
+    OSS_FILE_MINE_INVALID("OSS_103", 400, "文件mine类型不符合规范"),
+    OSS_FILE_SIZE_INVALID("OSS_104", 400, "文件不符合规范"),
 
     OSS_PICTURE_NOT_EXISTS("OSS_102", 404, "图片不存在"),
-    OSS_PICTURE_FORMAT_INVALID("OSS_103", 400, "图片格式错误"),
+    OSS_PICTURE_FORMAT_INVALID("OSS_103", 400, "图片格式不符合规范"),
     OSS_PICTURE_SIZE_INVALID("OSS_104", 400, "图片大小错误"),
 
     OSS_PICTURE_URL_GENERATE_FAILS("OSS_105", 500, "图片访问链接生成失败"),;

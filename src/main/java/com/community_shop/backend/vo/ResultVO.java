@@ -83,4 +83,8 @@ public class ResultVO<T> implements Serializable {
         return new ResultVO<>(errorCode.getCode(), errorCode.getMessage(), null, System.currentTimeMillis());
     }
 
+    public static <T> ResultVO<T> fail(ErrorCode errorCode, String message) {
+        return new ResultVO<>(errorCode.getCode(), message, null, System.currentTimeMillis());
+    }
+
 }

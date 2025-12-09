@@ -191,16 +191,10 @@ public class MinioUtil {
      * @return 图片在 MinIO 中的相对路径列表（存储到数据库）
      */
     public List<String> uploadImages(List<MultipartFile> files, OssModuleEnum module, String bucketName) {
-        // 1. 校验文件类型（仅允许 jpg/png/webp，避免恶意文件）
-        files.forEach(file -> {
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|png|webp)$")) {
-                throw new OssException(ErrorCode.OSS_PICTURE_FORMAT_INVALID, "仅支持 jpg/png/webp 格式图片");
-            }
-        });
-
-        // 2. 调用普通文件的上传方法
-        return uploadFiles(files, module, bucketName);
+        return files.stream()
+                .map(file -> uploadImage(file, module, bucketName))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -215,7 +209,7 @@ public class MinioUtil {
     }
 
     /**
-     * 上传文件到默认存储桶
+     * 上传文件到指定存储桶
      * @param file       上传的文件对象
      * @param module     文件模块枚举
      * @param bucketName 存储桶名称
@@ -278,23 +272,14 @@ public class MinioUtil {
     }
 
     /**
-     * 获取文件输入流
-     * @param bucketName 存储桶名称
-     * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
-     * @return 文件流
-     * @throws Exception Minio操作异常
+     * 上传文件到默认存储桶
+     * @param file       上传的文件对象
+     * @param module     文件模块枚举
+     * @return 图片在 MinIO 中的相对路径（存储到数据库）
      */
-    public InputStream downloadFile(String bucketName, String objectName) throws Exception {
-        // 1. 获取存储桶名称
-        if (bucketName == null) {
-            bucketName = minioConfig.getBucketName();
-        }
-
-        // 2. 获取文件输入流
-        return minioClient.getObject(GetObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .build());
+    public String uploadFile(MultipartFile file, OssModuleEnum module) {
+        // 调用默认存储桶
+        return uploadFile(file, module, minioConfig.getBucketName());
     }
 
     /**
@@ -323,11 +308,34 @@ public class MinioUtil {
 
     /**
      * 获取文件输入流
+     * @param bucketName 存储桶名称
+     * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
+     * @return 文件流
+     */
+    public InputStream downloadFile(String bucketName, String objectName) {
+        try {
+            // 1. 获取存储桶名称
+            if (bucketName == null) {
+                bucketName = minioConfig.getBucketName();
+            }
+
+            // 2. 获取文件输入流
+            return minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .build());
+        } catch (Exception e) {
+            log.error("文件获取失败：{}", e.getMessage());
+            throw new OssException(ErrorCode.OSS_SERVICE_FAILS);
+        }
+    }
+
+    /**
+     * 获取文件输入流
      * @param objectName 存储对象名称
      * @return 文件流
-     * @throws Exception Minio操作异常
      */
-    public InputStream downloadFile(String objectName) throws Exception {
+    public InputStream downloadFile(String objectName) {
         // 使用默认存储桶
         return this.downloadFile(minioConfig.getBucketName(), objectName);
     }
@@ -337,31 +345,34 @@ public class MinioUtil {
      * @param bucketName  存储桶名称
      * @param objectName 存储对象名称
      * @param response   HttpServletResponse
-     * @throws Exception Minio操作异常或IO异常
      */
-    public void downloadToResponse(String bucketName, String objectName, HttpServletResponse response) throws Exception {
-        // 1. 获取存储桶名称
-        if (bucketName == null) {
-            bucketName = minioConfig.getBucketName();
-        }
+    public void downloadToResponse(String bucketName, String objectName, HttpServletResponse response) {
+        try {
+            // 1. 获取存储桶名称
+            if (bucketName == null) {
+                bucketName = minioConfig.getBucketName();
+            }
 
-        // 获取文件元数据
-        StatObjectResponse stat = minioClient.statObject(StatObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .build());
+            // 2. 获取文件元数据
+            StatObjectResponse stat = minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .build());
 
-        // 设置响应头
-        response.setContentType(stat.contentType());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + URLEncoder.encode(objectName, StandardCharsets.UTF_8) + "\"");
-        response.setContentLengthLong(stat.size());
+            // 3. 设置响应头
+            response.setContentType(stat.contentType());
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=\"" + URLEncoder.encode(objectName, StandardCharsets.UTF_8) + "\"");
+            response.setContentLengthLong(stat.size());
 
-        // 流式传输文件内容
-        try (InputStream is = downloadFile(objectName);
-             OutputStream os = response.getOutputStream()) {
+            // 4. 流式传输文件内容
+            InputStream is = downloadFile(objectName);
+            OutputStream os = response.getOutputStream();
             IOUtils.copy(is, os);
             os.flush();
+        } catch (Exception e) {
+            log.error("文件获取失败：{}", e.getMessage());
+            throw new OssException(ErrorCode.OSS_SERVICE_FAILS, "文件获取失败");
         }
     }
 
@@ -369,9 +380,8 @@ public class MinioUtil {
      * 直接下载文件到HttpServletResponse（浏览器下载）
      * @param objectName 存储对象名称
      * @param response   HttpServletResponse
-     * @throws Exception Minio操作异常或IO异常
      */
-    public void downloadToResponse(String objectName, HttpServletResponse response) throws Exception {
+    public void downloadToResponse(String objectName, HttpServletResponse response) {
         // 使用默认存储桶
         this.downloadToResponse(minioConfig.getBucketName(), objectName, response);
     }
@@ -404,7 +414,7 @@ public class MinioUtil {
             throw new OssException(ErrorCode.OSS_PICTURE_URL_GENERATE_FAILS);
         } catch (Exception e) {
             log.error("MinIO 生成签名 URL 失败：{}", e.getMessage());
-            throw new OssException(ErrorCode.OSS_SERVICE_FAILS);
+            throw new OssException(ErrorCode.OSS_SERVICE_FAILS, "MinIO 生成签名 URL 失败");
         }
     }
 
@@ -488,29 +498,36 @@ public class MinioUtil {
      *
      * @param bucketName 存储桶名称
      * @return 文件信息列表
-     * @throws Exception Minio操作异常
      */
-    public List<String> listAllFiles(String bucketName) throws Exception {
-        List<String> list = new ArrayList<>();
-        for (Result<Item> result : minioClient.listObjects(
-                ListObjectsArgs.builder().bucket(bucketName).build())) {
-            list.add(result.get().objectName());
+    public List<String> listAllFiles(String bucketName) {
+        try {
+            List<String> list = new ArrayList<>();
+            for (Result<Item> result : minioClient.listObjects(
+                    ListObjectsArgs.builder().bucket(bucketName).build())) {
+                list.add(result.get().objectName());
+            }
+            return list;
+        } catch (Exception e) {
+            log.error("列出存储桶中的所有文件失败：{}", e.getMessage());
+            throw new OssException(ErrorCode.OSS_SERVICE_FAILS, "列出存储桶中的所有文件失败");
         }
-        return list;
     }
 
     /**
      * 获取文件元数据
-     *
      * @param objectName 存储对象名称
      * @return 文件元数据
-     * @throws Exception Minio操作异常
      */
-    public StatObjectResponse getObjectStat(String objectName) throws Exception {
-        return minioClient.statObject(StatObjectArgs.builder()
-                .bucket(minioConfig.getBucketName())
-                .object(objectName)
-                .build());
+    public StatObjectResponse getObjectStat(String objectName) {
+        try {
+            return minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(minioConfig.getBucketName())
+                    .object(objectName)
+                    .build());
+        } catch (Exception e) {
+            log.error("获取文件元数据失败：{}", e.getMessage());
+            throw new OssException(ErrorCode.OSS_SERVICE_FAILS, "获取文件元数据失败");
+        }
     }
 
     /**
@@ -603,7 +620,14 @@ public class MinioUtil {
         return module + "/" + date + "/" + uuid + suffix;
     }
 
-    private String generateFileAbsolutePath(String bucketName, String objectName) throws Exception {
+
+    /**
+     * 获取文件的绝对存储路径
+     * @param bucketName 存储桶名称
+     * @param objectName 文件对象名称
+     * @return 文件的绝对存储路径
+     */
+    private String generateFileAbsolutePath(String bucketName, String objectName) {
         // 获取存储桶名称
         if (bucketName == null) {
             bucketName = minioConfig.getBucketName();

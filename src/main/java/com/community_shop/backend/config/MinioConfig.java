@@ -22,6 +22,9 @@ public class MinioConfig {
     @Value("${minio.bucketName}")
     private String bucketName;
 
+    /**
+     * 创建 Minio 客户端
+     */
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()

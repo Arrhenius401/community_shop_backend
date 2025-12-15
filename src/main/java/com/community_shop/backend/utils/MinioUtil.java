@@ -98,7 +98,7 @@ public class MinioUtil {
         this.minioConfig = minioConfig;
     }
 
-    /* 存储桶操作系列方法 */
+    /* ==================== 存储桶操作系列方法 ==================== */
 
     /**
      * 检查存储桶是否存在
@@ -152,7 +152,7 @@ public class MinioUtil {
         return minioClient.listBuckets();
     }
 
-    /* 文件操作系列方法 */
+    /* ==================== 文件操作系列方法 ==================== */
 
     /**
      * 上传图片（支持 MultipartFile，和 OSS 用法完全一致）
@@ -247,6 +247,8 @@ public class MinioUtil {
             }
 
             // 5. 上传文件
+            // putObject() 方法，已内置分片操作
+            // 如果 fileSize > 5 MB（默认阈值），SDK 内部会自动触发 multipart upload
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(minioConfig.getBucketName())
@@ -466,22 +468,32 @@ public class MinioUtil {
      * @param objectNames 对象名称列表
      * @return 删除错误列表
      */
-    @SneakyThrows
     public List<DeleteError> deleteFiles(String bucketName, List<String> objectNames) {
-        List<DeleteObject> objects = objectNames.stream()
-                .map(DeleteObject::new)
-                .collect(Collectors.toList());
+        try {
+            // 1. 获取存储桶名称
+            if (bucketName == null) {
+                bucketName = minioConfig.getBucketName();
+            }
 
-        Iterable<Result<DeleteError>> results = minioClient.removeObjects(RemoveObjectsArgs.builder()
-                .bucket(bucketName)
-                .objects(objects)
-                .build());
+            // 2. 批量删除文件
+            List<DeleteObject> objects = objectNames.stream()
+                    .map(DeleteObject::new)
+                    .collect(Collectors.toList());
 
-        List<DeleteError> errors = new ArrayList<>();
-        for (Result<DeleteError> result : results) {
-            errors.add(result.get());
+            Iterable<Result<DeleteError>> results = minioClient.removeObjects(RemoveObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .objects(objects)
+                    .build());
+
+            List<DeleteError> errors = new ArrayList<>();
+            for (Result<DeleteError> result : results) {
+                errors.add(result.get());
+            }
+            return errors;
+        } catch (Exception e) {
+            log.error("批量删除文件失败：{}", e.getMessage());
+            throw new OssException(ErrorCode.FAILURE, "批量删除文件失败");
         }
-        return errors;
     }
 
     /**
@@ -596,7 +608,33 @@ public class MinioUtil {
         return objectExists(minioConfig.getBucketName(), objectName);
     }
 
-    /* 辅助方法 */
+    /* ==================== 扩展功能方法 ==================== */
+
+    /**
+     * 复制文件到新位置
+     *
+     * @param sourceBucket 源存储桶
+     * @param sourceObject 源文件
+     * @param destBucket   目标存储桶
+     * @param destObject   目标文件
+     */
+    public void copyObject(String sourceBucket, String sourceObject, String destBucket, String destObject) {
+        try {
+            minioClient.copyObject(CopyObjectArgs.builder()
+                    .source(CopySource.builder()
+                            .bucket(sourceBucket)
+                            .object(sourceObject)
+                            .build())
+                    .bucket(destBucket)
+                    .object(destObject)
+                    .build());
+        } catch (Exception e) {
+            throw new RuntimeException("源文件不存在");
+        }
+    }
+
+    /* ==================== 辅助方法 ==================== */
+    
     /**
      * 生成文件的相对存储路径（避免文件名重复，和 OSS 逻辑一致）
      * 格式：模块/日期/UUID.后缀（如 product/20240520/123e4567.jpg）
@@ -634,30 +672,5 @@ public class MinioUtil {
         }
         // 获取文件绝对路径
         return minioConfig.getEndpoint() + "/" + bucketName + "/" + objectName;
-    }
-
-    /* 扩展功能方法 */
-
-    /**
-     * 复制文件到新位置
-     *
-     * @param sourceBucket 源存储桶
-     * @param sourceObject 源文件
-     * @param destBucket   目标存储桶
-     * @param destObject   目标文件
-     */
-    public void copyObject(String sourceBucket, String sourceObject, String destBucket, String destObject) {
-        try {
-            minioClient.copyObject(CopyObjectArgs.builder()
-                    .source(CopySource.builder()
-                            .bucket(sourceBucket)
-                            .object(sourceObject)
-                            .build())
-                    .bucket(destBucket)
-                    .object(destObject)
-                    .build());
-        } catch (Exception e) {
-            throw new RuntimeException("源文件不存在");
-        }
     }
 }

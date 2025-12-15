@@ -13,7 +13,6 @@ import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -634,7 +633,7 @@ public class MinioUtil {
     }
 
     /* ==================== 辅助方法 ==================== */
-    
+
     /**
      * 生成文件的相对存储路径（避免文件名重复，和 OSS 逻辑一致）
      * 格式：模块/日期/UUID.后缀（如 product/20240520/123e4567.jpg）

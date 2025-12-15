@@ -214,6 +214,10 @@ public enum ErrorCode {
     OSS_PICTURE_FORMAT_INVALID("OSS_103", 400, "图片格式不符合规范"),
     OSS_PICTURE_SIZE_INVALID("OSS_104", 400, "图片大小错误"),
 
+    OSS_MULTIPART_FILE_NOT_EXISTS("OSS_101", 404, "分片文件不存在"),
+    OSS_MULTIPART_FILE_SIZE_INVALID("OSS_102", 400, "分片文件不符合规范"),
+    OSS_MULTIPART_FILE_UPLOAD_FAILS("OSS_103", 500, "分片文件上传失败"),
+
     OSS_PICTURE_URL_GENERATE_FAILS("OSS_105", 500, "图片访问链接生成失败"),;
 
 

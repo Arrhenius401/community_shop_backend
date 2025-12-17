@@ -1,11 +1,13 @@
 package com.community_shop.backend.service.base;
 
 import com.community_shop.backend.dto.PageResult;
+import com.community_shop.backend.dto.chat.ChatPromptDTO;
 import com.community_shop.backend.dto.chat.ChatSessionDetailDTO;
 import com.community_shop.backend.dto.chat.ChatSessionListItem;
 import com.community_shop.backend.dto.chat.ChatSessionQueryDTO;
 import com.community_shop.backend.entity.ChatSession;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 /**
  * AI 会话模块 Service 接口（消息->会话）
@@ -14,19 +16,27 @@ import org.springframework.stereotype.Service;
 public interface ChatSessionService extends BaseService<ChatSession>{
 
     /**
+     * AI 聊天
+     * @param prompt 聊天参数
+     * @return 聊天结果
+     */
+    Flux<String> chatWithAi(ChatPromptDTO prompt);
+
+    /**
      * 创建新的会话ID
      * @param userId 用户ID
      * @return 会话记录列表
      */
-    String createSessionId(Long userId);
+    String createSession(Long userId);
 
     /**
-     * 更新会话标题
+     * 生成会话标题
      * @param sessionId 会话ID
-     * @param title 标题
-     * @return 是否成功
+     * @param firstPrompt 第一个问题
+     * @param firstAnswer 第一个答案
+     * @return 生成的标题
      */
-    Boolean updateSessionTitle(String sessionId, String title);
+    String generateTitle(String sessionId, String firstPrompt, String firstAnswer);
 
     /**
      * 获取会话内容

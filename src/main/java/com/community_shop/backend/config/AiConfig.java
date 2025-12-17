@@ -63,8 +63,6 @@ public class AiConfig {
     public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory,
                                      DateTimeTool dateTimeTool
     ) {
-
-
         return ChatClient
                 // 注入底层 Model
                 .builder(model)

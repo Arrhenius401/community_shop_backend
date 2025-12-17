@@ -20,17 +20,10 @@ public interface ChatMessageService extends BaseService<ChatMessage> {
     List<ChatMessageDetailDTO> getBySessionId(String sessionId);
 
     /**
-     * 插入用户的第一条prompt
+     * 判断是否是第一条消息
      * @param sessionId 会话ID
-     * @param prompt 提示语
-     * @return 插入结果（true成功/false失败）
+     * @return 是否是第一条消息
      */
-    Boolean insertFirstPrompt(String sessionId, String prompt);
+    Boolean isFirstMessage(String sessionId);
 
-    /**
-     * 根据会话ID删除会话记录
-     * @param sessionId 会话ID
-     * @return 删除结果（true成功/false失败）
-     */
-    boolean removeBySessionId(String sessionId);
 }

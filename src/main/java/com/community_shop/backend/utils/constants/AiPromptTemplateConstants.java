@@ -47,8 +47,14 @@ public class AiPromptTemplateConstants {
     """;
 
     // -------------------------- 5. 基础服务组件 --------------------------
-    /**
-    public static final String GENERATE_SUMMARY = "请根据对话内容生成中文标题，必须极度简短，标点符号省略，最长不得超过14个字符，只返回标题内容不要任何格式";
+    public static final String GENERATE_TITLE_ROLE = "你是一个标题生成助手，仅返回简洁的标题，不超过20个字";
+
+    /** 根据对话内容生成中文标题 */
+    public static final String GENERATE_TITLE = """
+    请为以下对话生成一个简短的标题（不超过20字）：
+    - 用户问：%s
+    - AI 答：%s
+    """;
 
     // -------------------------- 6. 通用提示词模板（静态常量，直接拼接参数使用） --------------------------
     /** 商品描述生成模板（参数：商品名称、类别、成色、附加信息） */

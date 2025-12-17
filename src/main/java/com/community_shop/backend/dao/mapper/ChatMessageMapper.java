@@ -33,6 +33,12 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
     List<ChatMessage> selectBySessionId(@Param("sessionId") String sessionId);
 
     /**
+     * 根据会话ID查询消息数量
+     */
+    @Select("SELECT COUNT(*) FROM chat_message WHERE chat_session_id = #{sessionId}")
+    int countBySessionId(@Param("sessionId") String sessionId);
+
+    /**
      * 根据会话ID删除所有记忆
      */
     @Delete("DELETE FROM chat_message WHERE chat_session_id = #{sessionId}")

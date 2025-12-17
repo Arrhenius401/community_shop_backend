@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -46,7 +45,7 @@ public class AiController {
     )
     public String createChat(){
         Long userId = parseUserIdFromToken();
-        return chatSessionService.createSessionId(userId);
+        return chatSessionService.createSession(userId);
     }
 
     /**
@@ -64,11 +63,7 @@ public class AiController {
             @Valid @RequestBody
             @Parameter(description = "AI对话参数，含用户名、手机号/邮箱、密码、验证码", required = true)
             ChatPromptDTO prompt){
-        return chatClient.prompt()
-                .user(prompt.getPrompt())
-                .advisors(a->a.param(ChatMemory.CONVERSATION_ID,prompt.getChatSessionId()))
-                .stream()
-                .content();
+        return chatSessionService.chatWithAi(prompt);
     }
 
     /**

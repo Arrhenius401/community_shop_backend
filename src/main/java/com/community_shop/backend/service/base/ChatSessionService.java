@@ -21,12 +21,12 @@ public interface ChatSessionService extends BaseService<ChatSession>{
     String createSessionId(Long userId);
 
     /**
-     * 更新会话摘要
+     * 更新会话标题
      * @param sessionId 会话ID
-     * @param summary 摘要
+     * @param title 标题
      * @return 是否成功
      */
-    Boolean updateSessionSummary(String sessionId, String summary);
+    Boolean updateSessionTitle(String sessionId, String title);
 
     /**
      * 获取会话内容

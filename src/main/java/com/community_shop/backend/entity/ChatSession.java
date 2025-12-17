@@ -27,7 +27,7 @@ public class ChatSession {
     private Long userId;
 
     /** 会话摘要（根据用户的第一个消息给出） */
-    private String summary;
+    private String title;
 
     /** 创建时间*/
     private LocalDateTime createTime;

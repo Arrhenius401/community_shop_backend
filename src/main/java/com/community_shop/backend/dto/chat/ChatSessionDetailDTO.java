@@ -30,10 +30,10 @@ public class ChatSessionDetailDTO {
     @Schema(description = "用户唯一标识", example = "10001")
     private Long userId;
 
-    /** 会话摘要（根据用户的第一个消息给出） */
-    @NotBlank(message = "会话摘要不能为空")
-    @Schema(description = "会话内容摘要", example = "关于感冒症状的咨询")
-    private String summary;
+    /** 会话标题（根据用户的第一个消息给出） */
+    @NotBlank(message = "会话标题不能为空")
+    @Schema(description = "会话标题摘要", example = "关于感冒症状的咨询")
+    private String title;
 
     /** 创建时间*/
     @Schema(description = "会话创建时间", example = "2023-10-01T10:00:00")

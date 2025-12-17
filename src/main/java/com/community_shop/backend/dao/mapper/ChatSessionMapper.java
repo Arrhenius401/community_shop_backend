@@ -16,13 +16,13 @@ import java.util.List;
 public interface ChatSessionMapper extends BaseMapper<ChatSession> {
 
     /**
-     * 更新会话摘要
+     * 更新会话标题
      * @param sessionId 会话ID
-     * @param summary 摘要
+     * @param title 标题
      * @return 影响行数
      */
-    @Update("UPDATE chat_session SET summary = #{summary} WHERE chat_session_id = #{sessionId}")
-    int updateSummary(String sessionId, String summary);
+    @Update("UPDATE chat_session SET title = #{title} WHERE chat_session_id = #{sessionId}")
+    int updateTitle(String sessionId, String title);
 
     /**
      * 查询会话ID列表

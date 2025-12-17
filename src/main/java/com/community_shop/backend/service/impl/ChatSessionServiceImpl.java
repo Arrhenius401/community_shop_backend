@@ -68,7 +68,7 @@ public class ChatSessionServiceImpl extends BaseServiceImpl<ChatSessionMapper, C
         chatSession.setStatus(ChatSessionStatusEnum.STARTED);
         chatSession.setCreateTime(LocalDateTime.now());
         chatSession.setUpdateTime(LocalDateTime.now());
-        chatSession.setSummary(userId + " 的会话: " + sessionId);
+        chatSession.setTitle(userId + " 的会话: " + sessionId);
 
         // 4. 插入会话记录
         int updateRows = chatSessionMapper.insert(chatSession);
@@ -80,11 +80,11 @@ public class ChatSessionServiceImpl extends BaseServiceImpl<ChatSessionMapper, C
     }
 
     @Override
-    public Boolean updateSessionSummary(String sessionId, String summary) {
+    public Boolean updateSessionTitle(String sessionId, String title) {
         // 1. 创建会话记录实体
         ChatSession session = new ChatSession();
         session.setChatSessionId(sessionId);
-        session.setSummary(summary); // 设置摘要（如用户第一条消息的摘要）
+        session.setTitle(title); // 设置摘要（如用户第一条消息的摘要）
         session.setUpdateTime(LocalDateTime.now()); // 更新时间戳
 
         // 2. 根据ID更新非空字段（MyBatis-Plus的更新方法）

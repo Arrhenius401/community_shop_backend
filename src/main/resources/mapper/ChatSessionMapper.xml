@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.community_shop.backend.entity.ChatSession">
         <id column="chat_session_id" property="chatSessionId"/>
         <result column="user_id" property="userId"/>
-        <result column="summary" property="summary"/>
+        <result column="title" property="title"/>
         <result column="status" property="status"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -14,7 +14,7 @@
 
     <!-- 基础字段SQL片段，减少冗余 -->
     <sql id="Base_Column_List">
-        chat_session_id, user_id, summary, status, create_time, update_time
+        chat_session_id, user_id, title, status, create_time, update_time
     </sql>
 
     <!-- ==================== SQL 语句 ==================== -->

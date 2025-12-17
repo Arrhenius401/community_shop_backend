@@ -19,7 +19,7 @@ public class MinioConfig {
     @Value("${minio.secret-key}")
     private String secretKey;
 
-    @Value("${minio.bucketName}")
+    @Value("${minio.bucket-name}")
     private String bucketName;
 
     /**

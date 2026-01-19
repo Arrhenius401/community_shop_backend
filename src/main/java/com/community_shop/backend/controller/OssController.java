@@ -2,13 +2,14 @@ package com.community_shop.backend.controller;
 
 import com.community_shop.backend.annotation.AdminRequired;
 import com.community_shop.backend.annotation.LoginRequired;
-import com.community_shop.backend.config.MinioConfig;
 import com.community_shop.backend.enums.code.OssModuleEnum;
 import com.community_shop.backend.exception.error.ErrorCode;
-import com.community_shop.backend.utils.MinioUtil;
+import com.community_shop.backend.service.base.FileService;
+import com.community_shop.backend.utils.RequestParseUtil;
 import com.community_shop.backend.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,19 +18,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
+/**
+ * 对象存储服务接口，封装了上传、下载、删除文件的功能
+ */
 @RestController
 @RequestMapping("/api/v1/oss")
+@Tag(
+        name = "对象存储服务接口",
+        description = "包含文件上传和下载等功能，所有接口均返回统一ResultVO格式，错误场景关联ErrorCode枚举"
+)
 public class OssController {
 
-    private final MinioUtil minioUtil;
-    private final MinioConfig minioConfig;
+    @Autowired
+    private FileService fileService;
 
     @Autowired
-    public OssController(MinioUtil minioUtil, MinioConfig minioConfig) {
-        this.minioUtil = minioUtil;
-        this.minioConfig = minioConfig;
-    }
+    private RequestParseUtil requestParseUtil;
 
     /**
      * 上传图片类型文件接口
@@ -43,15 +47,14 @@ public class OssController {
             description = "上传单一图片文件，并返回图片的逻辑路径（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
     )
     public ResultVO<?> uploadImage(
-            @RequestParam @Parameter(description = "上传的文件")
+            @RequestParam @Parameter(description = "上传的文件", required = true)
             MultipartFile file,
-            @RequestParam @Parameter(description = "文件所属的模块名")
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module
             ) {
         try {
-            // 0. 可检验用户是否有正常操作的权限
-            // 1. 上传图片
-            String filePath = minioUtil.uploadImage(file, module);
+            Long userId = parseUserIdFromToken();
+            String filePath = fileService.uploadImage(file, module, userId);
             return ResultVO.success(filePath);
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE);
@@ -70,15 +73,14 @@ public class OssController {
             description = "上传图片文件列表，并返回图片的逻辑路径列表（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
     )
     public ResultVO<?> batchUploadImages(
-            @RequestParam @Parameter(description = "上传的文件列表")
+            @RequestParam @Parameter(description = "上传的文件列表", required = true)
             List<MultipartFile> files,
-            @RequestParam @Parameter(description = "文件所属的模块名")
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module
     ) {
         try {
-            // 0. 可检验用户是否有正常操作的权限
-            // 1. 批量上传图片
-            List<String> filePaths = minioUtil.uploadImages(files, module);
+            Long userId = parseUserIdFromToken();
+            List<String> filePaths = fileService.batchUploadImages(files, module, userId);
             return ResultVO.success(filePaths);
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE);
@@ -97,13 +99,13 @@ public class OssController {
             description = "上传文件，并返回文件的逻辑路径（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
     )
     public ResultVO<String> uploadFile(
-            @RequestParam @Parameter(description = "上传的文件")
+            @RequestParam @Parameter(description = "上传的文件", required = true)
             MultipartFile file,
-            @RequestParam @Parameter(description = "文件所属的模块名")
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module) {
         try {
-            // 0. 可检验用户是否有正常操作的权限
-            String filePath = minioUtil.uploadFile(file, module);
+            Long userId = parseUserIdFromToken();
+            String filePath = fileService.uploadFile(file, module, userId);
             return ResultVO.success(filePath);
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE);
@@ -122,14 +124,13 @@ public class OssController {
             description = "上传文件列表，并返回文件的逻辑路径列表（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
     )
     public ResultVO<List<String>> batchUploadFiles(
-            @RequestParam @Parameter(description = "上传的文件列表")
+            @RequestParam @Parameter(description = "上传的文件列表", required = true)
             List<MultipartFile> files,
-            @RequestParam @Parameter(description = "文件所属的模块名")
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module) {
         try {
-            // 0. 可检验用户是否有正常操作的权限
-            // 1. 批量上传文件
-            List<String> filePaths = minioUtil.uploadFiles(files, module);
+            Long userId = parseUserIdFromToken();
+            List<String> filePaths = fileService.batchUploadFiles(files, module, userId);
             return ResultVO.success(filePaths);
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE);
@@ -148,11 +149,11 @@ public class OssController {
             description = "下载默认存储桶内指定文件，并返回文件内容（浏览器下载）"
     )
     public void downloadFile(
-            @PathVariable @Parameter(description = "存储对象名称")
+            @PathVariable @Parameter(description = "存储对象名称", required = true)
             String objectName,
             HttpServletResponse response) {
         try {
-            minioUtil.downloadToResponse(objectName, response);
+            fileService.downloadToResponse(objectName, response);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
@@ -169,10 +170,10 @@ public class OssController {
             description = "预览默认存储桶内指定文件，并返回文件预览地址"
     )
     public ResultVO<String> previewFile(
-            @PathVariable @Parameter(description = "存储对象名称")
+            @PathVariable @Parameter(description = "存储对象名称", required = true)
             String objectName) {
         try {
-            String url = minioUtil.generatePresignedUrl(objectName);
+            String url = fileService.generatePresignedUrl(objectName);
             return ResultVO.success(url);
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE, e.getMessage());
@@ -190,10 +191,11 @@ public class OssController {
             description = "删除默认存储桶内指定文件"
     )
     public ResultVO<Void> deleteFile(
-            @PathVariable @Parameter(description = "存储对象名称")
+            @PathVariable @Parameter(description = "存储对象名称", required = true)
             String objectName) {
         try {
-            minioUtil.deleteFile(objectName);
+            Long userId = parseUserIdFromToken();
+            fileService.deleteFile(objectName, userId);
             return ResultVO.success();
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE);
@@ -211,16 +213,22 @@ public class OssController {
             description = "获取指定存储桶内的所有文件列表，并返回文件列表（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
     )
     public ResultVO<List<String>> listFiles(
-            @RequestParam(required = false) @Parameter(description = "存储桶名称")
+            @RequestParam(required = false) @Parameter(description = "存储桶名称", required = true)
             String bucketName) {
         try {
-            String targetBucket = (bucketName != null && !bucketName.isEmpty())
-                    ? bucketName : minioConfig.getBucketName();
-            List<String> files = minioUtil.listAllFiles(targetBucket);
+            List<String> files = fileService.listAllFiles(bucketName, parseUserIdFromToken());
             return ResultVO.success(files);
         } catch (Exception e) {
             return ResultVO.fail(ErrorCode.FAILURE);
         }
+    }
+
+    /**
+     * 工具方法：从请求头令牌中解析用户ID（实际项目需结合JWT工具实现）
+     * @return 当前登录用户ID（未登录时返回null）
+     */
+    private Long parseUserIdFromToken() {
+        return requestParseUtil.parseUserIdFromRequest();
     }
 
 }

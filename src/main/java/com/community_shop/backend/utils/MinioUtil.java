@@ -412,7 +412,7 @@ public class MinioUtil {
             );
         } catch (MinioException e) {
             log.error("MinIO 生成签名 URL 失败：{}", e.getMessage());
-            throw new OssException(ErrorCode.OSS_PICTURE_URL_GENERATE_FAILS);
+            throw new OssException(ErrorCode.OSS_PRESIGNED_URL_GENERATE_FAILS);
         } catch (Exception e) {
             log.error("MinIO 生成签名 URL 失败：{}", e.getMessage());
             throw new OssException(ErrorCode.OSS_SERVICE_FAILS, "MinIO 生成签名 URL 失败");

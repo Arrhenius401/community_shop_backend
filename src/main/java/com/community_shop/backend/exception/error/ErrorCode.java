@@ -218,7 +218,10 @@ public enum ErrorCode {
     OSS_MULTIPART_FILE_SIZE_INVALID("OSS_102", 400, "分片文件不符合规范"),
     OSS_MULTIPART_FILE_UPLOAD_FAILS("OSS_103", 500, "分片文件上传失败"),
 
-    OSS_PICTURE_URL_GENERATE_FAILS("OSS_105", 500, "图片访问链接生成失败"),;
+    OSS_PRESIGNED_URL_GENERATE_FAILS("OSS_105", 500, "预览访问链接生成失败"),
+
+    OSS_FILE_DOWNLOAD_FAILS("OSS_106", 500, "文件下载失败"),
+    OSS_FILE_DELETE_FAILS("OSS_107", 500, "文件删除失败"),;
 
 
     // HTTP状态码

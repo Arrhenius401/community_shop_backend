@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import com.community_shop.backend.dao.mapper.OrderMapper;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.enums.code.OrderStatusEnum;
-import com.community_shop.backend.enums.simple.PayTypeEnum;
+import com.community_shop.backend.enums.code.PayTypeEnum;
 import com.community_shop.backend.dto.order.OrderQueryDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

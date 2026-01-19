@@ -12,7 +12,7 @@ import com.community_shop.backend.enums.code.OrderStatusEnum;
 import com.community_shop.backend.enums.code.ProductStatusEnum;
 import com.community_shop.backend.enums.code.UserRoleEnum;
 import com.community_shop.backend.exception.error.ErrorCode;
-import com.community_shop.backend.enums.simple.PayTypeEnum;
+import com.community_shop.backend.enums.code.PayTypeEnum;
 import com.community_shop.backend.exception.BusinessException;
 import com.community_shop.backend.entity.Order;
 import com.community_shop.backend.entity.Product;

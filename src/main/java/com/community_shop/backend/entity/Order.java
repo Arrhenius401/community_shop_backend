@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.community_shop.backend.dto.order.OrderCreateDTO;
 import com.community_shop.backend.enums.code.OrderStatusEnum;
-import com.community_shop.backend.enums.simple.PayTypeEnum;
+import com.community_shop.backend.enums.code.PayTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

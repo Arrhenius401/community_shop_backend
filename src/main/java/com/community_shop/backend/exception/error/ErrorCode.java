@@ -221,8 +221,19 @@ public enum ErrorCode {
     OSS_PRESIGNED_URL_GENERATE_FAILS("OSS_105", 500, "预览访问链接生成失败"),
 
     OSS_FILE_DOWNLOAD_FAILS("OSS_106", 500, "文件下载失败"),
-    OSS_FILE_DELETE_FAILS("OSS_107", 500, "文件删除失败"),;
+    OSS_FILE_DELETE_FAILS("OSS_107", 500, "文件删除失败"),
 
+
+    // 支付模块
+    PAYMENT_FAILED("PAY_001", 400, "支付失败"),
+
+    PAYMENT_NOT_EXISTS("PAY_002", 404, "支付不存在"),
+
+    PAYMENT_GENERATE_URL_FAILS("PAY_011", 500, "生成支付链接失败"),
+    PAYMENT_CALLBACK_VALIDATE_FAILS("PAY_012", 400, "支付回调参数验证失败"),
+    PAYMENT_CALLBACK_FAILS("PAY_013", 400, "支付回调失败"),
+
+    PAYMENT_ALIPAY_FAILS("PAY_102", 400, "支付宝支付失败");
 
     // HTTP状态码
     // 200：成功操作

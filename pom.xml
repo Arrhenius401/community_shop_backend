@@ -331,6 +331,26 @@
             <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
 
+        <!-- 支付宝支付 SDK -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.22.110.ALL</version> <!-- 稳定版本，适配Spring Boot 3.x -->
+        </dependency>
+
+        <!-- 微信支付官方SDK（推荐最新稳定版） -->
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>0.2.10</version>
+        </dependency>
+        <!-- 微信支付依赖的HTTP客户端 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.3</version>
+        </dependency>
+
         <!-- RabbitMQ -->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->

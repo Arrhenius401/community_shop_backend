@@ -1,6 +1,5 @@
 package com.community_shop.backend.service.impl;
 
-import com.community_shop.backend.config.MinioConfig;
 import com.community_shop.backend.dao.mapper.FileMapper;
 import com.community_shop.backend.entity.File;
 import com.community_shop.backend.enums.code.OssModuleEnum;
@@ -32,9 +31,6 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
 
     @Autowired
     private MinioUtil minioUtil;
-
-    @Autowired
-    private MinioConfig minioConfig;
 
     @Autowired
     private FileMapper fileMapper;
@@ -250,14 +246,12 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
     public List<String> listAllFiles(String bucketName, Long userId) {
         try {
             // 1. 检验用户是否有正常操作的权限
-            if (userService.verifyRole(userId, UserRoleEnum.ADMIN)) {
+            if (!userService.verifyRole(userId, UserRoleEnum.ADMIN)) {
                 throw new BusinessException(ErrorCode.PERMISSION_DENIED);
             }
 
             // 2. 获取文件列表
-            String targetBucket = (bucketName != null && !bucketName.isEmpty())
-                    ? bucketName : minioConfig.getBucketName();
-            return minioUtil.listAllFiles(targetBucket);
+            return minioUtil.listAllFiles(bucketName);
 
         } catch (BusinessException e) {
             throw e;

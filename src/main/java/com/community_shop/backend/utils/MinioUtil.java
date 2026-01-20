@@ -512,6 +512,12 @@ public class MinioUtil {
      */
     public List<String> listAllFiles(String bucketName) {
         try {
+            // 1. 获取存储桶名称
+            if (bucketName == null || bucketName.isEmpty()) {
+                bucketName = minioConfig.getBucketName();
+            }
+
+            // 2. 列出存储桶中的所有文件
             List<String> list = new ArrayList<>();
             for (Result<Item> result : minioClient.listObjects(
                     ListObjectsArgs.builder().bucket(bucketName).build())) {

@@ -205,6 +205,8 @@ public enum ErrorCode {
     // 对象存储服务模块
     OSS_SERVICE_FAILS("OSS_001", 500, "OSS服务不可用"),
 
+    OSS_BUCKET_NOT_EXISTS("OSS_051", 404, "存储桶不存在"),
+
     OSS_FILE_NOT_EXISTS("OSS_101", 404, "文件不存在"),
     OSS_FILE_FORMAT_INVALID("OSS_102", 400, "文件格式不符合规范"),
     OSS_FILE_MINE_INVALID("OSS_103", 400, "文件mine类型不符合规范"),

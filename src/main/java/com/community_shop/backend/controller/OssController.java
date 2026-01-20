@@ -3,7 +3,6 @@ package com.community_shop.backend.controller;
 import com.community_shop.backend.annotation.AdminRequired;
 import com.community_shop.backend.annotation.LoginRequired;
 import com.community_shop.backend.enums.code.OssModuleEnum;
-import com.community_shop.backend.exception.error.ErrorCode;
 import com.community_shop.backend.service.base.FileService;
 import com.community_shop.backend.utils.RequestParseUtil;
 import com.community_shop.backend.vo.ResultVO;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,13 +50,9 @@ public class OssController {
             @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module
             ) {
-        try {
-            Long userId = parseUserIdFromToken();
-            String filePath = fileService.uploadImage(file, module, userId);
-            return ResultVO.success(filePath);
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE);
-        }
+        Long userId = parseUserIdFromToken();
+        String filePath = fileService.uploadImage(file, module, userId);
+        return ResultVO.success(filePath);
     }
 
     /**
@@ -78,13 +72,9 @@ public class OssController {
             @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module
     ) {
-        try {
-            Long userId = parseUserIdFromToken();
-            List<String> filePaths = fileService.batchUploadImages(files, module, userId);
-            return ResultVO.success(filePaths);
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE);
-        }
+        Long userId = parseUserIdFromToken();
+        List<String> filePaths = fileService.batchUploadImages(files, module, userId);
+        return ResultVO.success(filePaths);
     }
 
     /**
@@ -103,13 +93,9 @@ public class OssController {
             MultipartFile file,
             @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module) {
-        try {
-            Long userId = parseUserIdFromToken();
-            String filePath = fileService.uploadFile(file, module, userId);
-            return ResultVO.success(filePath);
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE);
-        }
+        Long userId = parseUserIdFromToken();
+        String filePath = fileService.uploadFile(file, module, userId);
+        return ResultVO.success(filePath);
     }
 
     /**
@@ -128,13 +114,9 @@ public class OssController {
             List<MultipartFile> files,
             @RequestParam @Parameter(description = "文件所属的模块名", required = true)
             OssModuleEnum module) {
-        try {
-            Long userId = parseUserIdFromToken();
-            List<String> filePaths = fileService.batchUploadFiles(files, module, userId);
-            return ResultVO.success(filePaths);
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE);
-        }
+        Long userId = parseUserIdFromToken();
+        List<String> filePaths = fileService.batchUploadFiles(files, module, userId);
+        return ResultVO.success(filePaths);
     }
 
     /**
@@ -142,7 +124,7 @@ public class OssController {
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      * @param response   HttpServletResponse（浏览器下载）
      */
-    @GetMapping("/download/{objectName}")
+    @GetMapping("/download/{objectName:.*}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
     @LoginRequired
     @Operation(
             summary ="文件浏览器下载接口",
@@ -152,18 +134,14 @@ public class OssController {
             @PathVariable @Parameter(description = "存储对象名称", required = true)
             String objectName,
             HttpServletResponse response) {
-        try {
-            fileService.downloadToResponse(objectName, response);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
+        fileService.downloadToResponse(objectName, response);
     }
 
     /**
      * 文件预览接口
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      */
-    @GetMapping("/preview/{objectName}")
+    @GetMapping("/preview/{objectName:.*}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
     @LoginRequired
     @Operation(
             summary = "文件预览接口",
@@ -172,19 +150,15 @@ public class OssController {
     public ResultVO<String> previewFile(
             @PathVariable @Parameter(description = "存储对象名称", required = true)
             String objectName) {
-        try {
-            String url = fileService.generatePresignedUrl(objectName);
-            return ResultVO.success(url);
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE, e.getMessage());
-        }
+        String url = fileService.generatePresignedUrl(objectName);
+        return ResultVO.success(url);
     }
 
     /**
      * 文件删除接口
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      */
-    @DeleteMapping("/delete/{objectName}")
+    @DeleteMapping("/delete/{objectName:.*}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
     @AdminRequired
     @Operation(
             summary = "文件删除接口",
@@ -193,13 +167,8 @@ public class OssController {
     public ResultVO<Void> deleteFile(
             @PathVariable @Parameter(description = "存储对象名称", required = true)
             String objectName) {
-        try {
-            Long userId = parseUserIdFromToken();
-            fileService.deleteFile(objectName, userId);
-            return ResultVO.success();
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE);
-        }
+        fileService.deleteFile(objectName, parseUserIdFromToken());
+        return ResultVO.success();
     }
 
     /**
@@ -215,12 +184,8 @@ public class OssController {
     public ResultVO<List<String>> listFiles(
             @RequestParam(required = false) @Parameter(description = "存储桶名称", required = true)
             String bucketName) {
-        try {
-            List<String> files = fileService.listAllFiles(bucketName, parseUserIdFromToken());
-            return ResultVO.success(files);
-        } catch (Exception e) {
-            return ResultVO.fail(ErrorCode.FAILURE);
-        }
+        List<String> files = fileService.listAllFiles(bucketName, parseUserIdFromToken());
+        return ResultVO.success(files);
     }
 
     /**

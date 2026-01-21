@@ -1,4 +1,4 @@
-package com.community_shop.backend.exception.handler;
+package com.community_shop.backend.handler;
 
 import com.community_shop.backend.exception.*;
 import com.community_shop.backend.vo.ResultVO;

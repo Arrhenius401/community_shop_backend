@@ -56,6 +56,8 @@ public enum ErrorCode {
 
     CREDIT_TOO_LOW("USER_081", 400, "用户积分不足"),
 
+    USER_NOT_MATCH("USER_101", 400, "用户不匹配"),
+
     // 用户第三方绑定相关
     THIRD_AUTH_FAILED("USER_071", 401, "第三方授权失败"),
     THIRD_SYSTEM_ERROR("USER_072", 500, "第三方系统错误"),

@@ -85,6 +85,7 @@ public class FileServiceTest {
         when(fileMapper.insert(any(File.class))).thenReturn(1);
         doNothing().when(minioUtil).deleteFile(anyString());
         when(fileMapper.deleteById(anyString())).thenReturn(1);
+        when(fileMapper.deleteByFilePath(anyString())).thenReturn(1);
         when(minioUtil.generatePresignedUrl(anyString())).thenReturn("https://minio.example.com/presigned-url");
         doNothing().when(minioUtil).downloadToResponse(anyString(), any(HttpServletResponse.class));
     }
@@ -181,7 +182,7 @@ public class FileServiceTest {
         fileService.deleteFile(uploadedImagePath, 1L);
 
         verify(minioUtil).deleteFile(uploadedImagePath);
-        verify(fileMapper).deleteById(uploadedImagePath);
+        verify(fileMapper).deleteByFilePath(uploadedImagePath);
     }
 
     @Test
@@ -199,7 +200,7 @@ public class FileServiceTest {
 
     @Test
     void testDeleteFile_DeleteDbFailed() {
-        when(fileMapper.deleteById(anyString())).thenReturn(0);
+        when(fileMapper.deleteByFilePath(anyString())).thenReturn(0);
 
         BusinessException exception = assertThrows(BusinessException.class, () -> {
             fileService.deleteFile(uploadedImagePath, 1L);

@@ -124,7 +124,7 @@ public class OssController {
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      * @param response   HttpServletResponse（浏览器下载）
      */
-    @GetMapping("/download/{objectName:.*}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
+    @GetMapping("/download/{*objectName}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
     @LoginRequired
     @Operation(
             summary ="文件浏览器下载接口",
@@ -141,7 +141,7 @@ public class OssController {
      * 文件预览接口
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      */
-    @GetMapping("/preview/{objectName:.*}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
+    @GetMapping("/preview/{*objectName}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
     @LoginRequired
     @Operation(
             summary = "文件预览接口",
@@ -158,7 +158,7 @@ public class OssController {
      * 文件删除接口
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      */
-    @DeleteMapping("/delete/{objectName:.*}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
+    @DeleteMapping("/delete/{*objectName}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
     @AdminRequired
     @Operation(
             summary = "文件删除接口",

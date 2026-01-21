@@ -45,6 +45,7 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
      * @param userId  用户ID
      */
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public String uploadImage(MultipartFile file, OssModuleEnum module, Long userId) {
         try {
             // 1. 检验用户是否有正常操作的权限
@@ -78,6 +79,7 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
      * @param userId  用户ID
      */
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> batchUploadImages(List<MultipartFile> files, OssModuleEnum module, Long userId) {
         try {
             // 1. 检验用户是否有正常操作的权限
@@ -113,6 +115,7 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
      * @param userId  用户ID
      */
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public String uploadFile(MultipartFile file, OssModuleEnum module, Long userId) {
         try {
             // 1. 检验用户是否有正常操作的权限
@@ -146,6 +149,7 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
      * @param userId  用户ID
      */
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> batchUploadFiles(List<MultipartFile> files, OssModuleEnum module, Long userId) {
         try {
             // 1. 检验用户是否有正常操作的权限
@@ -213,8 +217,8 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
      * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
      * @param userId  用户ID
      */
-    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void deleteFile(String objectName, Long userId) {
         try {
             // 1. 检验用户是否有正常操作的权限
@@ -226,7 +230,12 @@ public class FileServiceImpl extends BaseServiceImpl<FileMapper, File> implement
             minioUtil.deleteFile(objectName);
 
             // 3. 删除文件信息
-            int deleteCount = fileMapper.deleteById(objectName);
+            // 清理文件路径
+            if (objectName.startsWith("/")) {
+                objectName = objectName.substring(1);
+            }
+
+            int deleteCount = fileMapper.deleteByFilePath(objectName);
             if (deleteCount <= 0) {
                 throw new BusinessException(ErrorCode.DATA_DELETE_FAILED);
             }

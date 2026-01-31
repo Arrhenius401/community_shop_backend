@@ -1,0 +1,199 @@
+package xyz.graygoo401.infra.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import xyz.graygoo401.api.infra.enums.OssModuleEnum;
+import xyz.graygoo401.common.annotation.AdminRequired;
+import xyz.graygoo401.common.annotation.LoginRequired;
+import xyz.graygoo401.common.util.RequestParseUtil;
+import xyz.graygoo401.common.vo.ResultVO;
+import xyz.graygoo401.infra.service.base.FileService;
+
+import java.util.List;
+
+/**
+ * 对象存储服务接口，封装了上传、下载、删除文件的功能
+ */
+@RestController
+@RequestMapping("/api/v1/oss")
+@Tag(
+        name = "对象存储服务接口",
+        description = "包含文件上传和下载等功能，所有接口均返回统一ResultVO格式，错误场景关联ErrorCode枚举"
+)
+public class OssController {
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private RequestParseUtil requestParseUtil;
+
+    /**
+     * 上传图片类型文件接口
+     * @param file   文件
+     * @param module 文件所属的模块名（如 "PICTURE_AVATAR" 头像、"PICTURE_PRODUCT" 商品图）
+     */
+    @PostMapping("/upload/image")
+    @LoginRequired
+    @Operation(
+            summary = "单一图片上传接口",
+            description = "上传单一图片文件，并返回图片的逻辑路径（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
+    )
+    public ResultVO<?> uploadImage(
+            @RequestParam @Parameter(description = "上传的文件", required = true)
+            MultipartFile file,
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
+            OssModuleEnum module
+            ) {
+        Long userId = parseUserIdFromToken();
+        String filePath = fileService.uploadImage(file, module, userId);
+        return ResultVO.success(filePath);
+    }
+
+    /**
+     * 批量上传图片类型文件接口
+     * @param files  文件列表
+     * @param module 文件所属的模块名
+     */
+    @PostMapping("/upload/images")
+    @LoginRequired
+    @Operation(
+            summary = "批量图片上传接口",
+            description = "上传图片文件列表，并返回图片的逻辑路径列表（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
+    )
+    public ResultVO<?> batchUploadImages(
+            @RequestParam @Parameter(description = "上传的文件列表", required = true)
+            List<MultipartFile> files,
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
+            OssModuleEnum module
+    ) {
+        Long userId = parseUserIdFromToken();
+        List<String> filePaths = fileService.batchUploadImages(files, module, userId);
+        return ResultVO.success(filePaths);
+    }
+
+    /**
+     * 上传文件通用接口
+     * @param file  文件
+     * @param module 文件所属的模块名
+     */
+    @PostMapping("/upload")
+    @LoginRequired
+    @Operation(
+            summary = "单一文件上传接口",
+            description = "上传文件，并返回文件的逻辑路径（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
+    )
+    public ResultVO<String> uploadFile(
+            @RequestParam @Parameter(description = "上传的文件", required = true)
+            MultipartFile file,
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
+            OssModuleEnum module) {
+        Long userId = parseUserIdFromToken();
+        String filePath = fileService.uploadFile(file, module, userId);
+        return ResultVO.success(filePath);
+    }
+
+    /**
+     * 批量上传文件通用接口
+     * @param files  文件列表
+     * @param module 文件所属的模块名
+     */
+    @PostMapping("/upload/batch")
+    @LoginRequired
+    @Operation(
+            summary = "批量文件上传接口",
+            description = "上传文件列表，并返回文件的逻辑路径列表（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
+    )
+    public ResultVO<List<String>> batchUploadFiles(
+            @RequestParam @Parameter(description = "上传的文件列表", required = true)
+            List<MultipartFile> files,
+            @RequestParam @Parameter(description = "文件所属的模块名", required = true)
+            OssModuleEnum module) {
+        Long userId = parseUserIdFromToken();
+        List<String> filePaths = fileService.batchUploadFiles(files, module, userId);
+        return ResultVO.success(filePaths);
+    }
+
+    /**
+     * 文件浏览器下载接口
+     * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
+     * @param response   HttpServletResponse（浏览器下载）
+     */
+    @GetMapping("/download/{*objectName}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
+    @LoginRequired
+    @Operation(
+            summary ="文件浏览器下载接口",
+            description = "下载默认存储桶内指定文件，并返回文件内容（浏览器下载）"
+    )
+    public void downloadFile(
+            @PathVariable @Parameter(description = "存储对象名称", required = true)
+            String objectName,
+            HttpServletResponse response) {
+        fileService.downloadToResponse(objectName, response);
+    }
+
+    /**
+     * 文件预览接口
+     * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
+     */
+    @GetMapping("/preview/{*objectName}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
+    @LoginRequired
+    @Operation(
+            summary = "文件预览接口",
+            description = "预览默认存储桶内指定文件，并返回文件预览地址"
+    )
+    public ResultVO<String> previewFile(
+            @PathVariable @Parameter(description = "存储对象名称", required = true)
+            String objectName) {
+        String url = fileService.generatePresignedUrl(objectName);
+        return ResultVO.success(url);
+    }
+
+    /**
+     * 文件删除接口
+     * @param objectName 存储对象名称（存储桶内文件的「逻辑路径」，相对于存储桶根目录）
+     */
+    @DeleteMapping("/delete/{*objectName}") // 匹配多级路径（如DEFAULT/2026-01-20/xxx.mp4）
+    @AdminRequired
+    @Operation(
+            summary = "文件删除接口",
+            description = "删除默认存储桶内指定文件"
+    )
+    public ResultVO<Void> deleteFile(
+            @PathVariable @Parameter(description = "存储对象名称", required = true)
+            String objectName) {
+        fileService.deleteFile(objectName, parseUserIdFromToken());
+        return ResultVO.success();
+    }
+
+    /**
+     * 获取文件列表接口
+     * @param bucketName 存储桶名称
+     */
+    @GetMapping("/list")
+    @AdminRequired
+    @Operation(
+            summary ="获取文件列表接口",
+            description = "获取指定存储桶内的所有文件列表，并返回文件列表（存储桶内文件的「逻辑路径」，相对于存储桶根目录）"
+    )
+    public ResultVO<List<String>> listFiles(
+            @RequestParam(required = false) @Parameter(description = "存储桶名称", required = true)
+            String bucketName) {
+        List<String> files = fileService.listAllFiles(bucketName, parseUserIdFromToken());
+        return ResultVO.success(files);
+    }
+
+    /**
+     * 工具方法：从请求头令牌中解析用户ID（实际项目需结合JWT工具实现）
+     * @return 当前登录用户ID（未登录时返回null）
+     */
+    private Long parseUserIdFromToken() {
+        return requestParseUtil.parseUserIdFromRequest();
+    }
+
+}

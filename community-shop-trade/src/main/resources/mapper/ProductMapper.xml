@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.graygoo401.trade.dao.mapper.ProductMapper">
+
+    <!-- 基础字段SQL片段（严格对应数据库表字段） -->
+    <sql id="Base_Column_List">
+        product_id, title, description, category, price, stock,
+        `condition`, seller_id, view_count, status,
+        create_time, update_time
+    </sql>
+
+
+    <!-- ==================== 搜索与筛选 ==================== -->
+
+    <select id="selectByKeyword" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE status = 'ON_SALE'
+        AND (title LIKE CONCAT('%', #{keyword}, '%')
+        OR description LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByKeyword" resultType="int">
+        SELECT COUNT(*) FROM product
+        WHERE status = 'ON_SALE'
+          AND (title LIKE CONCAT('%', #{keyword}, '%')
+            OR description LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*) FROM product
+        <where>
+            <if test="status == null">status = 'ON_SALE'</if>
+            <if test="status != null">status = #{status.code,jdbcType=VARCHAR}</if>
+
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="minPrice != null">
+                AND price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND price &lt;= #{maxPrice}
+            </if>
+            <if test="condition != null">
+                AND `condition` = #{condition.code,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!-- 按ProductQueryDTO条件统计商品数量 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(*) FROM product
+        <where>
+            <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 类别筛选 -->
+            <if test="query.category != null and query.category != ''">
+                AND category = #{query.category}
+            </if>
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+            <!-- 成色筛选 -->
+            <if test="query.condition != null">
+                AND `condition` = #{query.condition.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 卖家ID筛选 -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 关键词搜索（标题/描述） -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR description LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 按ProductQueryDTO条件分页查询商品 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        <where>
+            <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 类别筛选 -->
+            <if test="query.category != null and query.category != ''">
+                AND category = #{query.category}
+            </if>
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+            <!-- 成色筛选 -->
+            <if test="query.condition != null">
+                AND `condition` = #{query.condition.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 卖家ID筛选 -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 关键词搜索（标题/描述） -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR description LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+        <!-- 排序：默认按创建时间倒序 -->
+        <if test="query.sortField != null">
+            ORDER BY ${query.sortField.dbField} ${query.sortDir.direction}
+        </if>
+        <if test="query.sortField == null">
+            ORDER BY create_time DESC
+        </if>
+        <!-- 分页 -->
+        LIMIT #{query.offset}, #{query.pageSize}
+    </select>
+
+    <!-- 按卖家查询条件统计商品数量 -->
+    <select id="countBySellerQuery" resultType="int">
+        SELECT COUNT(*) FROM product
+        <where>
+            <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 类别筛选 -->
+            <if test="query.category != null and query.category != ''">
+                AND category = #{query.category}
+            </if>
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+            <!-- 库存区间筛选 -->
+            <if test="query.minStock != null">
+                AND stock &gt;= #{query.minStock}
+            </if>
+            <if test="query.maxStock != null">
+                AND stock &lt;= #{query.maxStock}
+            </if>
+            <!-- 成色筛选 -->
+            <if test="query.condition != null">
+                AND `condition` = #{query.condition.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 卖家ID筛选 -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 关键词搜索（标题/描述） -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR description LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <!-- 按卖家查询条件分页查询商品 -->
+    <select id="selectBySellerQuery" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        <where>
+            <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 类别筛选 -->
+            <if test="query.category != null and query.category != ''">
+                AND category = #{query.category}
+            </if>
+            <!-- 价格区间筛选 -->
+            <if test="query.minPrice != null">
+                AND price &gt;= #{query.minPrice}
+            </if>
+            <if test="query.maxPrice != null">
+                AND price &lt;= #{query.maxPrice}
+            </if>
+            <!-- 库存区间筛选 -->
+            <if test="query.minStock != null">
+                AND stock &gt;= #{query.minStock}
+            </if>
+            <if test="query.maxStock != null">
+                AND stock &lt;= #{query.maxStock}
+            </if>
+            <!-- 成色筛选 -->
+            <if test="query.condition != null">
+                AND `condition` = #{query.condition.code,jdbcType=VARCHAR}
+            </if>
+            <!-- 卖家ID筛选 -->
+            <if test="query.sellerId != null">
+                AND seller_id = #{query.sellerId}
+            </if>
+            <!-- 关键词搜索（标题/描述） -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR description LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+        <!-- 排序：默认按创建时间倒序 -->
+        <if test="query.sortField != null">
+            ORDER BY ${query.sortField.dbField} ${query.sortDir.direction}
+        </if>
+        <if test="query.sortField == null">
+            ORDER BY create_time DESC
+        </if>
+        <!-- 分页 -->
+        LIMIT #{query.offset}, #{query.pageSize}
+    </select>
+
+    <!-- ==================== 库存与卖家查询 ==================== -->
+    <update id="updateStock">
+        UPDATE product
+        SET stock = #{stock},
+            update_time = NOW()
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="updateViewCount">
+        UPDATE product
+        SET view_count = view_count + 1,
+            update_time = NOW()
+        WHERE product_id = #{productId}
+    </update>
+
+    <select id="selectBySellerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE seller_id = #{sellerId}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectBySellerIdAndStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM product
+        WHERE seller_id = #{sellerId}
+        AND status = #{status.code,jdbcType=VARCHAR}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+
+</mapper>

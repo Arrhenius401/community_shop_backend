@@ -1,0 +1,32 @@
+# 默认端口
+server:
+  port: 9093
+
+# 私有域名
+private-domain-name: graygoo401.xyz
+
+# 应用程序名称
+spring:
+  # 应用配置
+  application:
+    name: Community_Shop_Backend_Community
+  # cloud 配置
+  cloud:
+    # Nacos 配置
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  # 使用的环境（dev, test, prod)
+  profiles:
+    active: dev
+  # 全局框架配置
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+# MyBatis 全局配置
+mybatis-plus:
+  type-aliases-package: xyz.graygoo401.community.dao.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true

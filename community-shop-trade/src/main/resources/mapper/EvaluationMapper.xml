@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.graygoo401.trade.dao.mapper.EvaluationMapper">
+
+    <!-- 1. 基础字段SQL片段（严格对应数据库表字段） -->
+    <sql id="Base_Column_List">
+        eval_id, order_id, user_id, evaluatee_id, content, score,
+        `status`, create_time, update_time
+    </sql>
+
+    <!-- 2. 联表查询专用字段（带表别名e.，用于关联order表的查询） -->
+    <sql id="JoinTable_Column_List">
+        e.eval_id, e.order_id, e.user_id, e.evaluatee_id, e.content, e.score,
+    e.`status`, e.create_time, e.update_time
+    </sql>
+
+    <!-- ==================== 关联查询 ==================== -->
+    <select id="selectByOrderId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `evaluation`
+        WHERE order_id = #{orderId}
+        AND `status` = 'NORMAL'
+    </select>
+
+    <select id="selectBySellerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `evaluation`
+        WHERE evaluatee_id = #{sellerId}
+        AND `status` = 'NORMAL'
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectByBuyerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `evaluation`
+        WHERE user_id = #{buyerId}
+        AND `status` = 'NORMAL'
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 新增：根据查询条件分页查询评价列表 -->
+    <select id="selectByQuery" resultMap="BaseResultMap">
+            SELECT <include refid="Base_Column_List"/> FROM `evaluation`
+        <where>
+            <!-- 状态搜索 -->
+            status = 'NORMAL'
+            <!-- 被评价者ID搜索 -->
+            <if test="evaluateeId != null">
+                AND evaluatee_id = #{evaluateeId}
+            </if>
+            <!-- 评分搜索 -->
+            <if test="score != null">
+                AND score = #{score}
+            </if>
+            <if test="productId != null">
+                AND order_id IN (
+                SELECT order_id FROM `order`
+                WHERE product_id = #{productId}
+                )
+            </if>
+        </where>
+
+        <!-- 排序：支持用户常用的排序方式 -->
+        <if test="sortField != null and sortDir != null">
+            ORDER BY ${query.sortField} ${query.sortDir}
+        </if>
+        <if test="sortField == null">
+            <!-- 默认按更新时间倒序 -->
+            ORDER BY create_time DESC
+        </if>
+
+        <!-- 分页参数 -->
+        <if test="pageNum != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <!-- 新增：根据查询条件统计评价数量 -->
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(1) FROM `evaluation`
+        <where>
+            <!-- 状态搜索 -->
+            status = 'NORMAL'
+            <!-- 被评价者ID搜索 -->
+            <if test="query.evaluateeId != null">
+                AND evaluatee_id = #{query.evaluateeId}
+            </if>
+            <!-- 评分搜索 -->
+            <if test="query.score != null">
+                AND score = #{query.score}
+            </if>
+            <if test="query.productId != null">
+                AND order_id IN (
+                SELECT order_id FROM `order`
+                WHERE product_id = #{query.productId}
+                )
+            </if>
+        </where>
+    </select>
+
+
+    <!-- ==================== 统计分析 ==================== -->
+    <select id="selectSellerAverageScore" resultType="java.lang.Double">
+        SELECT ROUND(AVG(score), 1) FROM `evaluation`
+        WHERE evaluatee_id = #{sellerId}
+          AND `status` = 'NORMAL'
+    </select>
+
+    <select id="countSellerScoreLevel" resultType="int">
+        SELECT COUNT(1) FROM `evaluation`
+        WHERE evaluatee_id = #{sellerId}
+          AND `status` = 'NORMAL'
+          AND `score` BETWEEN #{minScore} AND #{maxScore}
+    </select>
+
+    <select id="countByOrderIds" resultType="int">
+        SELECT COUNT(1) FROM `evaluation`
+        WHERE order_id IN
+        <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+        AND status = 'NORMAL'
+    </select>
+
+    <select id="selectProductAverageScore" resultType="java.lang.Double">
+        SELECT ROUND(AVG(score), 1) FROM `evaluation` e
+        JOIN `order` o ON e.order_id = o.order_id
+        WHERE o.product_id = #{productId}
+    </select>
+
+</mapper>

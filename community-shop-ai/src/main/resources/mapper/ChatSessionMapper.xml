@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.graygoo401.ai.dao.mapper.ChatSessionMapper">
+
+    <!-- 基础字段SQL片段，减少冗余 -->
+    <sql id="Base_Column_List">
+        chat_session_id, user_id, title, status, create_time, update_time
+    </sql>
+
+    <!-- ==================== SQL 语句 ==================== -->
+
+    <!-- 1. 多条件统计会话总数 -->
+    <select id="countByQuery" parameterType="xyz.graygoo401.api.ai.dto.session.ChatSessionQueryDTO" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM `chat_session`
+        <where>
+            <!-- 条件1：用户名筛选 -->
+            <if test="userId != null">
+                user_id = #{userId} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+        </where>
+    </select>
+
+    <!-- 2. 多条件查询用户列表（支持标签、筛选、排序、分页） -->
+    <select id="selectByQuery" parameterType="xyz.graygoo401.api.ai.dto.session.ChatSessionQueryDTO" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `chat_session`
+        <where>
+            <!-- 条件1：用户名筛选 -->
+            <if test="userId != null">
+                user_id = #{userId} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+        </where>
+        <!-- 默认排序 -->
+        ORDER BY update_time DESC
+        <!-- 分页：基于PageParam的pageNum和pageSize计算偏移量（offset = (pageNum-1)*pageSize） -->
+        <if test="pageNum != null and pageSize != null">
+            LIMIT #{offset,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+        </if>
+    </select>
+
+</mapper>

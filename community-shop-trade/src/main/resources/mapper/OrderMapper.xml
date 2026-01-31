@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.graygoo401.trade.dao.mapper.OrderMapper">
+
+    <!-- 基础字段SQL片段（严格对应数据库表字段） -->
+    <sql id="Base_Column_List">
+        order_id, product_id, buyer_id, seller_id, order_no, total_amount, quantity,
+        receiver_name, `address`, phone_number, buyer_remark, `status`, pay_type,
+        create_time, pay_time, ship_time, receive_time, cancel_time, pay_expire_time
+    </sql>
+
+    <!-- ==================== 状态与时间更新 ==================== -->
+    <update id="updateStatus">
+        UPDATE `order`
+        SET `status` = #{status.code,jdbcType=VARCHAR}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <update id="updatePayInfo">
+        UPDATE `order`
+        SET pay_time = #{payTime},
+            pay_type = #{payType},
+            `status` = 'PENDING_SHIPMENT' -- 支付后自动更新为待发货状态
+        WHERE order_id = #{orderId}
+          AND `status` = 'PENDING_PAYMENT' -- 仅允许未支付订单更新支付信息
+    </update>
+
+    <update id="updateShipInfo">
+        UPDATE `order`
+        SET ship_time = #{shipTime},
+            `status` = 'PENDING_RECEIVE' -- 发货后自动更新为待收货状态
+        WHERE order_id = #{orderId}
+          AND `status` = 'PENDING_SHIPMENT' -- 仅允许待发货订单更新发货时间
+    </update>
+
+    <update id="updateReceiveInfo">
+        UPDATE `order`
+        SET receive_time = #{receiveTime},
+            `status` = 'COMPLETED' -- 收货后自动更新为已完成状态
+        WHERE order_id = #{orderId}
+          AND `status` = 'PENDING_RECEIVE' -- 仅允许待收货订单更新收货时间
+    </update>
+
+
+    <!-- ==================== 条件查询 ==================== -->
+
+    <!-- 按订单查询条件统计订单数量 -->
+    <select id="countByQuery" parameterType="com.community_shop.backend.dto.order.OrderQueryDTO" resultType="int">
+        SELECT COUNT(1) FROM `order`
+        <where>
+            <!-- 条件1：买家ID搜索 -->
+            <if test="buyerId != null">
+                buyer_id = #{buyerId}
+            </if>
+            <!-- 条件2：卖家ID搜索 -->
+            <if test="sellerId != null">
+                AND seller_id = #{sellerId}
+            </if>
+            <!-- 条件3：订单状态搜索 -->
+            <if test="status != null">
+                AND `status` = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 条件4：支付方式搜索 -->
+            <if test="payType != null">
+                AND pay_type = #{payType}
+            </if>
+        </where>
+    </select>
+
+    <!-- 按订单查询条件分页查询订单 -->
+    <select id="selectByQuery" parameterType="com.community_shop.backend.dto.order.OrderQueryDTO" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        <where>
+            <!-- 条件1：买家ID搜索 -->
+            <if test="buyerId != null">
+                buyer_id = #{buyerId}
+            </if>
+            <!-- 条件2：卖家ID搜索 -->
+            <if test="sellerId != null">
+                AND seller_id = #{sellerId}
+            </if>
+            <!-- 条件3：订单状态搜索 -->
+            <if test="status != null">
+                AND `status` = #{status.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
+            </if>
+            <!-- 条件4：支付方式搜索 -->
+            <if test="payType != null">
+                AND pay_type = #{payType}
+            </if>
+        </where>
+
+        <!-- 排序：支持用户常用的排序方式 -->
+        <if test="sortField != null and sortDir != null">
+            ORDER BY ${sortField} ${sortDir}
+        </if>
+        <if test="sortField == null">
+            <!-- 默认按创建时间倒序 -->
+            ORDER BY create_time DESC
+        </if>
+
+        <!-- 分页参数 -->
+        <if test="pageNum != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="selectByBuyerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        WHERE buyer_id = #{buyerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectBySellerId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        WHERE seller_id = #{sellerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByBuyerId" resultType="int">
+        SELECT COUNT(*) FROM `order`
+        WHERE buyer_id = #{buyerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="countBySellerId" resultType="int">
+        SELECT COUNT(*) FROM `order`
+        WHERE seller_id = #{sellerId}
+        <if test="status != null">
+            AND status = #{status.code,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="selectByCreateTimeRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM `order`
+        <where>
+            <!-- 按角色区分查询条件 -->
+            <if test="role == 'BUYER'">
+                buyer_id = #{userId}
+            </if>
+            <if test="role == 'SELLER'">
+                seller_id = #{userId}
+            </if>
+            <!-- 时间范围筛选 -->
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+</mapper>

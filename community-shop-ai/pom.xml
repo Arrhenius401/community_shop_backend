@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>xyz.graygoo401</groupId>
+        <artifactId>Community_Shop_Backend</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>community-shop-ai</artifactId>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- 1. 引入基础底座 -->
+        <dependency>
+            <groupId>xyz.graygoo401</groupId>
+            <artifactId>community-shop-common</artifactId>
+        </dependency>
+
+        <!-- 2. 引入 API (定义了 UserDTO 等) -->
+        <dependency>
+            <groupId>xyz.graygoo401</groupId>
+            <artifactId>community-shop-api</artifactId>
+        </dependency>
+
+        <!-- 3. 引入工具 (MinIO/短信等) -->
+        <dependency>
+            <groupId>xyz.graygoo401</groupId>
+            <artifactId>community-shop-infra</artifactId>
+        </dependency>
+
+        <!-- 数据库驱动 (只有业务模块需要连库) -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+
+        <!-- 4. 引入 Spring Cloud 组件 -->
+        <!-- 服务注册与发现 (Nacos) -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!-- 远程调用 (Feign) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!-- 负载均衡 (必带，否则 Feign 找不着人) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

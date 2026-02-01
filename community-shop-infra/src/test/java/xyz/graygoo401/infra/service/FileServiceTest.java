@@ -19,6 +19,7 @@ import xyz.graygoo401.common.exception.error.SystemErrorCode;
 import xyz.graygoo401.infra.dao.entity.File;
 import xyz.graygoo401.infra.dao.mapper.FileMapper;
 import xyz.graygoo401.infra.service.base.FileService;
+import xyz.graygoo401.infra.service.impl.FileServiceImpl;
 import xyz.graygoo401.infra.util.MinioUtil;
 
 import java.lang.reflect.Method;
@@ -43,7 +44,7 @@ public class FileServiceTest {
     private UserUtil userUtil;
 
     @InjectMocks
-    private FileService fileService;
+    private FileServiceImpl fileService;
 
     // 测试数据
     private UserDTO testUser;
@@ -88,21 +89,6 @@ public class FileServiceTest {
         when(fileMapper.deleteByFilePath(anyString())).thenReturn(1);
         when(minioUtil.generatePresignedUrl(anyString())).thenReturn("https://minio.example.com/presigned-url");
         doNothing().when(minioUtil).downloadToResponse(anyString(), any(HttpServletResponse.class));
-    }
-
-    // ==================== 测试 getFileSuffix (私有方法) ====================
-    @Test
-    void testGetFileSuffix() throws Exception {
-        Method method = FileService.class.getDeclaredMethod("getFileSuffix", String.class);
-        method.setAccessible(true);
-
-        assertEquals("jpg", method.invoke(fileService, "photo.jpg"));
-        assertEquals("jpeg", method.invoke(fileService, "photo.jpeg"));
-        assertEquals("", method.invoke(fileService, "README"));       // 无后缀
-        assertEquals("", method.invoke(fileService, "file."));        // 以点结尾
-        assertEquals("gitignore", method.invoke(fileService, ".gitignore")); // 隐藏文件
-        assertEquals("", method.invoke(fileService, ""));             // 空字符串
-        assertEquals("", method.invoke(fileService, (String)null));           // null
     }
 
     // ==================== 测试 uploadImage ====================

@@ -5,20 +5,20 @@
     <!-- 基础字段SQL片段，减少冗余 -->
     <sql id="Base_Column_List">
         user_id, username, email, phone_number, password, avatar_url, bio, gender, `role`, `status`,
-        credit_score, activity_time, create_time
+        credit_score, update_time, create_time
     </sql>
 
 
     <!-- ==================== 登录与身份校验 ==================== -->
-    <select id="selectByUsername" resultMap="BaseResultMap">
+    <select id="selectByUsername" resultType="xyz.graygoo401.user.dao.entity.User">
         SELECT <include refid="Base_Column_List"/> FROM `user` WHERE username = #{username}
     </select>
 
-    <select id="selectByPhone" resultMap="BaseResultMap">
+    <select id="selectByPhone" resultType="xyz.graygoo401.user.dao.entity.User">
         SELECT <include refid="Base_Column_List"/> FROM `user` WHERE phone_number = #{phoneNumber}
     </select>
 
-    <select id="selectByEmail" resultMap="BaseResultMap">
+    <select id="selectByEmail" resultType="xyz.graygoo401.user.dao.entity.User">
         SELECT <include refid="Base_Column_List"/> FROM `user` WHERE email = #{email}
     </select>
 
@@ -31,7 +31,7 @@
 
     <!-- ==================== 条件查询 ==================== -->
 
-    <select id="selectByRole" resultMap="BaseResultMap">
+    <select id="selectByRole" resultType="xyz.graygoo401.user.dao.entity.User">
         SELECT <include refid="Base_Column_List"/> FROM `user`
         WHERE `role` = #{role.code,jdbcType=VARCHAR} <!-- 简化：无需显式指定typeHandler -->
     </select>
@@ -56,7 +56,7 @@
     </select>
 
     <!-- 2. 多条件查询用户列表（支持标签、筛选、排序、分页） -->
-    <select id="selectByQuery" parameterType="xyz.graygoo401.api.user.dto.user.UserQueryDTO" resultMap="BaseResultMap">
+    <select id="selectByQuery" parameterType="xyz.graygoo401.api.user.dto.user.UserQueryDTO" resultType="xyz.graygoo401.user.dao.entity.User">
         SELECT <include refid="Base_Column_List"/> FROM `user`
         <where>
             <!-- 条件1：状态筛选 -->

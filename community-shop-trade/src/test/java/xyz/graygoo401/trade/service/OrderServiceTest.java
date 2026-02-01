@@ -35,6 +35,7 @@ import xyz.graygoo401.trade.exception.error.OrderErrorCode;
 import xyz.graygoo401.trade.exception.error.ProductErrorCode;
 import xyz.graygoo401.trade.service.base.OrderService;
 import xyz.graygoo401.trade.service.base.ProductService;
+import xyz.graygoo401.trade.service.impl.OrderServiceImpl;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -71,7 +72,7 @@ public class OrderServiceTest {
 
     // 注入测试目标服务
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
 
     // 测试数据
     private UserDTO testAdminUser;

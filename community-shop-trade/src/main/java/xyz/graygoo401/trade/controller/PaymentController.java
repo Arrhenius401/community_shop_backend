@@ -3,6 +3,7 @@ package xyz.graygoo401.trade.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,6 @@ import xyz.graygoo401.common.util.RequestParseUtil;
 import xyz.graygoo401.common.vo.ResultVO;
 import xyz.graygoo401.trade.service.impl.AlipayServiceImpl;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,9 +1,11 @@
 package xyz.graygoo401.api.trade.dto.payment;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
+/**
+ * 支付宝支付参数DTO
+ */
 @Data
 public class AlipayPayDTO {
 

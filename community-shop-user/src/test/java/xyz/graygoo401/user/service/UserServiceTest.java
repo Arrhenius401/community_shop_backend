@@ -350,7 +350,7 @@ public class UserServiceTest {
         // 模拟依赖行为
         doReturn(testUser).when(userMapper).selectByEmail(anyString());
         doReturn( true).when(passwordEncoder).matches(anyString(), anyString());
-        doReturn("testToken").when(tokenUtil).generateToken(anyLong());
+        doReturn("testToken").when(tokenUtil).generateToken(anyLong(), anyString(), anyString());
         doReturn(LocalDateTime.now().plusHours(1)).when(tokenUtil).getExpirationTimeFromToken(anyString());
         when(userConvert.userToLoginResultUserSimpleDTO(any(User.class))).thenAnswer(invocation -> {
             LoginResultDTO.UserSimpleDTO user = new LoginResultDTO.UserSimpleDTO();

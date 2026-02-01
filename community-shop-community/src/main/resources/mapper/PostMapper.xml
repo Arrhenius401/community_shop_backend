@@ -11,28 +11,28 @@
 
     <!-- ==================== 列表查询（多维度排序） ==================== -->
 
-    <select id="selectByUserId" resultMap="BaseResultMap">
+    <select id="selectByUserId" resultType="xyz.graygoo401.community.dao.entity.Post">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         WHERE user_id = #{userId}
         ORDER BY create_time DESC
         LIMIT #{offset}, #{limit}
     </select>
 
-    <select id="selectHotPosts" resultMap="BaseResultMap">
+    <select id="selectHotPosts" resultType="xyz.graygoo401.community.dao.entity.Post">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         WHERE `is_hot` = 1 AND `status` = 'NORMAL'
         ORDER BY like_count DESC, post_follow_count DESC
         LIMIT #{limit}
     </select>
 
-    <select id="selectEssencePosts" resultMap="BaseResultMap">
+    <select id="selectEssencePosts" resultType="xyz.graygoo401.community.dao.entity.Post">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         WHERE is_essence = 1 AND `status` = 'NORMAL'
         ORDER BY update_time DESC
         LIMIT #{offset}, #{limit}
     </select>
 
-    <select id="selectTopPosts" resultMap="BaseResultMap">
+    <select id="selectTopPosts" resultType="xyz.graygoo401.community.dao.entity.Post">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         WHERE `is_top` = 1 AND `status` = 'NORMAL'
         ORDER BY update_time DESC
@@ -71,7 +71,7 @@
     </select>
 
     <!-- 按帖子查询条件分页查询帖子 -->
-    <select id="selectByQuery" parameterType="xyz.graygoo401.api.community.dto.post.PostQueryDTO" resultMap="BaseResultMap">
+    <select id="selectByQuery" parameterType="xyz.graygoo401.api.community.dto.post.PostQueryDTO" resultType="xyz.graygoo401.community.dao.entity.Post">
         SELECT <include refid="Base_Column_List"/> FROM `post`
         <where>
             <!-- 帖子标题关键词搜索 -->

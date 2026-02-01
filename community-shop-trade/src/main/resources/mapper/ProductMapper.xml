@@ -12,7 +12,7 @@
 
     <!-- ==================== 搜索与筛选 ==================== -->
 
-    <select id="selectByKeyword" resultMap="BaseResultMap">
+    <select id="selectByKeyword" resultType="xyz.graygoo401.trade.dao.entity.Product">
         SELECT <include refid="Base_Column_List"/> FROM product
         WHERE status = 'ON_SALE'
         AND (title LIKE CONCAT('%', #{keyword}, '%')
@@ -90,7 +90,7 @@
 
 
     <!-- 按ProductQueryDTO条件分页查询商品 -->
-    <select id="selectByQuery" resultMap="BaseResultMap">
+    <select id="selectByQuery" resultType="xyz.graygoo401.trade.dao.entity.Product">
         SELECT <include refid="Base_Column_List"/> FROM product
         <where>
             <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
@@ -184,7 +184,7 @@
     </select>
 
     <!-- 按卖家查询条件分页查询商品 -->
-    <select id="selectBySellerQuery" resultMap="BaseResultMap">
+    <select id="selectBySellerQuery" resultType="xyz.graygoo401.trade.dao.entity.Product">
         SELECT <include refid="Base_Column_List"/> FROM product
         <where>
             <!-- 卖家ID固定筛选（当前登录卖家只能查看自己的商品） -->
@@ -253,14 +253,14 @@
         WHERE product_id = #{productId}
     </update>
 
-    <select id="selectBySellerId" resultMap="BaseResultMap">
+    <select id="selectBySellerId" resultType="xyz.graygoo401.trade.dao.entity.Product">
         SELECT <include refid="Base_Column_List"/> FROM product
         WHERE seller_id = #{sellerId}
         ORDER BY create_time DESC
         LIMIT #{offset}, #{limit}
     </select>
 
-    <select id="selectBySellerIdAndStatus" resultMap="BaseResultMap">
+    <select id="selectBySellerIdAndStatus" resultType="xyz.graygoo401.trade.dao.entity.Product">
         SELECT <include refid="Base_Column_List"/> FROM product
         WHERE seller_id = #{sellerId}
         AND status = #{status.code,jdbcType=VARCHAR}

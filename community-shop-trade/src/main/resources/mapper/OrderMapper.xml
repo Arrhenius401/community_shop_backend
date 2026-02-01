@@ -45,7 +45,7 @@
     <!-- ==================== 条件查询 ==================== -->
 
     <!-- 按订单查询条件统计订单数量 -->
-    <select id="countByQuery" parameterType="com.community_shop.backend.dto.order.OrderQueryDTO" resultType="int">
+    <select id="countByQuery" parameterType="xyz.graygoo401.api.trade.dto.order.OrderQueryDTO" resultType="int">
         SELECT COUNT(1) FROM `order`
         <where>
             <!-- 条件1：买家ID搜索 -->
@@ -68,7 +68,7 @@
     </select>
 
     <!-- 按订单查询条件分页查询订单 -->
-    <select id="selectByQuery" parameterType="com.community_shop.backend.dto.order.OrderQueryDTO" resultMap="BaseResultMap">
+    <select id="selectByQuery" parameterType="xyz.graygoo401.api.trade.dto.order.OrderQueryDTO" resultType="xyz.graygoo401.trade.dao.entity.Order">
         SELECT <include refid="Base_Column_List"/> FROM `order`
         <where>
             <!-- 条件1：买家ID搜索 -->
@@ -104,7 +104,7 @@
         </if>
     </select>
 
-    <select id="selectByBuyerId" resultMap="BaseResultMap">
+    <select id="selectByBuyerId" resultType="xyz.graygoo401.trade.dao.entity.Order">
         SELECT <include refid="Base_Column_List"/> FROM `order`
         WHERE buyer_id = #{buyerId}
         <if test="status != null">
@@ -114,7 +114,7 @@
         LIMIT #{offset}, #{limit}
     </select>
 
-    <select id="selectBySellerId" resultMap="BaseResultMap">
+    <select id="selectBySellerId" resultType="xyz.graygoo401.trade.dao.entity.Order">
         SELECT <include refid="Base_Column_List"/> FROM `order`
         WHERE seller_id = #{sellerId}
         <if test="status != null">
@@ -140,7 +140,7 @@
         </if>
     </select>
 
-    <select id="selectByCreateTimeRange" resultMap="BaseResultMap">
+    <select id="selectByCreateTimeRange" resultType="xyz.graygoo401.trade.dao.entity.Order">
         SELECT <include refid="Base_Column_List"/> FROM `order`
         <where>
             <!-- 按角色区分查询条件 -->

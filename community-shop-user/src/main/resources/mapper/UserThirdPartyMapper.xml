@@ -10,14 +10,14 @@
 
 
     <!-- ==================== 关联查询 ==================== -->
-    <select id="selectByThirdTypeAndOpenid" resultMap="BaseResultMap">
+    <select id="selectByThirdTypeAndOpenid" resultType="xyz.graygoo401.user.dao.entity.UserThirdParty">
         SELECT <include refid="Base_Column_List"/> FROM user_third_party
         WHERE third_type = #{thirdType.code,jdbcType=VARCHAR}
         AND openid = #{openid}
         AND is_valid = 1 -- 仅查询有效绑定记录
     </select>
 
-    <select id="selectValidByUserId" resultMap="BaseResultMap">
+    <select id="selectValidByUserId" resultType="xyz.graygoo401.user.dao.entity.UserThirdParty">
         SELECT <include refid="Base_Column_List"/> FROM user_third_party
         WHERE user_id = #{userId}
         AND is_valid = 1

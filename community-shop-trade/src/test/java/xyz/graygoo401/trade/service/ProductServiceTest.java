@@ -703,7 +703,7 @@ public class ProductServiceTest {
         });
 
         // 4. 验证结果
-        assertEquals(ProductErrorCode.PRODUCT_ALREADY_OFF_SALE, exception);
+        assertEquals(ProductErrorCode.PRODUCT_ALREADY_OFF_SALE, exception.getErrorCode());
         verify(valueOperations, never()).set(anyString(), any(), anyLong(), any(TimeUnit.class));
     }
 

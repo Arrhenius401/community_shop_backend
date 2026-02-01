@@ -2,37 +2,33 @@ package xyz.graygoo401.api.ai.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.ai.chat.messages.MessageType;
 
 /**
  * 自定义枚举适配器（适配 MyBatis-Plus 自动转换）
  */
+@AllArgsConstructor
 @Getter
 public enum ChatMessageTypeEnum {
 
     /** 用户消息 */
-    USER(MessageType.USER),
+    USER("USER", "用户信息"),
 
     /** 助手消息 */
-    ASSISTANT(MessageType.ASSISTANT),
+    ASSISTANT("ASSISTANT", "助手信息"),
 
     /** 系统消息 */
-    SYSTEM(MessageType.SYSTEM),
+    SYSTEM("SYSTEM", "系统信息"),
 
     /** 工具消息 */
-    TOOL(MessageType.TOOL);
+    TOOL("TOOL", "工具信息");
 
     @JsonValue
     @EnumValue
     private final String code;
 
-    private final MessageType aiMessageType;
-
-    ChatMessageTypeEnum(MessageType aiMessageType) {
-        this.code = aiMessageType.getValue();
-        this.aiMessageType = aiMessageType;
-    }
+    private final String desc;
 
     /**
      * 数据库字符串 → 自定义枚举
@@ -44,13 +40,6 @@ public enum ChatMessageTypeEnum {
             }
         }
         throw new IllegalArgumentException("未知消息类型: " + value);
-    }
-
-    /**
-     * 自定义枚举 → Spring AI MessageType
-     */
-    public MessageType toAiMessageType() {
-        return aiMessageType;
     }
 
     /**

@@ -16,7 +16,7 @@
         WHERE user_id = #{userId} AND post_id = #{postId}
     </delete>
 
-    <select id="selectByUserAndPost" resultMap="BaseResultMap">
+    <select id="selectByUserAndPost" resultType="xyz.graygoo401.community.dao.entity.UserPostLike">
         SELECT <include refid="Base_Column_List"/> FROM user_post_like
         WHERE user_id = #{userId} AND post_id = #{postId}
         AND status = 'ACTIVE'

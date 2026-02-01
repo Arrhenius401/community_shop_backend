@@ -45,7 +45,7 @@
 
 
     <!-- ==================== 查询与统计 ==================== -->
-    <select id="selectByReceiver" resultMap="BaseResultMap">
+    <select id="selectByReceiver" resultType="xyz.graygoo401.infra.dao.entity.Message">
         SELECT <include refid="Base_Column_List"/> FROM `message`
         WHERE receiver_id = #{receiverId}
         AND is_deleted = 0 -- 仅查询未删除的消息
@@ -104,7 +104,7 @@
     </select>
 
     <!-- 复杂查询条件分页查询 -->
-    <select id="selectByQuery" resultMap="BaseResultMap">
+    <select id="selectByQuery" resultType="xyz.graygoo401.infra.dao.entity.Message">
         SELECT <include refid="Base_Column_List"/> FROM message
         <where>
             <!-- 条件1：筛选状态消息 -->
@@ -154,7 +154,7 @@
     </select>
 
     <!-- 私聊查询条件分页查询 -->
-    <select id="selectByPrivateQuery" resultMap="BaseResultMap">
+    <select id="selectByPrivateQuery" resultType="xyz.graygoo401.infra.dao.entity.Message">
         SELECT <include refid="Base_Column_List"/> FROM message
         <where>
             <!-- 条件1：未删除的消息 -->

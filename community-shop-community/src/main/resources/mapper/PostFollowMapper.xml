@@ -8,20 +8,20 @@
     </sql>
 
     <!-- ==================== 关联查询 ==================== -->
-    <select id="selectByPostId" resultMap="BaseResultMap">
+    <select id="selectByPostId" resultType="xyz.graygoo401.community.dao.entity.PostFollow">
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         WHERE post_id = #{postId} AND status = 'NORMAL'
         ORDER BY create_time ASC
         LIMIT #{offset}, #{limit}
     </select>
 
-    <select id="selectByUserId" resultMap="BaseResultMap">
+    <select id="selectByUserId" resultType="xyz.graygoo401.community.dao.entity.PostFollow">
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         WHERE user_id = #{userId} AND status = 'NORMAL'
         ORDER BY create_time ASC
     </select>
 
-    <select id="selectByParentId" resultMap="BaseResultMap">
+    <select id="selectByParentId" resultType="xyz.graygoo401.community.dao.entity.PostFollow">
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         WHERE parent_id = #{parentId} AND status = 'NORMAL'
         ORDER BY create_time ASC
@@ -44,7 +44,7 @@
     </select>
 
     <!-- 按跟帖查询条件分页查询跟帖 -->
-    <select id="selectByQuery" resultMap="BaseResultMap">
+    <select id="selectByQuery" resultType="xyz.graygoo401.community.dao.entity.PostFollow">
         SELECT <include refid="Base_Column_List"/> FROM post_follow
         <where>
             <!-- 帖子ID搜索 -->

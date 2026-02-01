@@ -30,7 +30,7 @@ public class Evaluation {
     private Long userId;
 
     /** 卖家ID */
-    @TableField("seller_id")
+    @TableField("evaluatee_id")
     private Long evaluateeId;
 
     /** 评价内容 */

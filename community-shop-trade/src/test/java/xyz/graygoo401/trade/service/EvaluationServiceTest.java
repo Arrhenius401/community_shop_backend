@@ -344,7 +344,7 @@ public class EvaluationServiceTest {
         });
 
         // 5. 验证异常信息
-        assertEquals(OrderErrorCode.ORDER_NOT_COMPLETED.getCode(), exception.getErrorCode());
+        assertEquals(OrderErrorCode.ORDER_NOT_COMPLETED, exception.getErrorCode());
 
         // 6. 验证依赖调用（未执行评价插入）
         verify(evaluationMapper, never()).insert(any(Evaluation.class));

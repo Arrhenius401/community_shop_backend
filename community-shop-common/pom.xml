@@ -25,19 +25,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- 2. Spring Boot测试支持（含Mapper层测试） -->
+        <!-- 2. redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <!-- 排除旧版本JUnit4 -->
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
 
         <!-- 3. Spring Security -->
         <dependency>

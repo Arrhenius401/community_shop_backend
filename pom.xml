@@ -241,7 +241,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.5.0</version>
                     <!-- 不配置 executions，避免子模块自动执行 repackage -->
                 </plugin>
 
@@ -275,7 +275,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.30</version> <!-- 与依赖版本一致 -->
+                            <version>${lombok.version}</version> <!-- 与依赖版本一致 -->
                         </path>
                         <!-- 2. 再执行 MapStruct 处理器（生成转换代码） -->
                         <path>

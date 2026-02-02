@@ -1,4 +1,4 @@
-package xyz.graygoo401.infra.config;
+package xyz.graygoo401.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;

@@ -272,6 +272,20 @@
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
+
+            <!-- 配置 Maven Surefire 插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <!-- 核心配置：无测试用例时不失败 -->
+                    <failIfNoTests>false</failIfNoTests>
+                    <!-- 可选：跳过测试执行（如果不需要运行任何测试） -->
+                    <!-- <skipTests>true</skipTests> -->
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

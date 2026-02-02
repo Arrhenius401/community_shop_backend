@@ -234,11 +234,27 @@
     </dependencyManagement>
 
     <build>
+
+        <pluginManagement>
+            <plugins>
+                <!-- 1. 管理 Spring Boot 插件版本（仅声明，不执行） -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <!-- 不配置 executions，避免子模块自动执行 repackage -->
+                </plugin>
+
+                <!-- 2. 管理 Surefire 插件版本 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
 
             <!-- 编译插件：解决 Lombok 与 MapStruct 注解处理器冲突 -->
             <!-- 必须配置编译插件，否则会导致 Lombok 和 MapStruct 的注解处理器执行顺序混乱，出现编译错误（如类找不到、方法未生成等） -->

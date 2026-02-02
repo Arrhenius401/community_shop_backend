@@ -106,12 +106,6 @@
         </dependency>
 
         <!-- 6. 引入工具 (MinIO/短信等) -->
-        <!-- MinIO SDK -->
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>8.5.2</version>
-        </dependency>
 
         <!-- 阿里云SDK基础依赖（阿里云为所有云产品（如号码认证、OSS、短信服务等）提供的 统一 API 调用框架） -->
         <dependency>

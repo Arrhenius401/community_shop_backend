@@ -80,4 +80,21 @@ public class RequestParseUtil {
         }
         return userId;
     }
+
+    /**
+     * 配合gateway模块，获取当前登录用户的ID
+     * @return 用户ID
+     * @throws UnLoginException 当用户未登录时抛出
+     */
+    public Long getUserId() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+
+        // 直接从网关传过来的 Header 中获取
+        String userIdStr = request.getHeader("X-User-Id");
+        if (userIdStr == null) {
+            throw new UnLoginException("用户未登录");
+        }
+        return Long.valueOf(userIdStr);
+    }
 }

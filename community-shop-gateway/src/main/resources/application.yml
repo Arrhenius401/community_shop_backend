@@ -1,0 +1,50 @@
+server:
+  port: 80 # 网关通常占用 80 端口（公网默认端口）
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+      discovery:
+        locator:
+          enabled: true # 让网关发现 Nacos 里的服务
+      routes:
+        # 1. 用户服务路由
+        - id: user-route
+          uri: lb://user-service # lb 代表 LoadBalance（负载均衡）
+          predicates:
+            - Path=/api/v1/users/**
+
+        # 2. 交易服务路由
+        - id: trade-route
+          uri: lb://trade-service
+          predicates:
+            - Path=/api/v1/trade/**
+
+        # 3. 基础设施路由
+        - id: infra-route
+          uri: lb://infra-service
+          predicates:
+            - Path=/api/v1/infra/**
+
+       # 4. AI服务路由
+        - id: ai-route
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/v1/ai/**

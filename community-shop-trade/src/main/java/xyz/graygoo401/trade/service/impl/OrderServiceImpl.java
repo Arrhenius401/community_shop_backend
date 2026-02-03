@@ -1,6 +1,7 @@
 package xyz.graygoo401.trade.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import xyz.graygoo401.api.common.dto.mq.OrderEventDTO;
 import xyz.graygoo401.api.infra.dto.message.MessageSendDTO;
 import xyz.graygoo401.api.infra.enums.MessageTypeEnum;
 import xyz.graygoo401.api.infra.util.InfraUtil;
@@ -88,6 +90,9 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     /**
      * 创建订单（支持单商品）
@@ -164,8 +169,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             );
 
             // 8. 发送订单创建通知给卖家
-            sendSellerOrderNotice(order.getSellerId(), order.getOrderId(), "新订单通知",
-                    "您有一笔新订单，订单编号：" + order.getOrderNo() + "，商品：" + product.getTitle());
+            sendOrderNotice(order, OrderStatusEnum.PENDING_PAYMENT.getCode());
 
             log.info("订单创建成功，订单ID：{}，买家ID：{}", order.getOrderId(), userId);
             return orderDetail;
@@ -239,8 +243,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
 
             // 8. 发送取消通知给卖家
-            sendSellerOrderNotice(order.getSellerId(), orderId, "订单取消通知",
-                    "订单编号：" + order.getOrderNo() + " 已取消，库存已恢复");
+            sendOrderNotice(order, OrderStatusEnum.CANCELLED.getCode());
 
             log.info("订单取消成功，订单ID：{}，操作人ID：{}", orderId, userId);
             return true;
@@ -311,10 +314,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
 
             // 8. 发送支付成功通知（买家 + 卖家）
-            sendBuyerOrderNotice(order.getBuyerId(), order.getOrderId(), "支付成功通知",
-                    "您的订单（编号：" + order.getOrderNo() + "）已支付成功，等待卖家发货");
-            sendSellerOrderNotice(order.getSellerId(), order.getOrderId(), "订单支付通知",
-                    "订单编号：" + order.getOrderNo() + " 已支付，请及时发货");
+            sendOrderNotice(order,OrderStatusEnum.PENDING_SHIPMENT.getCode());
 
             log.info("支付回调处理成功，订单号：{}，支付流水号：{}",
                     payCallbackDTO.getOrderNo(), payCallbackDTO.getPayNo());
@@ -384,9 +384,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + sellerId);
 
             // 8. 发送发货通知给买家
-            sendBuyerOrderNotice(order.getBuyerId(), orderId, "卖家发货通知",
-                    "您的订单（编号：" + order.getOrderNo() + "）已发货，快递公司："
-                            + shipDTO.getExpressCompany() + "，快递单号：" + shipDTO.getExpressNo());
+            sendOrderNotice(order, OrderStatusEnum.SHIPPED.getCode());
 
             log.info("订单发货成功，订单ID：{}，卖家ID：{}", orderId, sellerId);
             return orderDetail;
@@ -452,8 +450,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
             redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
 
             // 8. 发送确认收货通知给卖家
-            sendSellerOrderNotice(order.getSellerId(), orderId, "买家确认收货通知",
-                    "订单编号：" + order.getOrderNo() + " 买家已确认收货，交易完成");
+            sendOrderNotice(order, OrderStatusEnum.COMPLETED.getCode());
 
             log.info("订单确认收货成功，订单ID：{}，买家ID：{}", orderId, buyerId);
             return orderDetail;
@@ -699,8 +696,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
                     redisTemplate.delete(CACHE_KEY_ORDER_LIST + "seller:" + order.getSellerId());
 
                     // 3.4 发送系统关闭通知给买家
-                    sendBuyerOrderNotice(order.getBuyerId(), order.getOrderId(), "订单超时关闭通知",
-                            "您的订单（编号：" + order.getOrderNo() + "）因超时未支付，已被系统自动关闭，库存已恢复");
+                    sendOrderNotice(order, OrderStatusEnum.CANCELLED.getCode());
 
                     closedCount++;
                     log.info("自动关闭超时订单成功，订单ID：{}，订单编号：{}", order.getOrderId(), order.getOrderNo());
@@ -856,30 +852,13 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
         }
     }
 
-    /**
-     * 发送订单通知给买家（调用MessageService）
-     */
-    private void sendBuyerOrderNotice(Long buyerId, Long orderId, String title, String content) {
-        MessageSendDTO sendDTO = new MessageSendDTO();
-        sendDTO.setReceiverId(buyerId);
-        sendDTO.setTitle(title);
-        sendDTO.setContent(content);
-        sendDTO.setBusinessId(orderId);
-        sendDTO.setType(MessageTypeEnum.ORDER);
-//        messageService.sendMessage(sendDTO, 0L); // 0表示系统发送
-    }
+    private void sendOrderNotice(Order order, String type) {
+        OrderEventDTO event = new OrderEventDTO(order.getOrderId(), order.getBuyerId(),
+                order.getSellerId(), order.getOrderNo(), type);
 
-    /**
-     * 发送订单通知给卖家（调用MessageService）
-     */
-    private void sendSellerOrderNotice(Long sellerId, Long orderId, String title, String content) {
-        MessageSendDTO sendDTO = new MessageSendDTO();
-        sendDTO.setReceiverId(sellerId);
-        sendDTO.setTitle(title);
-        sendDTO.setContent(content);
-//        sendDTO.setOrderId(orderId);
-        sendDTO.setType(MessageTypeEnum.ORDER);
-//        messageService.sendMessage(sendDTO, 0L); // 0表示系统发送
+        // 发送到 order.topic 交换机，路由键为 order.pay.success
+        rabbitTemplate.convertAndSend("order.topic", "order.pay.success", event);
+
     }
 
     /**

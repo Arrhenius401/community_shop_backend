@@ -19,6 +19,7 @@ import xyz.graygoo401.common.util.TokenUtil;
 /**
  * 权限拦截器（校验登录状态和管理员权限）
  */
+@Deprecated
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 

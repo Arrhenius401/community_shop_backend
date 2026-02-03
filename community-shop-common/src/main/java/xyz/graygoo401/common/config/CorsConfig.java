@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 用于解决浏览器的同源策略限制，允许前端应用不同源（域名、端口、协议）访问后端资源
  * 除非前后端整合在一起，否则前端后端一般运行在不同端口上
  */
+@Deprecated
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

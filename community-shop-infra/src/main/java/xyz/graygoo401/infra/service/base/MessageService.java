@@ -28,6 +28,14 @@ public interface MessageService extends BaseService<Message> {
     Long sendMessage(Long userId, MessageSendDTO messageSendDTO);
 
     /**
+     * 发送系统通知（如系统公告）
+     * @param messageSendDTO 消息参数（接收人、内容、类型）
+     * @return 创建成功的消息ID
+     * @throws BusinessException 接收人不存在、内容超限时抛出
+     */
+    Long sendNotice(MessageSendDTO messageSendDTO);
+
+    /**
      * 获取消息详情
      * @param userId 当前用户ID
      * @param msgId 消息ID

@@ -1,10 +1,12 @@
 package xyz.graygoo401.community.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import xyz.graygoo401.api.common.dto.mq.CommunityEventDTO;
 import xyz.graygoo401.api.community.enums.PostStatusEnum;
 import xyz.graygoo401.api.user.dto.user.UserDTO;
 import xyz.graygoo401.api.user.feign.UserClient;
@@ -49,6 +51,9 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -61,7 +66,8 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             if(userClient.getUserById(userId) == null){
                 throw new BusinessException(SystemErrorCode.USER_NOT_EXISTS);
             }
-            if(postService.getById(postId) == null){
+            Post post = postService.getById(postId);
+            if(post == null){
                 throw new BusinessException(PostErrorCode.POST_NOT_EXISTS);
             }
 
@@ -95,6 +101,11 @@ public class UserPostLikeServiceImpl extends BaseServiceImpl<UserPostLikeMapper,
             redisTemplate.opsForValue().set(statusCacheKey, true, CACHE_TTL_LIKE, TimeUnit.MINUTES);
             String likeCountCacheKey = CACHE_KEY_POST_LIKE_COUNT + postId;
             redisTemplate.opsForValue().increment(likeCountCacheKey);   //实现对指定键（key）的数值值进行自增操作
+
+            // 5. 发送互动消息（如果操作是点赞）
+            CommunityEventDTO event = new CommunityEventDTO(postId, userId,
+                    post.getUserId(), "LIKE");
+            rabbitTemplate.convertAndSend("community.topic", "community.like", event);
 
             log.info("用户点赞成功，用户ID：{}，帖子ID：{}", userId, postId);
             return true;

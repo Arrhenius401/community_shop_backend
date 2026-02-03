@@ -109,6 +109,49 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
     }
 
     /**
+     * 发送系统通知（如系统公告）
+     *
+     * @param messageSendDTO 消息参数（接收人、内容、类型）
+     * @return 创建成功的消息ID
+     * @throws BusinessException 接收人不存在、内容超限时抛出
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long sendNotice(MessageSendDTO messageSendDTO) {
+        try {
+            // 1. 参数校验
+            validateBusinessMessageParam(messageSendDTO);
+
+            // 2. 校验接收人存在
+            UserDTO receiver = userUtil.getUserById(messageSendDTO.getReceiverId());
+            if (Objects.isNull(receiver)) {
+                log.error("发送系统通知失败，接收人不存在，接收人ID：{}", messageSendDTO.getReceiverId());
+                throw new BusinessException(MessageErrorCode.RECEIVER_NOT_EXISTS);
+            }
+
+            // 3. 构建Message实体
+            Message message = buildBusinessMessage(messageSendDTO);
+            message.setSenderId(0L);
+
+            // 4. 插入数据库
+            int insertRows = messageMapper.insert(message);
+            if (insertRows <= 0) {
+                log.error("发送系统通知失败，数据库插入失败，消息参数：{}", messageSendDTO);
+                throw new BusinessException(SystemErrorCode.DATA_INSERT_FAILED);
+            }
+
+            log.info("发送系统通知成功，消息ID：{}，接收人ID：{}，消息类型：{}",
+                    message.getMsgId(), messageSendDTO.getReceiverId(), messageSendDTO.getType());
+            return message.getMsgId();
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("发送系统通知异常，消息参数：{}", messageSendDTO, e);
+            throw new BusinessException(SystemErrorCode.FAILURE);
+        }
+    }
+
+    /**
      * 获取消息详情
      *
      * @param userId 用户ID

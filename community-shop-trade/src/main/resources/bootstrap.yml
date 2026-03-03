@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: trade-service # 1. 服务名，对应 Nacos 里的 Data ID
+  profiles:
+    active: dev # 2. 环境名
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848 # Nacos 地址
+        file-extension: yaml # 配置文件后缀

@@ -58,6 +58,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <spring-boot.version>3.4.2</spring-boot.version>
         <mockito.version>4.11.0</mockito.version>
         <spring-ai.version>1.0.3</spring-ai.version>
 
@@ -125,7 +126,7 @@
             <dependency>
                 <groupId>xyz.graygoo401</groupId>
                 <artifactId>community-shop-common</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>xyz.graygoo401</groupId>
@@ -242,7 +243,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${parent.version}</version>
+                    <version>${spring-boot.version}</version>
                     <!-- 不配置 executions，避免子模块自动执行 repackage -->
                 </plugin>
 

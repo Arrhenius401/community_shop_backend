@@ -12,7 +12,11 @@ import xyz.graygoo401.common.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "user-service", contextId = "userClient")
+@FeignClient(
+        name = "user-service",
+        contextId = "userClient",
+        fallback = UserClientFallback.class
+)
 public interface UserClient {
 
     /**
